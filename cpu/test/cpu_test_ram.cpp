@@ -1,3 +1,5 @@
+#include <bitset>
+#include <iostream>
 #include "cpu_test_ram.h"
 
 cpu_test_ram::cpu_test_ram(unsigned int num_bytes)
@@ -13,7 +15,14 @@ cpu_test_ram::cpu_test_ram(unsigned int num_bytes)
 
 void cpu_test_ram::write_byte(unsigned int addr, unsigned char val)
 {
-    storage[addr] = val;
+    if(addr < num_bytes)
+    {
+        storage[addr] = val;
+    }
+    else
+    {
+        std::cout << "--ram-error (write_byte): addr " << std::hex << addr << "out of range\n";
+    }
 }
 
 void cpu_test_ram::write_word(unsigned int addr, unsigned int val)
@@ -31,7 +40,15 @@ void cpu_test_ram::write_word(unsigned int addr, unsigned int val)
 
 unsigned char cpu_test_ram::read_byte(unsigned int addr)
 {
-    return storage[addr];
+    if(addr < num_bytes)
+    {
+        return storage[addr];
+    }
+    else
+    {
+        std::cout << "--ram-error (read_byte): addr " << std::hex << addr << "out of range\n";
+        return NULL;
+    }
 }
 
 unsigned int cpu_test_ram::read_word(unsigned int addr)

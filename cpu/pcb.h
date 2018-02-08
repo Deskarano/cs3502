@@ -1,6 +1,8 @@
 #ifndef CS3502_PCB_H
 #define CS3502_PCB_H
 
+#include "test/cpu_test_ram.h"
+
 enum pcb_state
 {
     NEW,
@@ -13,7 +15,7 @@ enum pcb_state
 class pcb
 {
 public:
-    pcb(unsigned int priority, unsigned int base_address);
+    pcb(unsigned int priority, cpu_test_ram *ram, unsigned int base_address);
 
     unsigned int get_pc()
     {
@@ -23,6 +25,11 @@ public:
     unsigned int *get_reg()
     {
         return reg;
+    }
+
+    cpu_test_ram *get_test_ram()
+    {
+        return ram;
     }
 
 private:
@@ -35,6 +42,7 @@ private:
     unsigned int priority;
 
     //memory-related info
+    cpu_test_ram *ram;
     unsigned int base_address;
 };
 
