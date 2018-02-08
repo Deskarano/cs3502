@@ -9,11 +9,14 @@ public:
     void start();
     void stop();
 
-    void load_pcb(pcb new_pcb);
+    void set_pcb(pcb *new_pcb);
+    pcb *get_pcb();
     void save_pcb();
 
 private:
-    pcb current_pcb;
+    pcb *current_pcb;
+
+    unsigned int pc;
     unsigned int reg[16];
 };
 

@@ -1,5 +1,174 @@
-#include <iostream>
 #include "cpu.h"
+
+void copy_reg(const unsigned int from[16], unsigned int to[16])
+{
+    for(int i = 0; i < 16; i++)
+    {
+        to[i] = from[i];
+    }
+}
+
+void execute(unsigned int instruction, unsigned int reg[16], unsigned int *pc)
+{
+    int op = (instruction >> 24) & 0b00111111;
+
+    if(op == 0x00) //RD
+    {
+
+    }
+
+    if(op == 0x01) //WR
+    {
+
+    }
+
+    if(op == 0x02) //ST
+    {
+
+    }
+
+    if(op == 0x03) //LW
+    {
+
+    }
+
+    if(op == 0x04) //MOV
+    {
+        int sreg1 = (instruction >> 20) & 0b1111;
+        int sreg2 = (instruction >> 16) & 0b1111;
+
+        reg[sreg1] = reg[sreg2];
+        return;
+    }
+
+    if(op == 0x05) //ADD
+    {
+        int sreg1 = (instruction >> 20) & 0b1111;
+        int sreg2 = (instruction >> 16) & 0b1111;
+        int dreg = (instruction >> 12) & 0b1111;
+
+        reg[dreg] = reg[sreg1] + reg[sreg2];
+        return;
+    }
+
+    if(op == 0x06) //SUB
+    {
+        //not implemented. instruction is never used
+        return;
+    }
+
+    if(op == 0x07) //MUL
+    {
+        //not implemented. instruction is never used
+        return;
+    }
+
+    if(op == 0x08) //DIV
+    {
+
+    }
+
+    if(op == 0x09) //AND
+    {
+        int sreg1 = (instruction >> 20) & 0b1111;
+        int sreg2 = (instruction >> 16) & 0b1111;
+        int dreg = (instruction >> 12) & 0b1111;
+
+        reg[dreg] = reg[sreg1] & reg[sreg2];
+    }
+
+    if(op == 0x0A) //OR
+    {
+        int sreg1 = (instruction >> 20) & 0b1111;
+        int sreg2 = (instruction >> 16) & 0b1111;
+        int dreg = (instruction >> 12) & 0b1111;
+
+        reg[dreg] = reg[sreg1] | reg[sreg2];
+    }
+
+    if(op == 0x0B) //MOVI
+    {
+
+    }
+
+    if(op == 0x0C) //ADDI
+    {
+
+    }
+
+    if(op == 0x0D) //MULI
+    {
+
+    }
+
+    if(op == 0x0E) //DIVI
+    {
+
+    }
+
+    if(op == 0x0F) //LDI
+    {
+
+    }
+
+    if(op == 0x10) //SLT
+    {
+
+    }
+
+    if(op == 0x11) //SLTI
+    {
+
+    }
+
+    if(op == 0x12) //HLT
+    {
+
+    }
+
+    if(op == 0x13) //NOP
+    {
+        return;
+    }
+
+    if(op == 0x14) //JMP
+    {
+        unsigned int target_addr = instruction & 0b00000000111111111111111111111111;
+        *pc = target_addr;
+
+        return;
+    }
+
+    if(op == 0x15) //BEQ
+    {
+
+    }
+
+    if(op == 0x16) //BNE
+    {
+
+    }
+
+    if(op == 0x17) //BEZ
+    {
+
+    }
+
+    if(op == 0x18) //BNZ
+    {
+
+    }
+
+    if(op == 0x19) //BGZ
+    {
+
+    }
+
+    if(op == 0x1A) //BLZ
+    {
+
+    }
+}
 
 void cpu::start()
 {
@@ -11,12 +180,20 @@ void cpu::stop()
 
 }
 
-void cpu::load_pcb(pcb new_pcb)
+void cpu::set_pcb(pcb *new_pcb)
 {
     this->current_pcb = new_pcb;
+
+    this->pc = new_pcb->get_pc();
+    copy_reg(current_pcb->get_reg(), this->reg);
+}
+
+pcb *cpu::get_pcb()
+{
+    return current_pcb;
 }
 
 void cpu::save_pcb()
 {
-
+    copy_reg(this->reg, current_pcb->get_reg());
 }
