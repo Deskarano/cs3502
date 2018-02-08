@@ -14,7 +14,11 @@ void execute(unsigned int instruction, unsigned int reg[16], unsigned int *pc)
 
     if(op == 0x00) //RD
     {
+        int reg1 = (instruction >> 20) & 0b1111;
+        int reg2 = (instruction >> 16) & 0b1111;
+        int addr = instruction & 0b00000000000000001111111111111111;
 
+        if(reg2 == 0){}
     }
 
     if(op == 0x01) //WR

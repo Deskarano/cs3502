@@ -22,6 +22,9 @@ add_executable(cs3502 ${SOURCE_FILES_MAIN})
 
 set(SOURCE_FILES_CPU_TEST
         cpu/test/cpu_test_main.cpp
+        cpu/test/cpu_test_ram.cpp
+        cpu/test/cpu_test_ram.h
+
         cpu/cpu.cpp
         cpu/cpu.h
         cpu/pcb.cpp
