@@ -303,12 +303,10 @@ void cpu::start()
 {
     unsigned int instruction = cpu_test_ram::read_word(pc);
 
-    while(instruction != 0x55810060)
+    while(((instruction >> 24) & 0b00111111) != 0x12)
     {
-        std::cout << std::hex << pc << ": " << instruction << "\n";
         execute(instruction, reg, &pc);
 
-        print_registers(reg);
         instruction = cpu_test_ram::read_word(pc);
     }
 }

@@ -43,3 +43,16 @@ unsigned int cpu_test_ram::read_word(unsigned int addr)
 
     return (val1 << 24) + (val2 << 16) + (val3 << 8) + val4;
 }
+
+void cpu_test_ram::dump_ram()
+{
+    for(int i = 0; i < num_bytes; i += 16)
+    {
+        std::cout << std::hex << i << ": ";
+        for(int j = 0; j < 16; j += 4)
+        {
+            std::cout << std::hex << read_word(i + j) << " ";
+        }
+        std::cout << "\n";
+    }
+}

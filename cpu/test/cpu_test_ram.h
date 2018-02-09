@@ -12,6 +12,8 @@ public:
     static unsigned char read_byte(unsigned int addr);
     static unsigned int read_word(unsigned int addr);
 
+    static void dump_ram();
+
 private:
     static unsigned int num_bytes;
     static unsigned char *data;

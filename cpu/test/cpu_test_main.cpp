@@ -36,5 +36,7 @@ int main()
     cpu1->set_pcb(pcb1);
     cpu1->start();
 
+    cpu_test_ram::dump_ram();
+
     return 0;
 }
