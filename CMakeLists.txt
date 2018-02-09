@@ -25,8 +25,6 @@ set(SOURCE_FILES_CPU_TEST
         cpu/test/cpu_test_ram.cpp
         cpu/test/cpu_test_ram.h
 
-        cpu/test/programfile
-
         cpu/cpu.cpp
         cpu/cpu.h
         cpu/pcb.cpp
