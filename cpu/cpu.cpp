@@ -14,6 +14,7 @@ void execute(instr *instruction, unsigned int reg[16], unsigned int *pc)
 {
     switch(instruction->op)
     {
+        //TODO: fully implement once RAM is done
         case RD:
         {
             auto args = (io_args *) instruction->args;
@@ -30,6 +31,7 @@ void execute(instr *instruction, unsigned int reg[16], unsigned int *pc)
             return;
         }
 
+        //TODO: fully implement once RAM is done
         case WR:
         {
             auto args = (io_args *) instruction->args;
@@ -46,6 +48,7 @@ void execute(instr *instruction, unsigned int reg[16], unsigned int *pc)
             return;
         }
 
+        //TODO: fully implement once RAM is done
         case ST:
         {
             auto args = (i_args *) instruction->args;
@@ -55,6 +58,7 @@ void execute(instr *instruction, unsigned int reg[16], unsigned int *pc)
             return;
         }
 
+        //TODO: fully implement once RAM is done
         case LW:
         {
             auto args = (i_args *) instruction->args;
@@ -396,6 +400,7 @@ void print_registers(unsigned int reg[16])
 
 void cpu::start()
 {
+    //TODO: fully implement once RAM is done
     instr *instruction = decode(cpu_test_ram::read_word(pc));
 
     while(instruction->op != HLT)
