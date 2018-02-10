@@ -43,7 +43,7 @@ struct io_args
     unsigned int addr;
 };
 
-typedef struct instr
+struct instr
 {
     instr_type type;
     instr_op op;

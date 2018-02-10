@@ -16,6 +16,11 @@ void cpu_test_ram::write_byte(unsigned int addr, unsigned char val)
     data[addr] = val;
 }
 
+unsigned char cpu_test_ram::read_byte(unsigned int addr)
+{
+    return data[addr];
+}
+
 void cpu_test_ram::write_word(unsigned int addr, unsigned int val)
 {
     auto val1 = (unsigned char) ((val >> 24) & 0b11111111);
@@ -29,11 +34,6 @@ void cpu_test_ram::write_word(unsigned int addr, unsigned int val)
     write_byte(addr + 3, val4);
 }
 
-unsigned char cpu_test_ram::read_byte(unsigned int addr)
-{
-    return data[addr];
-}
-
 unsigned int cpu_test_ram::read_word(unsigned int addr)
 {
     unsigned int val1 = read_byte(addr);
@@ -43,6 +43,8 @@ unsigned int cpu_test_ram::read_word(unsigned int addr)
 
     return (val1 << 24) + (val2 << 16) + (val3 << 8) + val4;
 }
+
+
 
 void cpu_test_ram::dump_ram()
 {
