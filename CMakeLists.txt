@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(SOURCE_FILES_MAIN
         driver.cpp
 
+        cpu/cpu_types.h
         cpu/cpu.cpp
         cpu/cpu.h
         cpu/pcb.cpp
@@ -17,16 +18,5 @@ set(SOURCE_FILES_MAIN
         disk/disk.cpp
         disk/disk.h
 
-        scheduler/short-term.cpp cpu/cpu_types.h)
+        scheduler/short-term.cpp)
 add_executable(cs3502 ${SOURCE_FILES_MAIN})
-
-set(SOURCE_FILES_CPU_TEST
-        cpu/test/cpu_test_main.cpp
-        cpu/test/cpu_test_ram.cpp
-        cpu/test/cpu_test_ram.h
-
-        cpu/cpu.cpp
-        cpu/cpu.h
-        cpu/pcb.cpp
-        cpu/pcb.h)
-add_executable(cs3502_cpu_test ${SOURCE_FILES_CPU_TEST})
