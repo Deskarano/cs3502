@@ -17,7 +17,7 @@ set(SOURCE_FILES_MAIN
         disk/disk.cpp
         disk/disk.h
 
-        scheduler/short-term.cpp)
+        scheduler/short-term.cpp cpu/cpu_types.h)
 add_executable(cs3502 ${SOURCE_FILES_MAIN})
 
 set(SOURCE_FILES_CPU_TEST
