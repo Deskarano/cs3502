@@ -1,6 +1,9 @@
 #include <iostream>
+
 #include "cpu.h"
 #include "cpu_types.h"
+
+#include "../ram/ram.h"
 
 void copy_reg(const unsigned int from[16], unsigned int to[16])
 {
@@ -10,59 +13,55 @@ void copy_reg(const unsigned int from[16], unsigned int to[16])
     }
 }
 
-void execute(instr *instruction, unsigned int reg[16], unsigned int *pc)
+void execute(instr *instruction, int reg[16], unsigned int *pc)
 {
     switch(instruction->op)
     {
-        //TODO: fully implement once RAM is done
         case RD:
         {
             auto args = (io_args *) instruction->args;
             if(args->reg2 == 0)
             {
-                reg[args->reg1] = cpu_test_ram::read_word(args->addr);
+                reg[args->reg1] = ram::read_word(args->addr);
             }
             else
             {
-                reg[args->reg1] = cpu_test_ram::read_word(reg[args->reg2]);
+                reg[args->reg1] = ram::read_word((unsigned) reg[args->reg2]);
             }
 
             *pc += 4;
             return;
         }
 
-        //TODO: fully implement once RAM is done
         case WR:
         {
             auto args = (io_args *) instruction->args;
             if(args->reg2 == 0)
             {
-                cpu_test_ram::write_word(args->addr, reg[args->reg1]);
+                ram::write_word(args->addr, reg[args->reg1]);
             }
             else
             {
-                cpu_test_ram::write_word(reg[args->reg2], reg[args->reg1]);
+                ram::write_word((unsigned) reg[args->reg2], reg[args->reg1]);
             }
 
             *pc += 4;
             return;
         }
 
-        //TODO: fully implement once RAM is done
         case ST:
         {
             auto args = (i_args *) instruction->args;
-            cpu_test_ram::write_word(reg[args->dreg], reg[args->breg]);
+            ram::write_word((unsigned) reg[args->dreg], reg[args->breg]);
 
             *pc += 4;
             return;
         }
 
-        //TODO: fully implement once RAM is done
         case LW:
         {
             auto args = (i_args *) instruction->args;
-            reg[args->dreg] = cpu_test_ram::read_word(reg[args->breg] + args->addr);
+            reg[args->dreg] = ram::read_word(reg[args->breg] + args->addr);
 
             *pc += 4;
             return;
@@ -393,12 +392,12 @@ void print_registers(unsigned int reg[16])
 void cpu::start()
 {
     //TODO: fully implement once RAM is done
-    instr *instruction = decode(cpu_test_ram::read_word(pc));
+    instr *instruction = decode((unsigned) ram::read_word(pc));
 
     while(instruction->op != HLT)
     {
         execute(instruction, reg, &pc);
-        instruction = decode(cpu_test_ram::read_word(pc));
+        instruction = decode((unsigned) ram::read_word(pc));
     }
 }
 
