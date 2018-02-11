@@ -315,8 +315,6 @@ instr *decode(unsigned int instruction)
 
     if(type == 0b00)
     {
-        result->type = R;
-
         auto args = new r_args;
         args->sreg1 = (instruction >> 20) & 0b1111;
         args->sreg2 = (instruction >> 16) & 0b1111;
@@ -326,8 +324,6 @@ instr *decode(unsigned int instruction)
     }
     else if(type == 0b01)
     {
-        result->type = I;
-
         auto args = new i_args;
         args->breg = (instruction >> 20) & 0b1111;
         args->dreg = (instruction >> 16) & 0b1111;
@@ -337,8 +333,6 @@ instr *decode(unsigned int instruction)
     }
     else if(type == 0b10)
     {
-        result->type = J;
-
         auto args = new j_args;
         args->addr = instruction & 0b111111111111111111111111;
 
@@ -346,8 +340,6 @@ instr *decode(unsigned int instruction)
     }
     else
     {
-        result->type = IO;
-
         auto args = new io_args;
         args->reg1 = (instruction >> 20) & 0b1111;
         args->reg2 = (instruction >> 16) & 0b1111;

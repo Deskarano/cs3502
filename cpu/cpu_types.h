@@ -1,11 +1,6 @@
 #ifndef CS3502_CPU_TYPES_H
 #define CS3502_CPU_TYPES_H
 
-enum instr_type
-{
-    R, I, J, IO
-};
-
 enum instr_op
 {
     RD, WR, ST, LW,
@@ -45,7 +40,6 @@ struct io_args
 
 struct instr
 {
-    instr_type type;
     instr_op op;
     void *args;
 };
