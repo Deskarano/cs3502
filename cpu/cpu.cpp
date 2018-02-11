@@ -5,7 +5,7 @@
 
 #include "../ram/ram.h"
 
-void copy_reg(const unsigned int from[16], unsigned int to[16])
+void copy_reg(const int from[16], int to[16])
 {
     for(int i = 0; i < 16; i++)
     {

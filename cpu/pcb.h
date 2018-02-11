@@ -1,8 +1,6 @@
 #ifndef CS3502_PCB_H
 #define CS3502_PCB_H
 
-#include "test/cpu_test_ram.h"
-
 enum pcb_state
 {
     NEW,
@@ -22,7 +20,7 @@ public:
         return pc;
     }
 
-    unsigned int *get_reg()
+    int *get_reg()
     {
         return reg;
     }
@@ -30,7 +28,7 @@ public:
 private:
     //cpu-related info
     unsigned int pc;
-    unsigned int reg[16];
+    int reg[16];
 
     //scheduler-related info
     pcb_state state;

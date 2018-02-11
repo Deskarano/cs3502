@@ -30,7 +30,7 @@ unsigned char ram::read_byte(unsigned int addr)
     }
     else
     {
-        std::cout << "--ram-error (read_byte): address " << std::hex << addr << " is out of range"
+        std::cout << "--ram-error (read_byte): address " << std::hex << addr << " is out of range\n";
         return 0;
     }
 }

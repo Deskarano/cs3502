@@ -17,7 +17,7 @@ private:
     pcb *current_pcb;
 
     unsigned int pc;
-    unsigned int reg[16];
+    int reg[16];
 };
 
 #endif //CS3502_CPU_H
