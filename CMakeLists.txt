@@ -12,6 +12,9 @@ set(SOURCE_FILES_MAIN
         cpu/pcb.cpp
         cpu/pcb.h
 
+        cpu/cpu_control.cpp
+        cpu/cpu_control.h
+
         ram/ram.cpp
         ram/ram.h
 
