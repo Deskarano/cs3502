@@ -18,5 +18,8 @@ set(SOURCE_FILES_MAIN
         disk/disk.cpp
         disk/disk.h
 
-        scheduler/short-term.cpp)
+        scheduler/loader.cpp
+        scheduler/short-term.cpp
+        scheduler/dispatch.cpp
+        scheduler/dispatch.h)
 add_executable(cs3502 ${SOURCE_FILES_MAIN})

@@ -1,0 +1,4 @@
+#ifndef CS3502_DISPATCH_H
+#define CS3502_DISPATCH_H
+
+#endif //CS3502_DISPATCH_H
