@@ -21,5 +21,5 @@ set(SOURCE_FILES_MAIN
         scheduler/loader.cpp
         scheduler/short-term.cpp
         scheduler/dispatch.cpp
-        scheduler/dispatch.h)
+        scheduler/dispatch.h scheduler/short-term.h)
 add_executable(cs3502 ${SOURCE_FILES_MAIN})
