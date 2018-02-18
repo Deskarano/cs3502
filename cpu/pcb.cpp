@@ -3,9 +3,9 @@
 pcb::pcb(unsigned int priority, unsigned int base_address)
 {
     this->pc = 0;
-    for(int i = 0; i < 16; i++)
+    for(int &i : this->reg)
     {
-        this->reg[i] = 0;
+        i = 0;
     }
 
     this->state = NEW;

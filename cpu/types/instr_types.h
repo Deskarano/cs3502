@@ -1,5 +1,5 @@
-#ifndef CS3502_CPU_TYPES_H
-#define CS3502_CPU_TYPES_H
+#ifndef CS3502_INSTR_TYPES_H
+#define CS3502_INSTR_TYPES_H
 
 enum instr_op
 {
@@ -44,4 +44,4 @@ struct instr
     void *args;
 };
 
-#endif //CS3502_CPU_TYPES_H
+#endif //CS3502_INSTR_TYPES_H

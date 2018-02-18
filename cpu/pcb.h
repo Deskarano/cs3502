@@ -1,23 +1,16 @@
 #ifndef CS3502_PCB_H
 #define CS3502_PCB_H
 
-enum pcb_state
-{
-    NEW,
-    READY,
-    RUNNING,
-    WAITING,
-    DONE
-};
+#include "types/pcb_types.h"
 
 class pcb
 {
 public:
     pcb(unsigned int priority, unsigned int base_address);
 
-    unsigned int get_pc()
+    unsigned int *get_pc()
     {
-        return pc;
+        return &pc;
     }
 
     int *get_reg()

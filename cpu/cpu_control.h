@@ -1,17 +1,16 @@
 #ifndef CS3502_CPU_CONTROL_H
 #define CS3502_CPU_CONTROL_H
 
-#include "cpu.h"
+#include "types/cpu_types.h"
 
 struct cpu_control
 {
 public:
-    void init(unsigned int num_cores);
-    cpu *get_core(unsigned int core_id);
+    static void init(unsigned int num_cores);
+    static cpu_state get_core_state(unsigned int core_id);
 
 private:
-    unsigned int num_cores;
-    cpu *cores;
+    static unsigned int num_cores;
 };
 
 #endif //CS3502_CPU_CONTROL_H
