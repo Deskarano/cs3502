@@ -10,7 +10,7 @@ struct disk {
 public:
     static void init(unsigned int num_words);
 
-    static void write_word(unsigned int addr, char val[8]);
+    static void write_word(unsigned int addr, const char val[8]);
     static char *read_word(unsigned int addr);
 
     static void clear_disk();

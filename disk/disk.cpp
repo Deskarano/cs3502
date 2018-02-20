@@ -16,11 +16,11 @@ void disk::init(unsigned int num_words)
 
 }
 
-void disk::write_word(unsigned int addr, char val[8])
+void disk::write_word(unsigned int addr, const char val[8])
 {
     for(int i = 0; i < 8; i++)
     {
-        data[addr + i] = val[i];
+        data[2 * addr + i] = val[i];
     }
 }
 
@@ -29,7 +29,7 @@ char *disk::read_word(unsigned int addr)
     auto result = new char[8];
     for(int i = 0; i < 8; i++)
     {
-        result[i] = data[addr + i];
+        result[i] = data[2 * addr + i];
     }
 
     return result;
