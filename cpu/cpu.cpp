@@ -294,7 +294,8 @@ void execute(instr *instruction, int reg[16], unsigned int &pc)
 
         case INVALID:
         {
-
+            std::cout << "--cpu-error (execute): invalid instruction\n";
+            return;
         }
     }
 }
@@ -375,6 +376,8 @@ instr *decode(unsigned int instruction)
 
 void cpu::start()
 {
+    state = FULL;
+
     instr *instruction = decode((unsigned) ram::read_word(pc));
 
     while(instruction->op != HLT)
@@ -386,7 +389,7 @@ void cpu::start()
 
 void cpu::stop()
 {
-    //dummy line for commit
+    state = IDLE;
 }
 
 void copy_reg(const int from[16], int to[16])

@@ -24,3 +24,15 @@ cpu_state cpu_control::get_core_state(unsigned int core_id)
         return ERR;
     }
 }
+
+void cpu_control::dispatch_to_core(unsigned int core_id, pcb *new_pcb)
+{
+    if(get_core_state(core_id) == FULL)
+    {
+        cores[core_id].stop();
+        cores[core_id].save_pcb();
+    }
+
+    cores[core_id].set_pcb(new_pcb);
+    cores[core_id].start();
+}
