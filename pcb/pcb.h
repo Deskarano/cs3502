@@ -1,7 +1,7 @@
 #ifndef CS3502_PCB_H
 #define CS3502_PCB_H
 
-#include "types/pcb_types.h"
+#include "pcb_types.h"
 
 class pcb
 {

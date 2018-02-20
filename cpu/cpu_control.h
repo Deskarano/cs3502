@@ -2,7 +2,7 @@
 #define CS3502_CPU_CONTROL_H
 
 #include "types/cpu_types.h"
-#include "pcb.h"
+#include "../pcb/pcb.h"
 
 struct cpu_control
 {
