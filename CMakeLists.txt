@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 set(SOURCE_FILES_MAIN
         driver.cpp
+        loader.cpp
 
         cpu/types/cpu_types.h
         cpu/types/instr_types.h
@@ -24,7 +25,6 @@ set(SOURCE_FILES_MAIN
         ram/ram.cpp
         ram/ram.h
 
-        scheduler/loader.cpp
         scheduler/short-term.cpp
 
         utils/base_conversions.h)
