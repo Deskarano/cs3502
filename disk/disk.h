@@ -5,8 +5,8 @@
 #ifndef CS3502_DISK_H
 #define CS3502_DISK_H
 
-struct disk {
-
+struct disk
+{
 public:
     static void init(unsigned int num_words);
 

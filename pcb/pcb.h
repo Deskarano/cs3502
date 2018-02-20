@@ -6,29 +6,40 @@
 class pcb
 {
 public:
-    pcb(unsigned int priority, unsigned int base_address);
+    pcb(unsigned int ID, unsigned int priority, unsigned int code_size);
+
+    void set_data_section(unsigned int input_size, unsigned int output_size, unsigned int temp_size);
+
+    unsigned int get_priority()
+    { return priority; }
+
+    pcb_state get_state()
+    { return state; }
 
     unsigned int *get_pc()
-    {
-        return &pc;
-    }
+    { return &pc; }
 
     int *get_reg()
-    {
-        return reg;
-    }
+    { return reg; }
 
 private:
+    //scheduler-related info
+    unsigned int ID;
+    unsigned int priority;
+    pcb_state state;
+
     //cpu-related info
     unsigned int pc;
     int reg[16];
 
-    //scheduler-related info
-    pcb_state state;
-    unsigned int priority;
-
     //memory-related info
-    unsigned int base_address;
+    unsigned int base_disk_address;
+    unsigned int base_ram_address;
+
+    unsigned int code_size;
+    unsigned int input_size;
+    unsigned int output_size;
+    unsigned int temp_size;
 };
 
 
