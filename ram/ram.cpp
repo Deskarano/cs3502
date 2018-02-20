@@ -14,16 +14,17 @@ void ram::write_word(unsigned int addr, char val[8])
 {
     for(int i = 0; i < 8; i++)
     {
-        data[i] = val[i];
+        data[addr + i] = val[i];
     }
 }
 
 char *ram::read_word(unsigned int addr)
 {
     auto result = new char[8];
+
     for(int i = 0; i < 8; i++)
     {
-        result[i] = data[i];
+        result[i] = data[addr + i];
     }
 
     return result;
