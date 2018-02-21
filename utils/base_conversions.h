@@ -1,7 +1,7 @@
 #ifndef CS3502_BASE_CONVERSIONS_H
 #define CS3502_BASE_CONVERSIONS_H
 
-unsigned int hex_to_dec(const char *hex, unsigned int length)
+static unsigned int hex_to_dec(const char *hex, unsigned int length)
 {
     unsigned int result = 0;
 
@@ -30,10 +30,10 @@ unsigned int hex_to_dec(const char *hex, unsigned int length)
     return result;
 }
 
-char *dec_to_hex(int dec)
+static char *dec_to_hex(int dec)
 {
     auto result = new char[8];
-    itoa(dec, result, 16);
+    snprintf(result, 8, "%0x", dec);
 
     return result;
 }

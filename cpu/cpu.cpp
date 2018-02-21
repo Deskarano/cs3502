@@ -384,7 +384,7 @@ void cpu::start()
     while(instruction->op != HLT)
     {
         execute(instruction, reg, pc);
-        instruction = decode((unsigned) ram::read_word(pc));
+        instruction = decode(ram::read_word(pc));
     }
 }
 

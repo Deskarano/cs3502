@@ -10,6 +10,9 @@ public:
 
     void set_data_section(unsigned int input_size, unsigned int output_size, unsigned int temp_size);
 
+    unsigned int get_ID()
+    { return ID; }
+
     unsigned int get_priority()
     { return priority; }
 
