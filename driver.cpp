@@ -4,13 +4,16 @@
 #include "disk/disk.h"
 #include "pcb/pcb_control.h"
 
-void load()
+void load(std::string programfile)
 {
-    std::ifstream program("programfile");
+    std::ifstream program(programfile);
     std::string line;
 
     unsigned int addr = 0;
-    unsigned int current_id;
+
+    std::string job_line;
+    std::string data_line;
+    unsigned int base_disk_address;
 
     if(program.is_open())
     {
@@ -20,11 +23,16 @@ void load()
             {
                 if(line[3] == 'J')
                 {
-                    current_id = pcb_control::create_pcb(&line);
+                    job_line = line;
+                    base_disk_address = addr;
                 }
                 else if(line[3] == 'D')
                 {
-                    pcb_control::update_pcb(current_id, &line);
+                    data_line = line;
+                }
+                else // line[3] == 'E'
+                {
+                    pcb_control::create_pcb(&job_line, &data_line, base_disk_address);
                 }
             }
             else
@@ -44,8 +52,14 @@ void load()
 int main()
 {
     disk::init(2048);
-    load();
+    load("programfile");
 
-    pcb *next = pcb_control::get_highest_priority_pcb();
-    std::cout << next->get_priority();
+    for(int i = 30; i > 0; i--)
+    {
+        pcb *pcb = pcb_control::get_pcb(i);
+        std::cout << "got pcb " << pcb->get_ID() << "\n";
+
+        pcb_control::delete_pcb(i);
+        std::cout << "deleted pcb " << i << "\n";
+    }
 }

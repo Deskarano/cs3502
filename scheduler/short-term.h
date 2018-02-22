@@ -6,6 +6,7 @@
 #define CS3502_SHORT_TERM_H
 
 #include "../pcb/pcb_control.h"
+#include "../pcb/pcb.h"
 
 enum sched_algo
 {
