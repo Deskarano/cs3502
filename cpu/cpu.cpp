@@ -1,9 +1,10 @@
 #include <iostream>
 
 #include "cpu.h"
-#include "../ram/ram.h"
-
 #include "types/instr_types.h"
+
+#include "../ram/ram.h"
+#include "../utils/base_conversions.h"
 
 void execute(instr *instruction, int reg[16], unsigned int &pc)
 {
@@ -14,11 +15,11 @@ void execute(instr *instruction, int reg[16], unsigned int &pc)
             auto args = (io_args *) instruction->args;
             if(args->reg2 == 0)
             {
-                reg[args->reg1] = ram::read_word(args->addr);
+                reg[args->reg1] = hex_to_dec(ram::read_word(args->addr), 8);
             }
             else
             {
-                reg[args->reg1] = ram::read_word((unsigned) reg[args->reg2]);
+                reg[args->reg1] = hex_to_dec(ram::read_word((unsigned) reg[args->reg2]), 8);
             }
 
             pc += 4;
@@ -30,11 +31,11 @@ void execute(instr *instruction, int reg[16], unsigned int &pc)
             auto args = (io_args *) instruction->args;
             if(args->reg2 == 0)
             {
-                ram::write_word(args->addr, reg[args->reg1]);
+                ram::write_word(args->addr, dec_to_hex(reg[args->reg1]));
             }
             else
             {
-                ram::write_word((unsigned) reg[args->reg2], reg[args->reg1]);
+                ram::write_word((unsigned) reg[args->reg2], dec_to_hex(reg[args->reg1]));
             }
 
             pc += 4;
@@ -44,7 +45,7 @@ void execute(instr *instruction, int reg[16], unsigned int &pc)
         case ST:
         {
             auto args = (i_args *) instruction->args;
-            ram::write_word((unsigned) reg[args->dreg], reg[args->breg]);
+            ram::write_word((unsigned) reg[args->dreg], dec_to_hex(reg[args->breg]));
 
             pc += 4;
             return;
@@ -53,7 +54,7 @@ void execute(instr *instruction, int reg[16], unsigned int &pc)
         case LW:
         {
             auto args = (i_args *) instruction->args;
-            reg[args->dreg] = ram::read_word(reg[args->breg] + args->addr);
+            reg[args->dreg] = hex_to_dec(ram::read_word(reg[args->breg] + args->addr), 8);
 
             pc += 4;
             return;
@@ -294,52 +295,53 @@ void execute(instr *instruction, int reg[16], unsigned int &pc)
 
         case INVALID:
         {
-
+            std::cout << "--cpu-error (execute): invalid instruction\n";
+            return;
         }
     }
 }
 
-instr *decode(unsigned int instruction)
+instr *decode(char instruction[8])
 {
     auto result = new instr;
-    int type = (instruction >> 30) & 0b11;
+    int type = hex_to_dec(instruction, 1) >> 6;
 
     if(type == 0b00)
     {
         auto args = new r_args;
-        args->sreg1 = (instruction >> 20) & 0b1111;
-        args->sreg2 = (instruction >> 16) & 0b1111;
-        args->dreg = (instruction >> 12) & 0b1111;
+        args->sreg1 = hex_to_dec(instruction + 2, 1);
+        args->sreg2 = hex_to_dec(instruction + 3, 1);
+        args->dreg = hex_to_dec(instruction + 4, 1);
 
         result->args = args;
     }
     else if(type == 0b01)
     {
         auto args = new i_args;
-        args->breg = (instruction >> 20) & 0b1111;
-        args->dreg = (instruction >> 16) & 0b1111;
-        args->addr = instruction & 0b1111111111111111;
+        args->breg = hex_to_dec(instruction + 2, 1);
+        args->dreg = hex_to_dec(instruction + 3, 1);
+        args->addr = hex_to_dec(instruction + 4, 4);
 
         result->args = args;
     }
     else if(type == 0b10)
     {
         auto args = new j_args;
-        args->addr = instruction & 0b111111111111111111111111;
+        args->addr = hex_to_dec(instruction + 2, 6);
 
         result->args = args;
     }
     else
     {
         auto args = new io_args;
-        args->reg1 = (instruction >> 20) & 0b1111;
-        args->reg2 = (instruction >> 16) & 0b1111;
-        args->addr = instruction & 0b1111111111111111;
+        args->reg1 = hex_to_dec(instruction + 2, 1);
+        args->reg2 = hex_to_dec(instruction + 3, 1);
+        args->addr = hex_to_dec(instruction + 4, 4);
 
         result->args = args;
     }
 
-    int op = (instruction >> 24) & 0b00111111;
+    int op = hex_to_dec(instruction, 2) & 0b00111111;
 
     if(op == 0x00) result->op = RD;
     else if(op == 0x01) result->op = WR;
@@ -375,18 +377,20 @@ instr *decode(unsigned int instruction)
 
 void cpu::start()
 {
-    instr *instruction = decode((unsigned) ram::read_word(pc));
+    state = FULL;
+
+    instr *instruction = decode(ram::read_word(pc));
 
     while(instruction->op != HLT)
     {
         execute(instruction, reg, pc);
-        instruction = decode((unsigned) ram::read_word(pc));
+        instruction = decode(ram::read_word(pc));
     }
 }
 
 void cpu::stop()
 {
-    //dummy line for commit
+    state = IDLE;
 }
 
 void copy_reg(const int from[16], int to[16])

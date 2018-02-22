@@ -18,8 +18,11 @@ set(SOURCE_FILES_MAIN
         cpu/cpu_control.cpp
         cpu/cpu_control.h
 
-        ram/ram.cpp
-        ram/ram.h
+        pcb/pcb_types.h
+        pcb/pcb.cpp
+        pcb/pcb.h
+        pcb/pcb_control.cpp
+        pcb/pcb_control.h
 
         disk/disk.cpp
         disk/disk.h
@@ -27,5 +30,11 @@ set(SOURCE_FILES_MAIN
         scheduler/loader.cpp
         scheduler/short-term.cpp
         scheduler/dispatch.cpp
-        scheduler/dispatch.h scheduler/short-term.h)
+        scheduler/dispatch.h scheduler/short-term.h
+        ram/ram.cpp
+        ram/ram.h
+
+        scheduler/short-term.cpp
+
+        utils/base_conversions.h )
 add_executable(cs3502 ${SOURCE_FILES_MAIN})

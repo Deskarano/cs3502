@@ -3,7 +3,7 @@
 
 #include "types/cpu_types.h"
 
-#include "pcb.h"
+#include "../pcb/pcb.h"
 
 class cpu
 {
