@@ -27,6 +27,6 @@ set(SOURCE_FILES_MAIN
 
         ram/ram.cpp
         ram/ram.h
-        
+
         utils/base_conversions.h )
 add_executable(cs3502 ${SOURCE_FILES_MAIN})

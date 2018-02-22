@@ -5,7 +5,7 @@
 #ifndef CS3502_SHORT_TERM_H
 #define CS3502_SHORT_TERM_H
 
-#include "../cpu/pcb.h"
+#include "../pcb/pcb.h"
 
 enum sched_algo
 {
