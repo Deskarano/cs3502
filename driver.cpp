@@ -4,9 +4,9 @@
 #include "disk/disk.h"
 #include "pcb/pcb_control.h"
 
-void load()
+void load(std::string programfile)
 {
-    std::ifstream program("programfile");
+    std::ifstream program(programfile);
     std::string line;
 
     unsigned int addr = 0;
@@ -44,8 +44,14 @@ void load()
 int main()
 {
     disk::init(2048);
-    load();
+    load("programfile");
 
-    pcb *next = pcb_control::get_highest_priority_pcb();
-    std::cout << next->get_priority();
+    for(int i = 30; i > 0; i--)
+    {
+        pcb *pcb = pcb_control::get_pcb(i);
+        std::cout << "got pcb " << pcb->get_ID() << "\n";
+
+        pcb_control::delete_pcb(i);
+        std::cout << "deleted pcb " << i << "\n";
+    }
 }

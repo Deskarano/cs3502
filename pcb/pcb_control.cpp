@@ -92,23 +92,31 @@ void pcb_control::update_pcb(unsigned int ID, std::string *data_section)
 
 pcb *pcb_control::get_pcb(unsigned int ID)
 {
-    pcb_node *current = pcb_list_head;
-
-    while(current->get_next() != nullptr)
+    if(pcb_list_head != nullptr)
     {
-        current = current->get_next();
+        pcb_node *current = pcb_list_head;
+
+        while(current->get_next() != nullptr)
+        {
+            current = current->get_next();
+            if(current->get_pcb()->get_ID() == ID)
+            {
+                return current->get_pcb();
+            }
+        }
+
         if(current->get_pcb()->get_ID() == ID)
         {
             return current->get_pcb();
         }
-    }
 
-    if(current->get_pcb()->get_ID() == ID)
+        std::cout << "--pcb_control-error (get_pcb): could not find PCB " << ID << "\n";
+        return nullptr;
+    }
+    else
     {
-        return current->get_pcb();
+        std::cout << "--pcb_control-error (get_pcb): PCB list is empty\n";
     }
-
-    return nullptr;
 }
 
 pcb *pcb_control::get_next_pcb()
@@ -140,5 +148,39 @@ pcb *pcb_control::get_highest_priority_pcb()
 
 void pcb_control::delete_pcb(unsigned int ID)
 {
+    //case for empty list
+    if(pcb_list_head == nullptr)
+    {
+        std::cout << "--pcb_control-error (delete_pcb): PCB list is empty\n";
+        return;
+    }
 
+    //case where target is first element
+    if(pcb_list_head->get_pcb()->get_ID() == ID)
+    {
+        pcb_node *del = pcb_list_head;
+        pcb_list_head = del->get_next();
+
+        delete del->get_pcb();
+        delete del;
+        return;
+    }
+
+    //case where target is middle element or last element
+    pcb_node *current = pcb_list_head;
+
+    while(current->get_next() != nullptr)
+    {
+        if(current->get_next()->get_pcb()->get_ID() == ID)
+        {
+            pcb_node *del = current->get_next();
+            current->set_next(del->get_next());
+
+            delete del->get_pcb();
+            delete del;
+            return;
+        }
+
+        current = current->get_next();
+    }
 }
