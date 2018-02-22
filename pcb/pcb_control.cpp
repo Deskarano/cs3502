@@ -28,8 +28,9 @@ private:
 
 static pcb_node *pcb_list_head = nullptr;
 
-unsigned int pcb_control::create_pcb(std::string *job_section)
+void pcb_control::create_pcb(std::string *job_section, std::string *data_section, unsigned int base_disk_address)
 {
+    //analyze job_section
     unsigned int ID, priority, code_size;
 
     unsigned int next_space = (int) job_section->find(' ');
@@ -48,29 +49,10 @@ unsigned int pcb_control::create_pcb(std::string *job_section)
     next_space = (int) job_section->find(' ');
     priority = hex_to_dec(job_section->substr(0, next_space).c_str(), (unsigned int) job_section->size() - 1);
 
-    if(pcb_list_head == nullptr)
-    {
-        pcb_list_head = new pcb_node(new pcb(ID, priority, code_size));
-    }
-    else
-    {
-        pcb_node *current = pcb_list_head;
-        while(current->get_next() != nullptr)
-        {
-            current = current->get_next();
-        }
-
-        current->set_next(new pcb_node(new pcb(ID, priority, code_size)));
-    }
-
-    return ID;
-}
-
-void pcb_control::update_pcb(unsigned int ID, std::string *data_section)
-{
+    //analyze data_section
     unsigned int input_size, output_size, temp_size;
 
-    unsigned int next_space = (int) data_section->find(' ');
+    next_space = (int) data_section->find(' ');
     data_section->erase(0, next_space + 1);
     next_space = (int) data_section->find(' ');
 
@@ -86,9 +68,24 @@ void pcb_control::update_pcb(unsigned int ID, std::string *data_section)
     next_space = (int) data_section->find(' ');
     temp_size = hex_to_dec(data_section->substr(0, next_space).c_str(), (unsigned int) data_section->size() - 1);
 
-    get_pcb(ID)->set_data_section(input_size, output_size, temp_size);
-}
+    auto new_pcb = new pcb(ID, priority, code_size, input_size, output_size, temp_size);
+    new_pcb->set_base_disk_address(base_disk_address);
 
+    if(pcb_list_head == nullptr)
+    {
+        pcb_list_head = new pcb_node(new_pcb);
+    }
+    else
+    {
+        pcb_node *current = pcb_list_head;
+        while(current->get_next() != nullptr)
+        {
+            current = current->get_next();
+        }
+
+        current->set_next(new pcb_node(new_pcb));
+    }
+}
 
 pcb *pcb_control::get_pcb(unsigned int ID)
 {

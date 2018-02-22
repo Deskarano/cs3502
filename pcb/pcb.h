@@ -6,9 +6,9 @@
 class pcb
 {
 public:
-    pcb(unsigned int ID, unsigned int priority, unsigned int code_size);
-
-    void set_data_section(unsigned int input_size, unsigned int output_size, unsigned int temp_size);
+    pcb(unsigned int ID, unsigned int priority,
+        unsigned int code_size, unsigned int input_size,
+        unsigned int output_size, unsigned int temp_size);
 
     unsigned int get_ID()
     { return ID; }
@@ -25,6 +25,18 @@ public:
     int *get_reg()
     { return reg; }
 
+    unsigned int get_base_disk_address()
+    { return base_disk_address; }
+
+    unsigned int get_base_ram_address()
+    { return base_ram_address; }
+
+    void set_base_disk_address(unsigned int base_disk_address)
+    { this->base_disk_address = base_disk_address; }
+
+    void set_base_ram_address(unsigned int base_ram_address)
+    { this->base_ram_address = base_ram_address; }
+
 private:
     //scheduler-related info
     unsigned int ID;
@@ -39,6 +51,7 @@ private:
     unsigned int base_disk_address;
     unsigned int base_ram_address;
 
+    //size-related info
     unsigned int code_size;
     unsigned int input_size;
     unsigned int output_size;

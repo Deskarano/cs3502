@@ -8,8 +8,7 @@
 struct pcb_control
 {
 public:
-    static unsigned int create_pcb(std::string *job_section);
-    static void update_pcb(unsigned int ID, std::string *data_section);
+    static void create_pcb(std::string *job_section, std::string *data_section, unsigned int base_disk_address);
 
     static pcb *get_pcb(unsigned int ID);
     static void delete_pcb(unsigned int ID);
