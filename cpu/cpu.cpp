@@ -1,19 +1,11 @@
 #include <iostream>
 
 #include "cpu.h"
-#include "cpu_types.h"
-
 #include "../ram/ram.h"
 
-void copy_reg(const int from[16], int to[16])
-{
-    for(int i = 0; i < 16; i++)
-    {
-        to[i] = from[i];
-    }
-}
+#include "types/instr_types.h"
 
-void execute(instr *instruction, int reg[16], unsigned int *pc)
+void execute(instr *instruction, int reg[16], unsigned int &pc)
 {
     switch(instruction->op)
     {
@@ -29,7 +21,7 @@ void execute(instr *instruction, int reg[16], unsigned int *pc)
                 reg[args->reg1] = ram::read_word((unsigned) reg[args->reg2]);
             }
 
-            *pc += 4;
+            pc += 4;
             return;
         }
 
@@ -45,7 +37,7 @@ void execute(instr *instruction, int reg[16], unsigned int *pc)
                 ram::write_word((unsigned) reg[args->reg2], reg[args->reg1]);
             }
 
-            *pc += 4;
+            pc += 4;
             return;
         }
 
@@ -54,7 +46,7 @@ void execute(instr *instruction, int reg[16], unsigned int *pc)
             auto args = (i_args *) instruction->args;
             ram::write_word((unsigned) reg[args->dreg], reg[args->breg]);
 
-            *pc += 4;
+            pc += 4;
             return;
         }
 
@@ -63,7 +55,7 @@ void execute(instr *instruction, int reg[16], unsigned int *pc)
             auto args = (i_args *) instruction->args;
             reg[args->dreg] = ram::read_word(reg[args->breg] + args->addr);
 
-            *pc += 4;
+            pc += 4;
             return;
         }
 
@@ -72,7 +64,7 @@ void execute(instr *instruction, int reg[16], unsigned int *pc)
             auto args = (r_args *) instruction->args;
             reg[args->sreg1] = reg[args->sreg2];
 
-            *pc += 4;
+            pc += 4;
             return;
         }
 
@@ -81,21 +73,21 @@ void execute(instr *instruction, int reg[16], unsigned int *pc)
             auto args = (r_args *) instruction->args;
             reg[args->dreg] = reg[args->sreg1] + reg[args->sreg2];
 
-            *pc += 4;
+            pc += 4;
             return;
         }
 
         case SUB:
         {
             //not implemented. instruction is never used
-            *pc += 4;
+            pc += 4;
             return;
         }
 
         case MUL:
         {
             //not implemented. instruction is never used
-            *pc += 4;
+            pc += 4;
             return;
         }
 
@@ -104,7 +96,7 @@ void execute(instr *instruction, int reg[16], unsigned int *pc)
             auto args = (r_args *) instruction->args;
             reg[args->dreg] = reg[args->sreg1] / reg[args->sreg2];
 
-            *pc += 4;
+            pc += 4;
             return;
         }
 
@@ -113,7 +105,7 @@ void execute(instr *instruction, int reg[16], unsigned int *pc)
             auto args = (r_args *) instruction->args;
             reg[args->dreg] = reg[args->sreg1] & reg[args->sreg2];
 
-            *pc += 4;
+            pc += 4;
             return;
         }
 
@@ -122,7 +114,7 @@ void execute(instr *instruction, int reg[16], unsigned int *pc)
             auto args = (r_args *) instruction->args;
             reg[args->dreg] = reg[args->sreg1] | reg[args->sreg2];
 
-            *pc += 4;
+            pc += 4;
             return;
         }
 
@@ -131,7 +123,7 @@ void execute(instr *instruction, int reg[16], unsigned int *pc)
             auto args = (i_args *) instruction->args;
             reg[args->dreg] = args->addr;
 
-            *pc += 4;
+            pc += 4;
             return;
         }
 
@@ -140,21 +132,21 @@ void execute(instr *instruction, int reg[16], unsigned int *pc)
             auto args = (i_args *) instruction->args;
             reg[args->dreg] += args->addr;
 
-            *pc += 4;
+            pc += 4;
             return;
         }
 
         case MULI:
         {
             //not implemented. instruction is never used
-            *pc += 4;
+            pc += 4;
             return;
         }
 
         case DIVI:
         {
             //not implemented. instruction is never used
-            *pc += 4;
+            pc += 4;
             return;
         }
 
@@ -163,7 +155,7 @@ void execute(instr *instruction, int reg[16], unsigned int *pc)
             auto args = (i_args *) instruction->args;
             reg[args->dreg] = args->addr;
 
-            *pc += 4;
+            pc += 4;
             return;
         }
 
@@ -179,14 +171,14 @@ void execute(instr *instruction, int reg[16], unsigned int *pc)
                 reg[args->dreg] = 0;
             }
 
-            *pc += 4;
+            pc += 4;
             return;
         }
 
         case SLTI:
         {
             //not implemented. instruction is never used
-            *pc += 4;
+            pc += 4;
             return;
         }
 
@@ -198,14 +190,14 @@ void execute(instr *instruction, int reg[16], unsigned int *pc)
 
         case NOP:
         {
-            *pc += 4;
+            pc += 4;
             return;;
         }
 
         case JMP:
         {
             auto args = (j_args *) instruction->args;
-            *pc = args->addr;
+            pc = args->addr;
 
             return;
         }
@@ -215,11 +207,11 @@ void execute(instr *instruction, int reg[16], unsigned int *pc)
             auto args = (i_args *) instruction->args;
             if(reg[args->breg] == reg[args->dreg])
             {
-                *pc = args->addr;
+                pc = args->addr;
             }
             else
             {
-                *pc += 4;
+                pc += 4;
             }
 
             return;
@@ -230,11 +222,11 @@ void execute(instr *instruction, int reg[16], unsigned int *pc)
             auto args = (i_args *) instruction->args;
             if(reg[args->breg] != reg[args->dreg])
             {
-                *pc = args->addr;
+                pc = args->addr;
             }
             else
             {
-                *pc += 4;
+                pc += 4;
             }
 
             return;
@@ -245,11 +237,11 @@ void execute(instr *instruction, int reg[16], unsigned int *pc)
             auto args = (i_args *) instruction->args;
             if(reg[args->breg] == 0)
             {
-                *pc = args->addr;
+                pc = args->addr;
             }
             else
             {
-                *pc += 4;
+                pc += 4;
             }
 
             return;
@@ -260,11 +252,11 @@ void execute(instr *instruction, int reg[16], unsigned int *pc)
             auto args = (i_args *) instruction->args;
             if(reg[args->breg] != 0)
             {
-                *pc = args->addr;
+                pc = args->addr;
             }
             else
             {
-                *pc += 4;
+                pc += 4;
             }
 
             return;
@@ -275,11 +267,11 @@ void execute(instr *instruction, int reg[16], unsigned int *pc)
             auto args = (i_args *) instruction->args;
             if(reg[args->breg] > 0)
             {
-                *pc = args->addr;
+                pc = args->addr;
             }
             else
             {
-                *pc += 4;
+                pc += 4;
             }
 
             return;
@@ -290,11 +282,11 @@ void execute(instr *instruction, int reg[16], unsigned int *pc)
             auto args = (i_args *) instruction->args;
             if(reg[args->breg] < 0)
             {
-                *pc = args->addr;
+                pc = args->addr;
             }
             else
             {
-                *pc += 4;
+                pc += 4;
             }
 
             return;
@@ -381,22 +373,13 @@ instr *decode(unsigned int instruction)
     return result;
 }
 
-void print_registers(unsigned int reg[16])
-{
-    for(int i = 0; i < 16; i++)
-    {
-        std::cout << "R" << i << ": " << reg[i] << "\n";
-    }
-}
-
 void cpu::start()
 {
-    //TODO: fully implement once RAM is done
     instr *instruction = decode((unsigned) ram::read_word(pc));
 
     while(instruction->op != HLT)
     {
-        execute(instruction, reg, &pc);
+        execute(instruction, reg, pc);
         instruction = decode((unsigned) ram::read_word(pc));
     }
 }
@@ -406,20 +389,24 @@ void cpu::stop()
     //dummy line for commit
 }
 
+void copy_reg(const int from[16], int to[16])
+{
+    for(int i = 0; i < 16; i++)
+    {
+        to[i] = from[i];
+    }
+}
+
 void cpu::set_pcb(pcb *new_pcb)
 {
     this->current_pcb = new_pcb;
 
-    this->pc = new_pcb->get_pc();
+    this->pc = *new_pcb->get_pc();
     copy_reg(current_pcb->get_reg(), this->reg);
-}
-
-pcb *cpu::get_pcb()
-{
-    return current_pcb;
 }
 
 void cpu::save_pcb()
 {
     copy_reg(this->reg, current_pcb->get_reg());
+    *current_pcb->get_pc() = pc;
 }

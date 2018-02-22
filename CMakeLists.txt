@@ -6,11 +6,17 @@ set(CMAKE_CXX_STANDARD 11)
 set(SOURCE_FILES_MAIN
         driver.cpp
 
-        cpu/cpu_types.h
+        cpu/types/cpu_types.h
+        cpu/types/instr_types.h
+        cpu/types/pcb_types.h
+
         cpu/cpu.cpp
         cpu/cpu.h
         cpu/pcb.cpp
         cpu/pcb.h
+
+        cpu/cpu_control.cpp
+        cpu/cpu_control.h
 
         ram/ram.cpp
         ram/ram.h
