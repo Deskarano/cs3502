@@ -14,6 +14,13 @@ public:
     static pcb *get_pcb(unsigned int ID);
     static pcb *get_highest_priority_pcb();
 
+    //used to find the correct pcb when short-term scheduling
+    static pcb *sched_firstComeFirstServe();
+    static pcb *sched_highestPriority();
+    static pcb *sched_shortestJob();
+    static pcb *sched_shortestRemaining();
+    static pcb *sched_roundRobin();
+
     static void delete_pcb(unsigned int ID);
 };
 

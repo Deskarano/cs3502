@@ -5,7 +5,7 @@
 #ifndef CS3502_SHORT_TERM_H
 #define CS3502_SHORT_TERM_H
 
-#include "../cpu/pcb.h"
+#include "../pcb/pcb_control.h"
 
 enum sched_algo
 {
@@ -19,11 +19,11 @@ enum sched_algo
 class shortterm
 {
 public:
-    void add_process(pcb* process);         //used to add a new process to queue
-    void remove_process(pcb* process);
-
-private:
+    shortterm(sched_algo sa);
     pcb* get_next_process(sched_algo sa);
+    static void set_scheduling_algorithm(sched_algo sa);
+private:
+    static sched_algo scheduling_algorithm;
 };
 
 #endif //CS3502_SHORT_TERM_H
