@@ -27,12 +27,12 @@ public:
 
     //return size of code
     //TODO: Doesn't count loops, I/O
-    unsigned int *get_code_size()
+    unsigned int get_code_size()
     { return code_size; }
 
     //return size of code minus the current program counter
     //TODO: Doesn't count loops, I/O
-    unsigned int *get_code_size_remaining()
+    unsigned int get_code_size_remaining()
     { return code_size - pc; }
 
     unsigned int get_base_disk_address()

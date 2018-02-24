@@ -123,29 +123,48 @@ pcb *pcb_control::get_pcb(unsigned int ID)
 
 pcb *pcb_control::get_next_pcb()
 {
+    if(pcb_list_head != nullptr)
+    {
+        pcb *result = pcb_list_head->get_pcb();
+        pcb_list_head = pcb_list_head->get_next();
 
+        return result;
+    }
+    else
+    {
+        std::cout << "--pcb_control-error (get_highest_priority_pcb): PCB list is empty\n";
+        return nullptr;
+    }
 }
 
 pcb *pcb_control::get_highest_priority_pcb()
 {
-    pcb_node *current = pcb_list_head;
-    pcb *result = current->get_pcb();
-
-    while(current->get_next() != nullptr)
+    if(pcb_list_head != nullptr)
     {
-        current = current->get_next();
+        pcb_node *current = pcb_list_head;
+        pcb *result = current->get_pcb();
+
+        while(current->get_next() != nullptr)
+        {
+            current = current->get_next();
+            if(result->get_priority() > current->get_pcb()->get_priority())
+            {
+                result = current->get_pcb();
+            }
+        }
+
         if(result->get_priority() > current->get_pcb()->get_priority())
         {
             result = current->get_pcb();
         }
-    }
 
-    if(result->get_priority() > current->get_pcb()->get_priority())
+        return result;
+    }
+    else
     {
-        result = current->get_pcb();
+        std::cout << "--pcb_control-error (get_highest_priority_pcb): PCB list is empty\n";
+        return nullptr;
     }
-
-    return result;
 }
 
 void pcb_control::delete_pcb(unsigned int ID)

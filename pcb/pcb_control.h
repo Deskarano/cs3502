@@ -15,7 +15,6 @@ public:
     static pcb *get_next_pcb();
 
     static void delete_pcb(unsigned int ID);
-
 };
 
 #endif //CS3502_PCB_CONTROL_H

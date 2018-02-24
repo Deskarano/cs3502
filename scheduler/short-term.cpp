@@ -4,7 +4,7 @@
 
 #include "short-term.h"
 #include "../ram/ram.h"
-#include "../pcn/pcb.h"
+#include "../pcb/pcb.h"
 #include "../pcb/pcb_control.h"
 
 //CONSTRUCTOR

@@ -13,7 +13,7 @@ void load(std::string programfile)
 
     std::string job_line;
     std::string data_line;
-    unsigned int base_disk_address;
+    unsigned int base_disk_address = 0;
 
     if(program.is_open())
     {
@@ -44,7 +44,7 @@ void load(std::string programfile)
     }
     else
     {
-        std::cout << "unable to open file\n";
+        std::cout << "unable to open program file\n";
         exit(1);
     }
 }
