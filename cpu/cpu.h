@@ -1,8 +1,9 @@
 #ifndef CS3502_CPU_H
 #define CS3502_CPU_H
 
-#include "types/cpu_types.h"
+#include <thread>
 
+#include "types/cpu_types.h"
 #include "../pcb/pcb.h"
 
 class cpu
@@ -17,8 +18,14 @@ public:
     cpu_state get_state() { return state; }
 
 private:
+    void compute_thread_func();
+    void io_thread_func();
+
     pcb *current_pcb;
     cpu_state state;
+
+    std::thread *compute_thread;
+    std::thread *io_thread;
 
     unsigned int pc;
     int reg[16];

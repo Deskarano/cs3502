@@ -3,9 +3,8 @@
 
 typedef enum
 {
-    IDLE,
-    FULL,
-    ERR
+    CPU_IDLE,
+    CPU_FULL
 } cpu_state;
 
 #endif //CS3502_CPU_TYPES_H

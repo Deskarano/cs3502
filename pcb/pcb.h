@@ -19,22 +19,11 @@ public:
     pcb_state get_state()
     { return state; }
 
-    //Othmane: changed return type from int* to int
-    unsigned int get_pc()
-    { return pc; }
+    unsigned int *get_pc()
+    { return &pc; }
 
     int *get_reg()
     { return reg; }
-
-    //return size of code
-    //TODO: Doesn't count loops, I/O
-    unsigned int get_code_size()
-    { return code_size; }
-
-    //return size of code minus the current program counter
-    //TODO: Doesn't count loops, I/O
-    unsigned int get_code_size_remaining()
-    { return code_size - pc; }
 
     unsigned int get_base_disk_address()
     { return base_disk_address; }
@@ -42,33 +31,26 @@ public:
     unsigned int get_base_ram_address()
     { return base_ram_address; }
 
+    void set_ID(unsigned int ID)
+    { this->ID = ID; }
+
+    void set_priority(unsigned int priority)
+    { this->priority = priority; }
+
+    void set_state(pcb_state state)
+    { this->state = state; }
+
+    void set_pc(unsigned int pc)
+    { this->pc = pc; }
+
     void set_base_disk_address(unsigned int base_disk_address)
     { this->base_disk_address = base_disk_address; }
 
     void set_base_ram_address(unsigned int base_ram_address)
     { this->base_ram_address = base_ram_address; }
 
-    //Othmane:added those setters for use in dispatcher
-
-    void set_ID(unsigned int ID){
-        this->ID = ID;
-    }
-
-    void set_state(pcb_state state){
-        this->state = state;
-    }
-
-    void set_priority(unsigned int priority){
-        this->priority = priority;
-    }
-
-    void set_pc(unsigned int pc){
-        this->pc = pc;
-    }
-
-    void set_code_size(unsigned int code_size){
-        this->code_size = code_size;
-    }
+    void set_code_size(unsigned int code_size)
+    { this->code_size = code_size; }
 
 private:
     //scheduler-related info

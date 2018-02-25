@@ -6,7 +6,7 @@
 #include "../ram/ram.h"
 #include "../utils/base_conversions.h"
 
-void execute(instr *instruction, int reg[16], unsigned int &pc)
+void execute(instr *instruction, unsigned int &pc, int reg[16])
 {
     switch(instruction->op)
     {
@@ -375,22 +375,47 @@ instr *decode(char instruction[8])
     return result;
 }
 
+void cpu::compute_thread_func()
+{
+    while(state == CPU_FULL)
+    {
+        //TODO: does this read have to go through io_thread?
+        instr *instruction = decode(ram::read_word(current_pcb->get_base_ram_address() + pc));
+
+        if(instruction->op == HLT)
+        {
+            current_pcb->set_state(PCB_DONE);
+
+            stop();
+            return;
+        }
+        else if(instruction->op == RD || instruction->op == WR ||
+           instruction->op == ST || instruction->op == LW)
+        {
+            current_pcb->set_state(PCB_WAITING);
+
+
+        }
+        else
+        {
+            execute(instruction, pc, reg);
+        }
+    }
+}
+
+void cpu::io_thread_func()
+{
+
+}
+
 void cpu::start()
 {
-    state = FULL;
-
-    instr *instruction = decode(ram::read_word(pc));
-
-    while(instruction->op != HLT)
-    {
-        execute(instruction, reg, pc);
-        instruction = decode(ram::read_word(pc));
-    }
+    std::thread compute_thread (compute_thread_func, this);
 }
 
 void cpu::stop()
 {
-    state = IDLE;
+    state = CPU_IDLE;
 }
 
 void copy_reg(const int from[16], int to[16])

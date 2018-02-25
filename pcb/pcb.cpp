@@ -6,7 +6,7 @@ pcb::pcb(unsigned int ID, unsigned int priority,
 {
     this->ID = ID;
     this->priority = priority;
-    this->state = NEW;
+    this->state = PCB_NEW;
 
     this->pc = 0;
     for(int i = 0; i < 16; i++)

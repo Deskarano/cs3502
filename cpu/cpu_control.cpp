@@ -21,7 +21,7 @@ cpu_state cpu_control::get_core_state(unsigned int core_id)
     else
     {
         std::cout << "--cpu_control-error (get_core_state): core_id out of range\n";
-        return ERR;
+        return NULL;
     }
 }
 

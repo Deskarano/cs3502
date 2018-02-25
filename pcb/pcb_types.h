@@ -3,11 +3,11 @@
 
 enum pcb_state
 {
-    NEW,
-    READY,
-    RUNNING,
-    WAITING,
-    DONE
+    PCB_NEW,
+    PCB_READY,
+    PCB_RUNNING,
+    PCB_WAITING,
+    PCB_DONE
 };
 
 #endif //CS3502_PCB_TYPES_H
