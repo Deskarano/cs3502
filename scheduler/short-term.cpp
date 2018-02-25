@@ -6,6 +6,10 @@
 #include "../ram/ram.h"
 #include "../pcb/pcb.h"
 #include "../pcb/pcb_control.h"
+#include <iostream>
+
+//Othmane: this is for cout to work correctly ;) and I also added the include for iostream
+using namespace std;
 
 //CONSTRUCTOR
 shortterm::shortterm(sched_algo sa = FCFS) {
@@ -36,7 +40,7 @@ pcb* shortterm::get_next_process(int queue_index = 0) {
             return sched_highestPriority(ready_queue_heads[queue_index]);
         case SJF:
             return sched_shortestJob(ready_queue_heads[queue_index]);
-        case SRI:
+        case SRT: //Othmane: changed this from SRI to SRT guess it was just a typo
             return sched_shortestRemaining(ready_queue_heads[queue_index]);
         case RR:
             return sched_roundRobin(ready_queue_heads[queue_index]);

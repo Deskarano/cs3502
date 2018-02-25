@@ -19,8 +19,9 @@ public:
     pcb_state get_state()
     { return state; }
 
-    unsigned int *get_pc()
-    { return &pc; }
+    //Othmane: changed return type from int* to int
+    unsigned int get_pc()
+    { return pc; }
 
     int *get_reg()
     { return reg; }
@@ -46,6 +47,28 @@ public:
 
     void set_base_ram_address(unsigned int base_ram_address)
     { this->base_ram_address = base_ram_address; }
+
+    //Othmane:added those setters for use in dispatcher
+
+    void set_ID(unsigned int ID){
+        this->ID = ID;
+    }
+
+    void set_state(pcb_state state){
+        this->state = state;
+    }
+
+    void set_priority(unsigned int priority){
+        this->priority = priority;
+    }
+
+    void set_pc(unsigned int pc){
+        this->pc = pc;
+    }
+
+    void set_code_size(unsigned int code_size){
+        this->code_size = code_size;
+    }
 
 private:
     //scheduler-related info
