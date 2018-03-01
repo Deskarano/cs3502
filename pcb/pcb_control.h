@@ -14,6 +14,7 @@ public:
     static pcb *get_highest_priority_pcb();
     static pcb *get_next_pcb();
 
+    static void delete_all_done();
     static void delete_pcb(unsigned int ID);
 };
 

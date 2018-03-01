@@ -167,6 +167,32 @@ pcb *pcb_control::get_highest_priority_pcb()
     }
 }
 
+void pcb_control::delete_all_done()
+{
+    if(pcb_list_head == nullptr)
+    {
+        return;
+    }
+    else
+    {
+        pcb_node *current = pcb_list_head;
+        while(current->get_next() != nullptr)
+        {
+            if(current->get_pcb()->get_state() == PCB_DONE)
+            {
+                pcb_node *del = current;
+                current = del->get_next();
+
+                delete_pcb(del->get_pcb()->get_ID());
+            }
+            else
+            {
+                current = current->get_next();
+            }
+        }
+    }
+}
+
 void pcb_control::delete_pcb(unsigned int ID)
 {
     //case for empty list
