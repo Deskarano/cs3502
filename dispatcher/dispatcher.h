@@ -6,7 +6,7 @@
 #define CS3502_DISPATCHER_H
 
 #include "../pcb/pcb.h"
-#include "../scheduler/short-term.h"
+#include "../scheduler/short/shortterm.h"
 
 
 class dispatcher {

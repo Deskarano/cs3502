@@ -5,9 +5,9 @@
 #ifndef CS3502_SHORT_TERM_H
 #define CS3502_SHORT_TERM_H
 
-#include "../pcb/pcb_control.h"
-#include "../pcb/pcb.h"
-#include "../pcb/pcb_control.cpp"
+#include "../../pcb/pcb_control.h"
+#include "../../pcb/pcb.h"
+#include "../../pcb/pcb_control.cpp"
 
 
 

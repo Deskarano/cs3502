@@ -1,7 +1,7 @@
-#include "short-term.h"
-#include "../ram/ram.h"
-#include "../pcb/pcb.h"
-#include "../pcb/pcb_control.h"
+#include "shortterm.h"
+#include "../../ram/ram.h"
+#include "../../pcb/pcb.h"
+#include "../../pcb/pcb_control.h"
 #include <iostream>
 
 //Othmane: this is for cout to work correctly ;) and I also added the include for iostream

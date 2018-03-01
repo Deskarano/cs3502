@@ -22,8 +22,8 @@ set(SOURCE_FILES_MAIN
         disk/disk.cpp
         disk/disk.h
 
-        scheduler/short-term.cpp
-        scheduler/short-term.h
+        scheduler/short/shortterm.cpp
+        scheduler/short/shortterm.h
 
         ram/ram.cpp
         ram/ram.h
@@ -33,5 +33,5 @@ set(SOURCE_FILES_MAIN
         utils/queue.h
 
         dispatcher/dispatcher.cpp
-        dispatcher/dispatcher.h)
+        dispatcher/dispatcher.h scheduler/long/longterm.cpp scheduler/long/longterm.h)
 add_executable(cs3502 ${SOURCE_FILES_MAIN})
