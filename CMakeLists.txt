@@ -29,7 +29,9 @@ set(SOURCE_FILES_MAIN
         ram/ram.h
 
         utils/base_conversions.h
+        utils/queue.cpp
+        utils/queue.h
+
         dispatcher/dispatcher.cpp
-        dispatcher/dispatcher.h
-)
+        dispatcher/dispatcher.h)
 add_executable(cs3502 ${SOURCE_FILES_MAIN})
