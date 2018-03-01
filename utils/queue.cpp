@@ -26,18 +26,17 @@ void queue::push(T *element)
     if(head == nullptr)
     {
         head = new_node;
-
-        length++;
-        return;
     }
-
-    auto current = (queue_node<T> *) head;
-    while(current->next != nullptr)
+    else
     {
-        current = current->next;
-    }
+        auto current = (queue_node<T> *) head;
+        while(current->next != nullptr)
+        {
+            current = current->next;
+        }
 
-    current->next = new_node;
+        current->next = new_node;
+    }
 
     length++;
     return;
@@ -52,6 +51,7 @@ T *queue::pop()
         auto ret = del->element;
 
         head = del->next;
+        length--;
 
         delete del;
         return ret;
