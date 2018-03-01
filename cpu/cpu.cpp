@@ -375,11 +375,10 @@ instr *decode(char instruction[8])
     return result;
 }
 
-void cpu::compute_thread_func()
+void cpu::cpu_main_thread()
 {
     while(state == CPU_FULL)
     {
-        //TODO: does this read have to go through io_thread?
         instr *instruction = decode(ram::read_word(current_pcb->get_base_ram_address() + pc));
 
         if(instruction->op == HLT)
@@ -389,13 +388,6 @@ void cpu::compute_thread_func()
             stop();
             return;
         }
-        else if(instruction->op == RD || instruction->op == WR ||
-           instruction->op == ST || instruction->op == LW)
-        {
-            current_pcb->set_state(PCB_WAITING);
-
-
-        }
         else
         {
             execute(instruction, pc, reg);
@@ -403,19 +395,17 @@ void cpu::compute_thread_func()
     }
 }
 
-void cpu::io_thread_func()
-{
-
-}
-
 void cpu::start()
 {
-    std::thread compute_thread (compute_thread_func, this);
+    *cpu_thread = std::thread (cpu_main_thread, this);
 }
 
 void cpu::stop()
 {
     state = CPU_IDLE;
+    cpu_thread->join();
+
+    save_pcb();
 }
 
 void copy_reg(const int from[16], int to[16])

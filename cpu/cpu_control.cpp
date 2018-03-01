@@ -14,20 +14,12 @@ void cpu_control::init(unsigned int num_cores)
 
 cpu_state cpu_control::get_core_state(unsigned int core_id)
 {
-    if(core_id < num_cores)
-    {
-        return cores[core_id].get_state();
-    }
-    else
-    {
-        std::cout << "--cpu_control-error (get_core_state): core_id out of range\n";
-        return NULL;
-    }
+    return cores[core_id].get_state();
 }
 
 void cpu_control::dispatch_to_core(unsigned int core_id, pcb *new_pcb)
 {
-    if(get_core_state(core_id) == FULL)
+    if(get_core_state(core_id) == CPU_FULL)
     {
         cores[core_id].stop();
         cores[core_id].save_pcb();

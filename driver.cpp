@@ -2,6 +2,7 @@
 #include <fstream>
 
 #include "disk/disk.h"
+#include "ram/ram.h"
 #include "pcb/pcb_control.h"
 
 void load(std::string programfile)
@@ -52,6 +53,7 @@ void load(std::string programfile)
 int main()
 {
     disk::init(2048);
+    ram::init(1024);
     load("programfile");
 
     for(int i = 30; i > 0; i--)

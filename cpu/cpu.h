@@ -18,14 +18,11 @@ public:
     cpu_state get_state() { return state; }
 
 private:
-    void compute_thread_func();
-    void io_thread_func();
+    std::thread *cpu_thread;
+    void cpu_main_thread();
 
     pcb *current_pcb;
     cpu_state state;
-
-    std::thread *compute_thread;
-    std::thread *io_thread;
 
     unsigned int pc;
     int reg[16];
