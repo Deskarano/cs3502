@@ -10,6 +10,8 @@ public:
     void push(T *element);
     T *pop();
 
+    T *as_array();
+
 private:
     void *head;
     unsigned int length;

@@ -58,3 +58,22 @@ T *queue<T>::pop()
         return ret;
     }
 };
+
+template <class T>
+T *queue<T>::as_array()
+{
+    auto ret = new T[length];
+    unsigned int index = 0;
+
+    auto current = (queue_node<T> *) head;
+    while(current->next != nullptr)
+    {
+        ret[index] = current->element;
+
+        index++;
+        current = current->next;
+    }
+
+    ret[index] = current->element;
+    return ret;
+}
