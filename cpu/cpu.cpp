@@ -420,12 +420,12 @@ void cpu::set_pcb(pcb *new_pcb)
 {
     this->current_pcb = new_pcb;
 
-    this->pc = *new_pcb->get_pc();
+    this->pc = new_pcb->get_pc();
     copy_reg(current_pcb->get_reg(), this->reg);
 }
 
 void cpu::save_pcb()
 {
     copy_reg(this->reg, current_pcb->get_reg());
-    *current_pcb->get_pc() = pc;
+    current_pcb->set_pc(this->pc);
 }

@@ -19,8 +19,8 @@ public:
     pcb_state get_state()
     { return state; }
 
-    unsigned int *get_pc()
-    { return &pc; }
+    unsigned int get_pc()
+    { return pc; }
 
     int *get_reg()
     { return reg; }
