@@ -13,15 +13,16 @@ public:
     queue_node<T> *next;
 };
 
-void queue::queue()
+template <class T>
+queue<T>::queue()
 {
     length = 0;
 }
 
 template <class T>
-void queue::push(T *element)
+void queue<T>::push(T *element)
 {
-    queue_node<T> *new_node = new queue_node(element);
+    queue_node<T> *new_node = new queue_node<T>(element);
 
     if(head == nullptr)
     {
@@ -43,7 +44,7 @@ void queue::push(T *element)
 }
 
 template <class T>
-T *queue::pop()
+T *queue<T>::pop()
 {
     if(head != nullptr)
     {

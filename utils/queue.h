@@ -5,7 +5,7 @@ template <class T>
 class queue
 {
 public:
-    void queue();
+    queue();
 
     void push(T *element);
     T *pop();
