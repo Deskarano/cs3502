@@ -33,5 +33,5 @@ set(SOURCE_FILES_MAIN
         utils/queue.h
 
         dispatcher/dispatcher.cpp
-        dispatcher/dispatcher.h scheduler/long/longterm.cpp scheduler/long/longterm.h)
+        dispatcher/dispatcher.h scheduler/long/longterm.cpp scheduler/long/longterm.h loader/loader.cpp loader/loader.h)
 add_executable(cs3502 ${SOURCE_FILES_MAIN})
