@@ -3,6 +3,7 @@
 
 unsigned int ram::num_words = 0;
 char *ram::data = nullptr;
+unsigned int ram::used_memory = 0;
 
 void ram::init(unsigned int num_words)
 {
@@ -28,4 +29,9 @@ char *ram::read_word(unsigned int addr)
     }
 
     return result;
+}
+
+bool ram::is_full()
+{
+    return used_memory >= num_words;
 }

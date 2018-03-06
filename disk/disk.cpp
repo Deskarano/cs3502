@@ -47,3 +47,7 @@ bool disk::is_full()
     return used_memory >= num_words;
 }
 
+bool disk::is_empty()
+{
+    return used_memory == 0;
+}

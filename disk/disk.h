@@ -15,6 +15,7 @@ public:
 
     static void clear_disk();
     static bool is_full();
+    static bool is_empty();
 
 private:
     //Variables
