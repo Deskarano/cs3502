@@ -20,6 +20,7 @@ void disk::write_word(unsigned int addr, const char val[8])
 {
     for(int i = 0; i < 8; i++)
     {
+        //TODO: check this math, along with similar functions in ram
         data[2 * addr + i] = val[i];
     }
 }

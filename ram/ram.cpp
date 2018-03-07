@@ -15,7 +15,7 @@ void ram::write_word(unsigned int addr, char val[8])
 {
     for(int i = 0; i < 8; i++)
     {
-        data[addr + i] = val[i];
+        data[2 * addr + i] = val[i];
     }
 }
 
@@ -25,7 +25,7 @@ char *ram::read_word(unsigned int addr)
 
     for(int i = 0; i < 8; i++)
     {
-        result[i] = data[addr + i];
+        result[i] = data[2 * addr + i];
     }
 
     return result;

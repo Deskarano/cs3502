@@ -16,22 +16,26 @@ set(SOURCE_FILES_MAIN
         pcb/pcb_types.h
         pcb/pcb.cpp
         pcb/pcb.h
-        pcb/pcb_control.cpp
-        pcb/pcb_control.h
 
         disk/disk.cpp
         disk/disk.h
 
-        scheduler/short/shortterm.cpp
-        scheduler/short/shortterm.h
-
         ram/ram.cpp
         ram/ram.h
+
+        scheduler/short/shortterm.cpp
+        scheduler/short/shortterm.h
+        scheduler/long/longterm.cpp scheduler/long/longterm.h
 
         utils/base_conversions.h
         utils/queue.cpp
         utils/queue.h
+        utils/memcpy.cpp
+        utils/memcpy.h
 
         dispatcher/dispatcher.cpp
-        dispatcher/dispatcher.h scheduler/long/longterm.cpp scheduler/long/longterm.h loader/loader.cpp loader/loader.h)
+        dispatcher/dispatcher.h
+
+        loader/loader.cpp
+        loader/loader.h )
 add_executable(cs3502 ${SOURCE_FILES_MAIN})

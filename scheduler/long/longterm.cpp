@@ -4,8 +4,9 @@
 
 #include "../../pcb/pcb.h"
 #include "../../ram/ram.h"
-#include "../../disk/disk.h"
+
 #include "../../utils/base_conversions.h"
+#include "../../utils/memcpy.h"
 
 class pcb_node
 {
@@ -145,16 +146,38 @@ pcb *get_highest_priority_pcb()
 
 void longterm::schedule_fcfs()
 {
-    unsigned int addr = 0;
+    unsigned int base_addr = 0;
     pcb *current = get_next_pcb();
 
-    while(addr + current->get_total_size() < ram::size())
+    while(base_addr / 4 + current->get_total_size() < ram::size())
     {
+        current->set_base_ram_address(base_addr);
 
+        disk_to_ram(current->get_base_disk_address(),
+                    base_addr,
+                    current->get_total_size());
+
+        //TODO: push pcb to short term scheduling queue
+        base_addr += 4 * current->get_total_size();
+        current = get_next_pcb();
     }
 }
 
 void longterm::schedule_priority()
 {
+    unsigned int base_addr = 0;
+    pcb *current = get_highest_priority_pcb();
 
+    while(base_addr / 4 + current->get_total_size() < ram::size())
+    {
+        current->set_base_ram_address(base_addr);
+
+        disk_to_ram(current->get_base_disk_address(),
+                    base_addr,
+                    current->get_total_size());
+
+        //TODO: same as above
+        base_addr += 4 * current->get_total_size();
+        current = get_highest_priority_pcb();
+    }
 }
