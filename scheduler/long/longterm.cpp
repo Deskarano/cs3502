@@ -181,3 +181,22 @@ void longterm::schedule_priority()
         current = get_highest_priority_pcb();
     }
 }
+
+int longterm::pcbs_left()
+{
+    if(pcb_list_head != nullptr)
+    {
+        pcb_node *current = pcb_list_head;
+        int count = 1;
+
+        while(current->next != nullptr)
+        {
+            count++;
+            current = current->next;
+        }
+    }
+    else
+    {
+        return 0;
+    }
+}

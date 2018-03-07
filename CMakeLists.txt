@@ -25,7 +25,8 @@ set(SOURCE_FILES_MAIN
 
         scheduler/short/shortterm.cpp
         scheduler/short/shortterm.h
-        scheduler/long/longterm.cpp scheduler/long/longterm.h
+        scheduler/long/longterm.cpp
+        scheduler/long/longterm.h
 
         utils/base_conversions.h
         utils/queue.cpp
