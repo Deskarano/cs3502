@@ -1,14 +1,12 @@
 #ifndef CS3502_LONGTERM_H
 #define CS3502_LONGTERM_H
 
-class longterm
+struct longterm
 {
 public:
-    void longterm();
-    void load_to_ram();
-
-private:
-    unsigned int address;
+    static void create_pcb(std::string *job_section, std::string *data_section, unsigned int base_disk_address);
+    static void schedule_fcfs();
+    static void schedule_priority();
 };
 
 

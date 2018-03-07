@@ -31,6 +31,9 @@ public:
     unsigned int get_base_ram_address()
     { return base_ram_address; }
 
+    unsigned int get_total_size()
+    { return code_size + input_size + output_size + temp_size; }
+
     void set_ID(unsigned int ID)
     { this->ID = ID; }
 

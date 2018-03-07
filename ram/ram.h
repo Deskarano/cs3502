@@ -9,6 +9,9 @@ public:
     static void write_word(unsigned int addr, char val[8]);
     static char *read_word(unsigned int addr);
 
+    static unsigned int size()
+    { return num_words; }
+
     static bool is_full();
 
 private:

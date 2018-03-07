@@ -13,6 +13,9 @@ public:
     static void write_word(unsigned int addr, const char val[8]);
     static char *read_word(unsigned int addr);
 
+    static unsigned int size()
+    { return num_words; }
+
     static void clear_disk();
     static bool is_full();
     static bool is_empty();
