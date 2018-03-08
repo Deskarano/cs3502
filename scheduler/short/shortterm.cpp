@@ -105,12 +105,13 @@ void shortterm::dispatch_processes()
     for(int i = 0; i < num_cores; i++)
     {
         current_state = cpu_control::get_core_state(i);
-        pcb *next_process = remove_first_process();
+        pcb *next_process;
 
         switch(current_state)
         {
             //CPU needs to get back to work
             case CPU_IDLE:
+                next_process = remove_first_process();
                 cpu_control::dispatch_to_core(i, next_process);
                 break;
 
