@@ -3,9 +3,9 @@
 
 #include "disk/disk.h"
 #include "ram/ram.h"
-#include "pcb/pcb_control.h"
+#include "scheduler/long/longterm.h"
 
-void load(std::string programfile)
+void load(const std::string programfile)
 {
     std::ifstream program(programfile);
     std::string line;
@@ -33,7 +33,7 @@ void load(std::string programfile)
                 }
                 else // line[3] == 'E'
                 {
-                    pcb_control::create_pcb(&job_line, &data_line, base_disk_address);
+                    longterm::create_pcb(&job_line, &data_line, base_disk_address);
                 }
             }
             else
@@ -56,12 +56,4 @@ int main()
     ram::init(1024);
     load("programfile");
 
-    for(int i = 30; i > 0; i--)
-    {
-        pcb *pcb = pcb_control::get_pcb(i);
-        std::cout << "got pcb " << pcb->get_ID() << "\n";
-
-        pcb_control::delete_pcb(i);
-        std::cout << "deleted pcb " << i << "\n";
-    }
 }
