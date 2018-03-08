@@ -33,5 +33,8 @@ set(SOURCE_FILES_MAIN
         utils/queue.cpp
         utils/queue.h
         utils/memcpy.cpp
-        utils/memcpy.h)
+        utils/memcpy.h
+
+        log/logger.cpp
+        log/logger.h)
 add_executable(cs3502 ${SOURCE_FILES_MAIN})
