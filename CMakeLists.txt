@@ -38,5 +38,5 @@ set(SOURCE_FILES_MAIN
         dispatcher/dispatcher.h
 
         loader/loader.cpp
-        loader/loader.h )
+        loader/loader.h pcb/pcb_node.h)
 add_executable(cs3502 ${SOURCE_FILES_MAIN})

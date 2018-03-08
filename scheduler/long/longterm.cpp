@@ -8,18 +8,9 @@
 #include "../../utils/base_conversions.h"
 #include "../../utils/memcpy.h"
 
-class pcb_node
-{
-public:
-    explicit pcb_node(pcb *new_pcb)
-    {
-        this->next = nullptr;
-        this->pcb = new_pcb;
-    }
+#include "../../pcb/pcb_node.h"
 
-    pcb_node *next;
-    pcb *pcb;
-};
+
 
 static pcb_node *pcb_list_head = nullptr;
 
@@ -96,7 +87,7 @@ pcb *get_next_pcb()
     }
     else
     {
-        std::cout << "--pcb_control-error (get_highest_priority_pcb): PCB list is empty\n";
+        std::cout << "--pcb_control-error (get_next_pcb): PCB list is empty\n";
         return nullptr;
     }
 }
