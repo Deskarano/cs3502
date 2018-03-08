@@ -9,7 +9,8 @@ public:
     static void schedule_fcfs();
     static void schedule_priority();
 
-    static int pcbs_left();
+    static int pcbs_left_ram();
+    static int pcbs_left_total();
 };
 
 

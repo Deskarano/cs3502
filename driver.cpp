@@ -45,7 +45,7 @@ void load(const std::string programfile)
     }
     else
     {
-        std::cout << "unable to open program file\n";
+        std::cout << "--loader-error: unable to open program file\n";
         exit(1);
     }
 }
@@ -54,6 +54,8 @@ int main()
 {
     disk::init(2048);
     ram::init(1024);
+
     load("programfile");
 
+    longterm::schedule_priority();
 }
