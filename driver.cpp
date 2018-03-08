@@ -4,6 +4,8 @@
 #include "disk/disk.h"
 #include "ram/ram.h"
 #include "scheduler/long/longterm.h"
+#include "scheduler/short/shortterm.h"
+#include "cpu/cpu_control.h"
 
 void load(const std::string programfile)
 {
@@ -38,7 +40,7 @@ void load(const std::string programfile)
             }
             else
             {
-                disk::write_word(addr, line.c_str());
+                disk::write_word(addr, line.substr(2).c_str());
                 addr += 4;
             }
         }
@@ -54,8 +56,10 @@ int main()
 {
     disk::init(2048);
     ram::init(1024);
+    cpu_control::init(1);
 
     load("programfile");
 
-    longterm::schedule_priority();
+    longterm::schedule_fcfs();
+    shortterm::dispatch_processes();
 }

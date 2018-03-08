@@ -18,7 +18,7 @@ public:
     cpu_state get_state() { return state; }
 
 private:
-    std::thread *cpu_thread;
+    std::thread cpu_thread;
     void cpu_main_thread();
 
     pcb *current_pcb;

@@ -153,12 +153,12 @@ void longterm::schedule_fcfs()
     {
         current->set_base_ram_address(base_addr);
 
+        std::cout << "--longterm-status (schedule_fcfs): loading PCB "
+                  << current->get_ID() << " at RAM address " << base_addr << "\n";
+
         disk_to_ram(current->get_base_disk_address(),
                     base_addr,
                     current->get_total_size());
-
-        std::cout << "--longterm-status (schedule_fcfs): loaded PCB "
-                  << current->get_ID() << " at RAM address " << base_addr << "\n";
 
         shortterm::receive_pcb(current);
 
@@ -176,12 +176,13 @@ void longterm::schedule_priority()
     {
         current->set_base_ram_address(base_addr);
 
+        std::cout << "--longterm-status (schedule_priority): loading PCB "
+                  << current->get_ID() << " (priority " << current->get_priority()
+                  << ") to RAM address " << base_addr << "\n";
+
         disk_to_ram(current->get_base_disk_address(),
                     base_addr,
                     current->get_total_size());
-
-        std::cout << "--longterm-status (schedule_priority): loaded PCB "
-                  << current->get_ID() << " at RAM address " << base_addr << "\n";
 
         shortterm::receive_pcb(current);
 
