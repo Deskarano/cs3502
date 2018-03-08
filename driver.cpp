@@ -56,12 +56,4 @@ int main()
     ram::init(1024);
     load("programfile");
 
-    for(int i = 30; i > 0; i--)
-    {
-        pcb *pcb = pcb_control::get_pcb(i);
-        std::cout << "got pcb " << pcb->get_ID() << "\n";
-
-        pcb_control::delete_pcb(i);
-        std::cout << "deleted pcb " << i << "\n";
-    }
 }

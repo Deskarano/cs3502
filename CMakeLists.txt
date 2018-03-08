@@ -14,6 +14,7 @@ set(SOURCE_FILES_MAIN
         cpu/cpu_control.h
 
         pcb/pcb_types.h
+        pcb/pcb_node.h
         pcb/pcb.cpp
         pcb/pcb.h
 
@@ -32,11 +33,5 @@ set(SOURCE_FILES_MAIN
         utils/queue.cpp
         utils/queue.h
         utils/memcpy.cpp
-        utils/memcpy.h
-
-        dispatcher/dispatcher.cpp
-        dispatcher/dispatcher.h
-
-        loader/loader.cpp
-        loader/loader.h pcb/pcb_node.h)
+        utils/memcpy.h)
 add_executable(cs3502 ${SOURCE_FILES_MAIN})

@@ -109,7 +109,7 @@ pcb *get_highest_priority_pcb()
             }
         }
 
-        if(del->pcb->get_priority() > current->pcb()->get_priority())
+        if(del->pcb->get_priority() > current->pcb->get_priority())
         {
             del = current;
         }

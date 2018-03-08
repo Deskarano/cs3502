@@ -1,24 +1,28 @@
 #include "shortterm.h"
 #include "../../ram/ram.h"
 #include "../../pcb/pcb.h"
-#include "../../pcb/pcb_control.h"
 #include "../../pcb/pcb_node.h"
 #include "../../cpu/cpu_control.h"
 #include "../../cpu/cpu.h"
 #include "../long/longterm.h"
 #include <iostream>
 
-
+sched_algo shortterm::scheduling_algorithm;
+pcb_node *shortterm::head_ptr;
+pcb_node *shortterm::tail_ptr;
+int shortterm::queue_length;
 
 using namespace std;
 
 //set scheduling algorithm
-void shortterm::set_scheduling_algorithm(sched_algo sa) {
+void shortterm::set_scheduling_algorithm(sched_algo sa)
+{
     shortterm::scheduling_algorithm = sa;
 }
 
 //take a PCB and add it to appropriate point in linked list
-void shortterm::receive_pcb(pcb *next_pcb) {
+void shortterm::receive_pcb(pcb *next_pcb)
+{
     //if list is empty
     if(queue_length == 0)
     {
@@ -45,7 +49,7 @@ void shortterm::receive_pcb(pcb *next_pcb) {
             tail_ptr->next = newnode;
             tail_ptr = tail_ptr->next;
             break;
-        //add at first spot where *current is greater
+            //add at first spot where *current is greater
         case PRI:
             //if less than head
             if(newnode->pcb->get_priority() < head_ptr->pcb->get_priority())
@@ -73,19 +77,20 @@ void shortterm::receive_pcb(pcb *next_pcb) {
             tail_ptr->next = newnode;
             tail_ptr = newnode;
             break;
-        //only implement in next phase if needed or extra time
-        /*
-        case SJF:
-            break;
-        case SRT:
-            break;
-        case RR:
-            break;*/
+            //only implement in next phase if needed or extra time
+            /*
+            case SJF:
+                break;
+            case SRT:
+                break;
+            case RR:
+                break;*/
     }
 }
 
 //look at CPU cores and give it a process if open
-void shortterm::dispatch_processes() {
+void shortterm::dispatch_processes()
+{
     cpu_state current_state;
     unsigned int num_cores = cpu_control::get_num_cores();
 
@@ -100,14 +105,16 @@ void shortterm::dispatch_processes() {
     for(int i = 0; i < num_cores; i++)
     {
         current_state = cpu_control::get_core_state(i);
+        pcb *next_process = remove_first_process();
+
         switch(current_state)
         {
             //CPU needs to get back to work
             case CPU_IDLE:
-                pcb *next_process = remove_first_process();
-                cpu_control::dispatch_to_core(i, remove_first_process());
+                cpu_control::dispatch_to_core(i, next_process);
                 break;
-            //TODO: when working with preemption
+
+                //TODO: when working with preemption
             case CPU_FULL:
                 break;
         }
@@ -115,13 +122,13 @@ void shortterm::dispatch_processes() {
 }
 
 //return the pointer to first pcb and remove from queue
-pcb* shortterm::remove_first_process()
+pcb *shortterm::remove_first_process()
 {
     //decrease queue length
     queue_length--;
 
     //return header point pcb and delete head pointer
-    pcb* ret = head_ptr->pcb;
+    pcb *ret = head_ptr->pcb;
     pcb_node *del = head_ptr;
 
     //if only one in list
@@ -133,7 +140,7 @@ pcb* shortterm::remove_first_process()
         delete del;
         return ret;
     }
-    //more than one in list, move head pointer due to removing
+        //more than one in list, move head pointer due to removing
     else
         head_ptr = head_ptr->next;
 
