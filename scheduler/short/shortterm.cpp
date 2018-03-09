@@ -1,23 +1,25 @@
 #include "shortterm.h"
+
 #include "../../ram/ram.h"
 #include "../../pcb/pcb.h"
 #include "../../pcb/pcb_node.h"
+
 #include "../../cpu/cpu_control.h"
 #include "../../cpu/cpu.h"
-#include "../long/longterm.h"
+
 #include <iostream>
 
-sched_algo shortterm::scheduling_algorithm;
-pcb_node *shortterm::head_ptr;
-pcb_node *shortterm::tail_ptr;
-int shortterm::queue_length;
+sched_algo scheduling_algorithm;
+pcb_node *head_ptr;
+pcb_node *tail_ptr;
+int queue_length;
 
 using namespace std;
 
 //set scheduling algorithm
 void shortterm::set_scheduling_algorithm(sched_algo sa)
 {
-    shortterm::scheduling_algorithm = sa;
+    scheduling_algorithm = sa;
 }
 
 //take a PCB and add it to appropriate point in linked list
@@ -42,7 +44,7 @@ void shortterm::receive_pcb(pcb *next_pcb)
     queue_length++;
 
     pcb_node *newnode = new pcb_node(next_pcb);
-    switch(shortterm::scheduling_algorithm)
+    switch(scheduling_algorithm)
     {
         //add to end
         case FCFS:

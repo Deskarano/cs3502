@@ -55,8 +55,7 @@ void longterm::create_pcb(std::string *job_section, std::string *data_section, u
     next_space = (int) data_section->find(' ');
     temp_size = hex_to_dec(data_section->substr(0, next_space).c_str(), (unsigned int) data_section->size() - 1);
 
-    pcb *new_pcb = new pcb(ID, priority, code_size, input_size, output_size, temp_size);
-    new_pcb->set_base_disk_address(base_disk_address);
+    pcb *new_pcb = new pcb(ID, priority, code_size, input_size, output_size, temp_size, base_disk_address);
 
     log_status::log_long_create_pcb(ID, base_disk_address);
 
