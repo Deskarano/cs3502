@@ -715,7 +715,7 @@ void logger::log_disk_init(unsigned int num_words)
     }
 }
 
-void logger::log_disk_write_word(unsigned int addr, char val[8])
+void logger::log_disk_write_word(unsigned int addr, const char val[8])
 {
     if(LOG_DISK_WRITE_WORD)
     {
@@ -724,7 +724,7 @@ void logger::log_disk_write_word(unsigned int addr, char val[8])
         {
             std::cout << val[i];
         }
-        std::cout << " to addr 0x" << dec_to_hex(addr);
+        std::cout << " to addr 0x" << dec_to_hex(addr) << "\n";
     }
 }
 
@@ -737,6 +737,69 @@ void logger::log_disk_read_word(unsigned int addr, char val[8])
         {
             std::cout << val[i];
         }
-        std::cout << " from addr 0x" << dec_to_hex(addr);
+        std::cout << " from addr 0x" << dec_to_hex(addr) << "\n";
+    }
+}
+
+void logger::log_ram_init(unsigned int num_words)
+{
+    if(LOG_RAM_INIT)
+    {
+        std::cout << "--ram-status (init): initalized ram with " << num_words << " words\n";
+    }
+}
+
+void logger::log_ram_write_word(unsigned int addr, char val[8])
+{
+    if(LOG_RAM_WRITE_WORD)
+    {
+        std::cout << "--ram-status (write_word): wrote val ";
+        for(int i = 0; i < 8; i++)
+        {
+            std::cout << val[i];
+        }
+        std::cout << " to addr 0x" << dec_to_hex(addr) << "\n";
+    }
+}
+
+void logger::log_ram_read_word(unsigned int addr, char val[8])
+{
+    if(LOG_RAM_READ_WORD)
+    {
+        std::cout << "--ram-status (read_word): read val ";
+        for(int i = 0; i < 8; i++)
+        {
+            std::cout << val[i];
+        }
+        std::cout << " from addr 0x" << dec_to_hex(addr) << "\n";
+    }
+}
+
+void logger::log_long_create_pcb(unsigned int pcb_id, unsigned int base_disk_address)
+{
+    if(LOG_LONG_CREATE_PCB)
+    {
+        std::cout << "--longterm-status (create_pcb): created PCB " << pcb_id
+                  << " at disk address " << base_disk_address
+                  << "\n";
+    }
+}
+
+void logger::log_long_schedule_fcfs(unsigned int pcb_id, unsigned int base_ram_address)
+{
+    if(LOG_LONG_SCHEDULE_FCFS)
+    {
+        std::cout << "--longterm-status (schedule_fcfs): loading PCB "
+                  << pcb_id << " to RAM address " << base_ram_address << "\n";
+    }
+}
+
+void logger::log_long_schedule_priority(unsigned int pcb_id, unsigned int priority, unsigned int base_ram_address)
+{
+    if(LOG_LONG_SCHEDULE_PRIORITY)
+    {
+        std::cout << "--longterm-status (schedule_priority): loading PCB "
+                  << pcb_id << " (priority " << priority
+                  << ") to RAM address " << base_ram_address << "\n";
     }
 }

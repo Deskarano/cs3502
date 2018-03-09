@@ -60,6 +60,6 @@ int main()
 
     load("programfile");
 
-    longterm::schedule_fcfs();
+    longterm::schedule_priority();
     shortterm::dispatch_processes();
 }

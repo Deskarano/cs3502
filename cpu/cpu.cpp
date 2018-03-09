@@ -424,7 +424,7 @@ void cpu::stop()
     logger::log_cpu_stop(current_pcb->get_ID());
 
     state = CPU_IDLE;
-    cpu_thread.join();
+    //cpu_thread.join();
 
     save_pcb();
 }

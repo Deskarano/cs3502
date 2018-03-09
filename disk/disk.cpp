@@ -11,7 +11,7 @@ void disk::init(unsigned int num_words)
     disk::data = new char[num_words * 8];
 }
 
-void disk::write_word(unsigned int addr, char val[8])
+void disk::write_word(unsigned int addr, const char val[8])
 {
     logger::log_disk_write_word(addr, val);
     for(int i = 0; i < 8; i++)

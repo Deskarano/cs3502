@@ -13,8 +13,16 @@
 #define LOG_CPU_CONTROL_DISPATCH    true
 
 #define LOG_DISK_INIT               true
-#define LOG_DISK_WRITE_WORD         true
-#define LOG_DISK_READ_WORD          true
+#define LOG_DISK_WRITE_WORD         false
+#define LOG_DISK_READ_WORD          false
+
+#define LOG_RAM_INIT                true
+#define LOG_RAM_WRITE_WORD          false
+#define LOG_RAM_READ_WORD           false
+
+#define LOG_LONG_CREATE_PCB         true
+#define LOG_LONG_SCHEDULE_FCFS      true
+#define LOG_LONG_SCHEDULE_PRIORITY  true
 
 struct logger
 {
@@ -22,6 +30,7 @@ public:
     static void log_cpu_fetch(unsigned int pcb_id, unsigned int pc, char *fetch);
     static void log_cpu_decode(char *fetch, void *instr);
     static void log_cpu_execute(unsigned int pc, void *instruction, int reg[16]);
+
     static void log_cpu_start(unsigned int pcb_id);
     static void log_cpu_stop(unsigned int pcb_id);
     static void log_cpu_set_pcb(unsigned int pcb_id);
@@ -31,8 +40,16 @@ public:
     static void log_cpu_control_dispatch(unsigned int core_id, unsigned int pcb_id);
 
     static void log_disk_init(unsigned int num_words);
-    static void log_disk_write_word(unsigned int addr, char val[8]);
+    static void log_disk_write_word(unsigned int addr, const char val[8]);
     static void log_disk_read_word(unsigned int addr, char val[8]);
+
+    static void log_ram_init(unsigned int num_words);
+    static void log_ram_write_word(unsigned int addr, char val[8]);
+    static void log_ram_read_word(unsigned int addr, char val[8]);
+
+    static void log_long_create_pcb(unsigned int pcb_id, unsigned int base_disk_address);
+    static void log_long_schedule_fcfs(unsigned int pcb_id, unsigned int base_ram_address);
+    static void log_long_schedule_priority(unsigned int pcb_id, unsigned int priority, unsigned int base_ram_address);
 };
 
 
