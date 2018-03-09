@@ -1,10 +1,6 @@
 #ifndef CS3502_INSTR_TYPES_H
 #define CS3502_INSTR_TYPES_H
 
-#include "../../utils/base_conversions.h"
-
-#include <iostream>
-
 enum instr_op
 {
     RD, WR, ST, LW,
@@ -47,6 +43,5 @@ struct instr
     instr_op op;
     void *args;
 };
-
 
 #endif //CS3502_INSTR_TYPES_H

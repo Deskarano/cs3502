@@ -56,10 +56,10 @@ int main()
 {
     disk::init(2048);
     ram::init(1024);
-    cpu_control::init(1);
+    cpu_control::init(3);
 
     load("programfile");
 
-    longterm::schedule_priority();
+    longterm::schedule_fcfs();
     shortterm::dispatch_processes();
 }

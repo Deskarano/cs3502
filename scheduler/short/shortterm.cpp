@@ -91,7 +91,6 @@ void shortterm::receive_pcb(pcb *next_pcb)
 //look at CPU cores and give it a process if open
 void shortterm::dispatch_processes()
 {
-    cpu_state current_state;
     unsigned int num_cores = cpu_control::get_num_cores();
 
     //error, no cores
@@ -104,20 +103,12 @@ void shortterm::dispatch_processes()
     //iterate through cores
     for(int i = 0; i < num_cores; i++)
     {
-        current_state = cpu_control::get_core_state(i);
-        pcb *next_process;
+        cpu_state current_state = cpu_control::get_core_state(i);
 
-        switch(current_state)
+        if(current_state == CPU_IDLE)
         {
-            //CPU needs to get back to work
-            case CPU_IDLE:
-                next_process = remove_first_process();
-                cpu_control::dispatch_to_core(i, next_process);
-                break;
-
-                //TODO: when working with preemption
-            case CPU_FULL:
-                break;
+            pcb *next_process = remove_first_process();
+            cpu_control::dispatch_to_core(i, next_process);
         }
     }
 }

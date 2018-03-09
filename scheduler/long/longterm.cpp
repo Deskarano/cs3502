@@ -11,7 +11,7 @@
 #include "../../utils/base_conversions.h"
 #include "../../utils/memcpy.h"
 
-#include "../../log/logger.h"
+#include "../../log/log_status.h"
 
 static pcb_node *pcb_list_head = nullptr;
 
@@ -58,7 +58,7 @@ void longterm::create_pcb(std::string *job_section, std::string *data_section, u
     pcb *new_pcb = new pcb(ID, priority, code_size, input_size, output_size, temp_size);
     new_pcb->set_base_disk_address(base_disk_address);
 
-    logger::log_long_create_pcb(ID, base_disk_address);
+    log_status::log_long_create_pcb(ID, base_disk_address);
 
     if(pcb_list_head == nullptr)
     {
@@ -153,7 +153,7 @@ void longterm::schedule_fcfs()
     while(base_addr / 4 + current->get_total_size() < ram::size())
     {
         current->set_base_ram_address(base_addr);
-        logger::log_long_schedule_fcfs(current->get_ID(), base_addr);
+        log_status::log_long_schedule_fcfs(current->get_ID(), base_addr);
 
         disk_to_ram(current->get_base_disk_address(),
                     base_addr,
@@ -174,7 +174,7 @@ void longterm::schedule_priority()
     while(base_addr / 4 + current->get_total_size() < ram::size())
     {
         current->set_base_ram_address(base_addr);
-        logger::log_long_schedule_priority(current->get_ID(), current->get_priority(), base_addr);
+        log_status::log_long_schedule_priority(current->get_ID(), current->get_priority(), base_addr);
 
         disk_to_ram(current->get_base_disk_address(),
                     base_addr,

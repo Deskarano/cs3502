@@ -1,14 +1,14 @@
 #include "cpu_control.h"
-#include "cpu.h"
 
-#include "../log/logger.h"
+#include "cpu.h"
+#include "../log/log_status.h"
 
 unsigned int cpu_control::num_cores = 0;
 static cpu *cores = nullptr;
 
 void cpu_control::init(unsigned int num_cores)
 {
-    logger::log_cpu_control_init(num_cores);
+    log_status::log_cpu_control_init(num_cores);
     cpu_control::num_cores = num_cores;
     cores = new cpu[num_cores];
 }
@@ -20,7 +20,7 @@ cpu_state cpu_control::get_core_state(unsigned int core_id)
 
 void cpu_control::dispatch_to_core(unsigned int core_id, pcb *new_pcb)
 {
-    logger::log_cpu_control_dispatch(core_id, new_pcb->get_ID());
+    log_status::log_cpu_control_dispatch(core_id, new_pcb->get_ID());
 
     if(get_core_state(core_id) == CPU_FULL)
     {

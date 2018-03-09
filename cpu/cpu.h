@@ -1,14 +1,16 @@
 #ifndef CS3502_CPU_H
 #define CS3502_CPU_H
 
-#include <thread>
-
 #include "types/cpu_types.h"
 #include "../pcb/pcb.h"
+
+#include <thread>
 
 class cpu
 {
 public:
+    cpu();
+
     void start();
     void stop();
 

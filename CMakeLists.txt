@@ -35,6 +35,6 @@ set(SOURCE_FILES_MAIN
         utils/memcpy.cpp
         utils/memcpy.h
 
-        log/logger.cpp
-        log/logger.h)
+        log/log_status.cpp
+        log/log_status.h)
 add_executable(cs3502 ${SOURCE_FILES_MAIN})

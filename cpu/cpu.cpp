@@ -1,15 +1,14 @@
-#include <iostream>
-
 #include "cpu.h"
 #include "types/instr_types.h"
 
 #include "../ram/ram.h"
-#include "../log/logger.h"
+#include "../log/log_status.h"
+#include "../utils/base_conversions.h"
+
+#include <iostream>
 
 void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int base)
 {
-    logger::log_cpu_execute(pc, instruction, reg);
-
     switch(instruction->op)
     {
         case RD:
@@ -188,21 +187,20 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
 
         case SLTI:
         {
-            //not implemented. instruction is never used
+            //TODO
             pc += 4;
             break;
         }
 
         case HLT:
         {
-            //TODO: implement this. pass PCB to execute()?
             break;
         }
 
         case NOP:
         {
             pc += 4;
-            break;;
+            break;
         }
 
         case JMP:
@@ -309,6 +307,11 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
             break;
         }
     }
+
+    log_status::log_cpu_execute(pc, instruction, reg);
+
+    delete instruction->args;
+    delete instruction;
 }
 
 instr *decode(char instruction[8])
@@ -382,7 +385,7 @@ instr *decode(char instruction[8])
     else if(op == 0x1A) result->op = BLZ;
     else result->op = INVALID;
 
-    logger::log_cpu_decode(instruction, result);
+    log_status::log_cpu_decode(instruction, result);
 
     return result;
 }
@@ -391,9 +394,8 @@ void cpu::cpu_main_thread()
 {
     while(state == CPU_FULL)
     {
+        log_status::log_cpu_fetch(current_pcb->get_ID(), pc);
         char *fetch = ram::read_word(current_pcb->get_base_ram_address() + pc);
-        logger::log_cpu_fetch(current_pcb->get_ID(), pc, fetch);
-
         instr *instruction = decode(fetch);
 
         if(instruction->op == HLT)
@@ -410,9 +412,20 @@ void cpu::cpu_main_thread()
     }
 }
 
+cpu::cpu()
+{
+    state = CPU_IDLE;
+
+    pc = 0;
+    for(int i = 0; i < 16; i++)
+    {
+        reg[i] = 0;
+    }
+}
+
 void cpu::start()
 {
-    logger::log_cpu_start(current_pcb->get_ID());
+    log_status::log_cpu_start(current_pcb->get_ID());
 
     state = CPU_FULL;
     cpu_thread = std::thread(cpu_main_thread, this);
@@ -421,7 +434,7 @@ void cpu::start()
 
 void cpu::stop()
 {
-    logger::log_cpu_stop(current_pcb->get_ID());
+    log_status::log_cpu_stop(current_pcb->get_ID());
 
     state = CPU_IDLE;
     //cpu_thread.join();
@@ -439,7 +452,7 @@ void copy_reg(const int from[16], int to[16])
 
 void cpu::set_pcb(pcb *new_pcb)
 {
-    logger::log_cpu_set_pcb(new_pcb->get_ID());
+    log_status::log_cpu_set_pcb(new_pcb->get_ID());
 
     this->current_pcb = new_pcb;
     this->pc = new_pcb->get_pc();
@@ -448,7 +461,7 @@ void cpu::set_pcb(pcb *new_pcb)
 
 void cpu::save_pcb()
 {
-    logger::log_cpu_save_pcb(current_pcb->get_ID());
+    log_status::log_cpu_save_pcb(current_pcb->get_ID());
 
     current_pcb->set_pc(this->pc);
     copy_reg(this->reg, current_pcb->get_reg());

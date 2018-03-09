@@ -1,9 +1,10 @@
-#ifndef CS3502_LOGGER_H
-#define CS3502_LOGGER_H
+#ifndef CS3502_LOG_STATUS_H
+#define CS3502_LOG_STATUS_H
 
-#define LOG_CPU_FETCH               true
-#define LOG_CPU_DECODE              true
+#define LOG_CPU_FETCH               false
+#define LOG_CPU_DECODE              false
 #define LOG_CPU_EXECUTE             true
+
 #define LOG_CPU_START               true
 #define LOG_CPU_STOP                true
 #define LOG_CPU_SET_PCB             true
@@ -24,10 +25,10 @@
 #define LOG_LONG_SCHEDULE_FCFS      true
 #define LOG_LONG_SCHEDULE_PRIORITY  true
 
-struct logger
+struct log_status
 {
 public:
-    static void log_cpu_fetch(unsigned int pcb_id, unsigned int pc, char *fetch);
+    static void log_cpu_fetch(unsigned int pcb_id, unsigned int pc);
     static void log_cpu_decode(char *fetch, void *instr);
     static void log_cpu_execute(unsigned int pc, void *instruction, int reg[16]);
 
@@ -53,4 +54,4 @@ public:
 };
 
 
-#endif //CS3502_LOGGER_H
+#endif //CS3502_LOG_STATUS_H
