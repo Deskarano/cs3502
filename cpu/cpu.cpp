@@ -9,6 +9,8 @@
 
 void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int base)
 {
+    unsigned int new_pc = pc + 4;
+    
     switch(instruction->op)
     {
         case RD:
@@ -23,7 +25,6 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
                 reg[args->reg1] = hex_to_dec(ram::read_word(base + (unsigned) reg[args->reg2]), 8);
             }
 
-            pc += 4;
             break;
         }
 
@@ -39,7 +40,6 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
                 ram::write_word(base + (unsigned) reg[args->reg2], dec_to_hex(reg[args->reg1]));
             }
 
-            pc += 4;
             break;
         }
 
@@ -48,7 +48,6 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
             auto args = (i_args *) instruction->args;
             ram::write_word(base + (unsigned) reg[args->dreg], dec_to_hex(reg[args->breg]));
 
-            pc += 4;
             break;
         }
 
@@ -57,7 +56,6 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
             auto args = (i_args *) instruction->args;
             reg[args->dreg] = hex_to_dec(ram::read_word(base + reg[args->breg] + args->addr), 8);
             
-            pc += 4;
             break;
         }
 
@@ -66,7 +64,6 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
             auto args = (r_args *) instruction->args;
             reg[args->sreg1] = reg[args->sreg2];
 
-            pc += 4;
             break;
         }
 
@@ -75,7 +72,6 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
             auto args = (r_args *) instruction->args;
             reg[args->dreg] = reg[args->sreg1] + reg[args->sreg2];
 
-            pc += 4;
             break;
         }
 
@@ -84,7 +80,6 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
             auto args = (r_args *) instruction->args;
             reg[args->dreg] = reg[args->sreg1] - reg[args->sreg2];
 
-            pc += 4;
             break;
         }
 
@@ -93,7 +88,6 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
             auto args = (r_args *) instruction->args;
             reg[args->dreg] = reg[args->sreg1] * reg[args->sreg2];
 
-            pc += 4;
             break;
         }
 
@@ -102,7 +96,6 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
             auto args = (r_args *) instruction->args;
             reg[args->dreg] = reg[args->sreg1] / reg[args->sreg2];
             
-            pc += 4;
             break;
         }
 
@@ -111,7 +104,6 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
             auto args = (r_args *) instruction->args;
             reg[args->dreg] = reg[args->sreg1] & reg[args->sreg2];
 
-            pc += 4;
             break;
         }
 
@@ -120,7 +112,6 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
             auto args = (r_args *) instruction->args;
             reg[args->dreg] = reg[args->sreg1] | reg[args->sreg2];
 
-            pc += 4;
             break;
         }
 
@@ -129,7 +120,6 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
             auto args = (i_args *) instruction->args;
             reg[args->dreg] = args->addr;
 
-            pc += 4;
             break;
         }
 
@@ -138,7 +128,6 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
             auto args = (i_args *) instruction->args;
             reg[args->dreg] += args->addr;
 
-            pc += 4;
             break;
         }
 
@@ -147,7 +136,6 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
             auto args = (i_args *) instruction->args;
             reg[args->dreg] *= args->addr;
 
-            pc += 4;
             break;
         }
 
@@ -156,7 +144,6 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
             auto args = (i_args *) instruction->args;
             reg[args->dreg] /= args->addr;
 
-            pc += 4;
             break;
         }
 
@@ -164,8 +151,7 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
         {
             auto args = (i_args *) instruction->args;
             reg[args->dreg] = args->addr;
-            
-            pc += 4;
+
             break;
         }
 
@@ -181,14 +167,12 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
                 reg[args->dreg] = 0;
             }
 
-            pc += 4;
             break;
         }
 
         case SLTI:
         {
             //TODO
-            pc += 4;
             break;
         }
 
@@ -199,14 +183,13 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
 
         case NOP:
         {
-            pc += 4;
             break;
         }
 
         case JMP:
         {
             auto args = (j_args *) instruction->args;
-            pc = args->addr;
+            new_pc = args->addr;
 
             break;
         }
@@ -216,11 +199,7 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
             auto args = (i_args *) instruction->args;
             if(reg[args->breg] == reg[args->dreg])
             {
-                pc = args->addr;
-            }
-            else
-            {
-                pc += 4;
+                new_pc = args->addr;
             }
 
             break;
@@ -231,11 +210,7 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
             auto args = (i_args *) instruction->args;
             if(reg[args->breg] != reg[args->dreg])
             {
-                pc = args->addr;
-            }
-            else
-            {
-                pc += 4;
+                new_pc = args->addr;
             }
 
             break;
@@ -246,11 +221,7 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
             auto args = (i_args *) instruction->args;
             if(reg[args->breg] == 0)
             {
-                pc = args->addr;
-            }
-            else
-            {
-                pc += 4;
+                new_pc = args->addr;
             }
 
             break;
@@ -261,11 +232,7 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
             auto args = (i_args *) instruction->args;
             if(reg[args->breg] != 0)
             {
-                pc = args->addr;
-            }
-            else
-            {
-                pc += 4;
+                new_pc = args->addr;
             }
 
             break;
@@ -276,11 +243,7 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
             auto args = (i_args *) instruction->args;
             if(reg[args->breg] > 0)
             {
-                pc = args->addr;
-            }
-            else
-            {
-                pc += 4;
+                new_pc = args->addr;
             }
 
             break;
@@ -291,11 +254,7 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
             auto args = (i_args *) instruction->args;
             if(reg[args->breg] < 0)
             {
-                pc = args->addr;
-            }
-            else
-            {
-                pc += 4;
+                new_pc = args->addr;
             }
 
             break;
@@ -309,6 +268,7 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
     }
 
     log_status::log_cpu_execute(pc, instruction, reg);
+    pc = new_pc;
 
     delete instruction->args;
     delete instruction;
