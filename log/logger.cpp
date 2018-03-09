@@ -256,7 +256,7 @@ void logger::log_cpu_fetch(unsigned int pcb_id, unsigned int pc, char *fetch)
     if(LOG_CPU_FETCH)
     {
         std::cout << "--cpu-status (cpu_fetch): PCB " << pcb_id
-                  << " fetched ((instr *) instruction) at 0x" << dec_to_hex(pc) << ": ";
+                  << " fetched instruction at 0x" << dec_to_hex(pc) << ": ";
         for(int i = 0; i < 8; i++)
         {
             std::cout << fetch[i];
@@ -283,7 +283,6 @@ void logger::log_cpu_execute(unsigned int pc, void *instruction, int reg[16])
 {
     if(LOG_CPU_EXECUTE)
     {
-
         switch(((instr *) instruction)->op)
         {
             case RD:
@@ -291,13 +290,14 @@ void logger::log_cpu_execute(unsigned int pc, void *instruction, int reg[16])
                 auto args = (io_args *) ((instr *) instruction)->args;
                 if(args->reg2 == 0)
                 {
-                    std::cout << "--cpu-status (execute RD @ 0x" << dec_to_hex(pc) << "): read " << reg[args->reg1]
+                    std::cout << "--cpu-status (execute RD @ 0x" << dec_to_hex(pc) << "): read val "
+                              << reg[args->reg1]
                               << " from addr 0x" << dec_to_hex(args->addr)
                               << " to reg " << args->reg1 << "\n";
                 }
                 else
                 {
-                    std::cout << "--cpu-status (execute RD @ 0x" << dec_to_hex(pc) << "): read " << reg[args->reg1]
+                    std::cout << "--cpu-status (execute RD @ 0x" << dec_to_hex(pc) << "): read val " << reg[args->reg1]
                               << " from addr in reg " << args->reg2
                               << " = 0x" << dec_to_hex(reg[args->reg2])
                               << " to reg " << args->reg1 << "\n";
@@ -311,12 +311,13 @@ void logger::log_cpu_execute(unsigned int pc, void *instruction, int reg[16])
                 auto args = (io_args *) ((instr *) instruction)->args;
                 if(args->reg2 == 0)
                 {
-                    std::cout << "--cpu-status (execute WR @ 0x" << dec_to_hex(pc) << "): wrote " << reg[args->reg1]
+                    std::cout << "--cpu-status (execute WR @ 0x" << dec_to_hex(pc) << "): wrote val in reg "
+                              << args->reg1 << " = " << reg[args->reg1]
                               << " to addr 0x" << dec_to_hex(args->addr) << "\n";
                 }
                 else
                 {
-                    std::cout << "--cpu-status (execute WR @ 0x" << dec_to_hex(pc) << "): wrote reg "
+                    std::cout << "--cpu-status (execute WR @ 0x" << dec_to_hex(pc) << "): wrote val in reg "
                               << args->reg1 << " = " << reg[args->reg1]
                               << " to addr in reg " << args->reg2
                               << " = 0x" << dec_to_hex(reg[args->reg2]) << "\n";
@@ -329,9 +330,9 @@ void logger::log_cpu_execute(unsigned int pc, void *instruction, int reg[16])
             {
                 auto args = (i_args *) ((instr *) instruction)->args;
 
-                std::cout << "--cpu-status (execute ST @ 0x" << dec_to_hex(pc) << "): wrote value in reg " << args->breg
+                std::cout << "--cpu-status (execute ST @ 0x" << dec_to_hex(pc) << "): wrote val in reg " << args->breg
                           << " = " << reg[args->breg]
-                          << " to addr in " << args->dreg
+                          << " to addr in reg " << args->dreg
                           << " = 0x" << dec_to_hex(reg[args->dreg]) << "\n";
 
                 break;
@@ -355,8 +356,8 @@ void logger::log_cpu_execute(unsigned int pc, void *instruction, int reg[16])
             {
                 auto args = (r_args *) ((instr *) instruction)->args;
 
-                std::cout << "--cpu-status (execute MOV @ 0x" << dec_to_hex(pc) << "): moved " << reg[args->sreg2]
-                          << " from reg " << args->sreg2
+                std::cout << "--cpu-status (execute MOV @ 0x" << dec_to_hex(pc) << "): moved reg" << args->sreg2
+                          << " = " << reg[args->sreg2]
                           << " to reg " << args->sreg1
                           << " = " << reg[args->sreg1]
                           << "\n";
@@ -368,10 +369,10 @@ void logger::log_cpu_execute(unsigned int pc, void *instruction, int reg[16])
             {
                 auto args = (r_args *) ((instr *) instruction)->args;
 
-                std::cout << "--cpu-status (execute ADD @ 0x" << dec_to_hex(pc) << "): added " << reg[args->sreg1]
-                          << " from reg " << args->sreg1
-                          << " and " << reg[args->sreg2]
-                          << " from reg " << args->sreg2
+                std::cout << "--cpu-status (execute ADD @ 0x" << dec_to_hex(pc) << "): added reg " << args->sreg1
+                          << " = " << reg[args->sreg1]
+                          << " and reg " <<args->sreg2
+                          << " = " << reg[args->sreg2]
                           << " to reg " << args->dreg
                           << " = " << reg[args->dreg]
                           << "\n";
@@ -395,10 +396,10 @@ void logger::log_cpu_execute(unsigned int pc, void *instruction, int reg[16])
             {
                 auto args = (r_args *) ((instr *) instruction)->args;
 
-                std::cout << "--cpu-status (execute DIV @ 0x" << dec_to_hex(pc) << "): divided " << reg[args->sreg1]
-                          << " from reg " << args->sreg1
-                          << " and " << reg[args->sreg2]
-                          << " from reg " << args->sreg2
+                std::cout << "--cpu-status (execute DIV @ 0x" << dec_to_hex(pc) << "): divided reg " << args->sreg1
+                          << " = " << reg[args->sreg1]
+                          << " and reg " << args->sreg2
+                          << " = " << reg[args->sreg2]
                           << " to reg " << args->dreg
                           << " = " << reg[args->dreg]
                           << "\n";
@@ -410,10 +411,10 @@ void logger::log_cpu_execute(unsigned int pc, void *instruction, int reg[16])
             {
                 auto args = (r_args *) ((instr *) instruction)->args;
 
-                std::cout << "--cpu-status (execute AND @ 0x" << dec_to_hex(pc) << "): and'd " << reg[args->sreg1]
-                          << " from reg " << args->sreg1
-                          << " and " << reg[args->sreg2]
-                          << " from reg " << args->sreg2
+                std::cout << "--cpu-status (execute AND @ 0x" << dec_to_hex(pc) << "): and'd reg " << args->sreg1
+                          << " = " << reg[args->sreg1]
+                          << " and reg " << args->sreg2
+                          << " = " << reg[args->sreg2]
                           << " to reg " << args->dreg
                           << " = " << reg[args->dreg]
                           << "\n";
@@ -425,10 +426,10 @@ void logger::log_cpu_execute(unsigned int pc, void *instruction, int reg[16])
             {
                 auto args = (r_args *) ((instr *) instruction)->args;
 
-                std::cout << "--cpu-status (execute OR @ 0x" << dec_to_hex(pc) << "): or'd " << reg[args->sreg1]
-                          << " from reg " << args->sreg1
-                          << " and " << reg[args->sreg2]
-                          << " from reg " << args->sreg2
+                std::cout << "--cpu-status (execute OR @ 0x" << dec_to_hex(pc) << "): or'd reg " << args->sreg1
+                          << " = " << reg[args->sreg1]
+                          << " and reg " << args->sreg2
+                          << " = " << reg[args->sreg2]
                           << " to reg " << args->dreg
                           << " = " << reg[args->dreg]
                           << "\n";
@@ -442,6 +443,7 @@ void logger::log_cpu_execute(unsigned int pc, void *instruction, int reg[16])
 
                 std::cout << "--cpu-status (execute MOVI @ 0x" << dec_to_hex(pc) << "): moved val " << args->addr
                           << " to reg " << args->dreg
+                          << " = " << reg[args->dreg]
                           << "\n";
 
                 break;
@@ -653,5 +655,88 @@ void logger::log_cpu_execute(unsigned int pc, void *instruction, int reg[16])
                 return;
             }
         }
+    }
+}
+
+void logger::log_cpu_start(unsigned int pcb_id)
+{
+    if(LOG_CPU_START)
+    {
+        std::cout << "--cpu-status (start): executing PCB " << pcb_id << "\n";
+    }
+}
+
+void logger::log_cpu_stop(unsigned int pcb_id)
+{
+    if(LOG_CPU_STOP)
+    {
+        std::cout << "--cpu-status (stop): stopping PCB " << pcb_id << "\n";
+    }
+}
+
+void logger::log_cpu_set_pcb(unsigned int pcb_id)
+{
+    if(LOG_CPU_SET_PCB)
+    {
+        std::cout << "--cpu-status (set_pcb): loading PCB " << pcb_id << "\n";
+    }
+}
+
+void logger::log_cpu_save_pcb(unsigned int pcb_id)
+{
+    if(LOG_CPU_SAVE_PCB)
+    {
+        std::cout << "--cpu-status (save_pcb): saving PCB " << pcb_id << "\n";
+    }
+}
+
+void logger::log_cpu_control_init(unsigned int num_cores)
+{
+    if(LOG_CPU_CONTROL_INIT)
+    {
+        std::cout << "--cpu_control-status (init): initialized " << num_cores << " cores\n";
+    }
+}
+
+void logger::log_cpu_control_dispatch(unsigned int core_id, unsigned int pcb_id)
+{
+    if(LOG_CPU_CONTROL_DISPATCH)
+    {
+        std::cout << "--cpu_control-status (dispatch_to_core): dispatching PCB "
+                  << pcb_id << " to core " << core_id << "\n";
+    }
+}
+
+void logger::log_disk_init(unsigned int num_words)
+{
+    if(LOG_DISK_INIT)
+    {
+        std::cout << "--disk-status (init): initalized disk with " << num_words << " words\n";
+    }
+}
+
+void logger::log_disk_write_word(unsigned int addr, char val[8])
+{
+    if(LOG_DISK_WRITE_WORD)
+    {
+        std::cout << "--disk-status (write_word): wrote val ";
+        for(int i = 0; i < 8; i++)
+        {
+            std::cout << val[i];
+        }
+        std::cout << " to addr 0x" << dec_to_hex(addr);
+    }
+}
+
+void logger::log_disk_read_word(unsigned int addr, char val[8])
+{
+    if(LOG_DISK_READ_WORD)
+    {
+        std::cout << "--disk-status (read_word): read val ";
+        for(int i = 0; i < 8; i++)
+        {
+            std::cout << val[i];
+        }
+        std::cout << " from addr 0x" << dec_to_hex(addr);
     }
 }

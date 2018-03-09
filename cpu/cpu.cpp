@@ -4,11 +4,12 @@
 #include "types/instr_types.h"
 
 #include "../ram/ram.h"
-#include "../utils/base_conversions.h"
 #include "../log/logger.h"
 
 void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int base)
 {
+    logger::log_cpu_execute(pc, instruction, reg);
+
     switch(instruction->op)
     {
         case RD:
@@ -81,14 +82,18 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
 
         case SUB:
         {
-            //not implemented. instruction is never used
+            auto args = (r_args *) instruction->args;
+            reg[args->dreg] = reg[args->sreg1] - reg[args->sreg2];
+
             pc += 4;
             break;
         }
 
         case MUL:
         {
-            //not implemented. instruction is never used
+            auto args = (r_args *) instruction->args;
+            reg[args->dreg] = reg[args->sreg1] * reg[args->sreg2];
+
             pc += 4;
             break;
         }
@@ -140,14 +145,18 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
 
         case MULI:
         {
-            //not implemented. instruction is never used
+            auto args = (i_args *) instruction->args;
+            reg[args->dreg] *= args->addr;
+
             pc += 4;
             break;
         }
 
         case DIVI:
         {
-            //not implemented. instruction is never used
+            auto args = (i_args *) instruction->args;
+            reg[args->dreg] /= args->addr;
+
             pc += 4;
             break;
         }
@@ -300,8 +309,6 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
             break;
         }
     }
-
-    logger::log_cpu_execute(pc, instruction, reg);
 }
 
 instr *decode(char instruction[8])
@@ -405,7 +412,8 @@ void cpu::cpu_main_thread()
 
 void cpu::start()
 {
-    std::cout << "--cpu-status (start): executing PCB " << current_pcb->get_ID() << "\n";
+    logger::log_cpu_start(current_pcb->get_ID());
+
     state = CPU_FULL;
     cpu_thread = std::thread(cpu_main_thread, this);
     cpu_thread.join();
@@ -413,10 +421,10 @@ void cpu::start()
 
 void cpu::stop()
 {
-    std::cout << "--cpu-status (stop): stopping PCB " << current_pcb->get_ID() << "\n";
+    logger::log_cpu_stop(current_pcb->get_ID());
 
     state = CPU_IDLE;
-    //cpu_thread.join();
+    cpu_thread.join();
 
     save_pcb();
 }
@@ -431,15 +439,17 @@ void copy_reg(const int from[16], int to[16])
 
 void cpu::set_pcb(pcb *new_pcb)
 {
-    std::cout << "--cpu-status (set_pcb): loading PCB " << new_pcb->get_ID() << "\n";
-    this->current_pcb = new_pcb;
+    logger::log_cpu_set_pcb(new_pcb->get_ID());
 
+    this->current_pcb = new_pcb;
     this->pc = new_pcb->get_pc();
     copy_reg(current_pcb->get_reg(), this->reg);
 }
 
 void cpu::save_pcb()
 {
-    copy_reg(this->reg, current_pcb->get_reg());
+    logger::log_cpu_save_pcb(current_pcb->get_ID());
+
     current_pcb->set_pc(this->pc);
+    copy_reg(this->reg, current_pcb->get_reg());
 }
