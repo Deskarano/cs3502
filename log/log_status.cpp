@@ -249,13 +249,13 @@ void print_instr(instr *instruction)
     }
 }
 
-void log_status::log_cpu_fetch(unsigned int pcb_id, unsigned int pc)
+void log_status::log_cpu_fetch(unsigned int core_id, unsigned int pcb_id, unsigned int pc)
 {
     if(LOG_CPU_FETCH)
     {
         write_lock->wait();
 
-        std::cout << "--cpu-status (cpu_fetch): PCB " << pcb_id
+        std::cout << "--cpu-status (" << core_id << ") (cpu_fetch): PCB " << pcb_id
                   << " fetching instruction at 0x" << dec_to_hex(pc)
                   << "\n";
 
@@ -263,13 +263,13 @@ void log_status::log_cpu_fetch(unsigned int pcb_id, unsigned int pc)
     }
 }
 
-void log_status::log_cpu_decode(char *fetch, void *instruction)
+void log_status::log_cpu_decode(unsigned int core_id, char *fetch, void *instruction)
 {
     if(LOG_CPU_DECODE)
     {
         write_lock->wait();
 
-        std::cout << "--cpu-status (decode): decoded instruction ";
+        std::cout << "--cpu-status (" << core_id << ") (decode): decoded instruction ";
         for(int i = 0; i < 8; i++)
         {
             std::cout << fetch[i];
@@ -281,7 +281,7 @@ void log_status::log_cpu_decode(char *fetch, void *instruction)
     }
 }
 
-void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16])
+void log_status::log_cpu_execute(unsigned int core_id, void *instruction, int reg[16])
 {
     if(LOG_CPU_EXECUTE)
     {
@@ -294,7 +294,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
                 auto args = (io_args *) ((instr *) instruction)->args;
                 if(args->reg2 == 0)
                 {
-                    std::cout << "--cpu-status (execute RD @ 0x" << dec_to_hex(pc) << "):\t"
+                    std::cout << "--cpu-status (" << core_id << ") (execute RD):\t"
                               << " read from addr 0x" << dec_to_hex(args->addr)
                               << " to reg " << args->reg1
                               << " = " << reg[args->reg1]
@@ -302,7 +302,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
                 }
                 else
                 {
-                    std::cout << "--cpu-status (execute RD @ 0x" << dec_to_hex(pc) << "):\t"
+                    std::cout << "--cpu-status (" << core_id << ") (execute RD):\t"
                               << " read from addr in reg " << args->reg2
                               << " = 0x" << dec_to_hex(reg[args->reg2])
                               << " to reg " << args->reg1
@@ -317,7 +317,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
                 auto args = (io_args *) ((instr *) instruction)->args;
                 if(args->reg2 == 0)
                 {
-                    std::cout << "--cpu-status (execute WR @ 0x" << dec_to_hex(pc) << "):\t"
+                    std::cout << "--cpu-status (" << core_id << ") (execute WR):\t"
                               << " wrote val in reg " << args->reg1
                               << " = " << reg[args->reg1]
                               << " to addr 0x" << dec_to_hex(args->addr)
@@ -325,7 +325,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
                 }
                 else
                 {
-                    std::cout << "--cpu-status (execute WR @ 0x" << dec_to_hex(pc) << "):\t"
+                    std::cout << "--cpu-status (" << core_id << ") (execute WR):\t"
                               << " wrote val in reg " << args->reg1
                               << " = " << reg[args->reg1]
                               << " to addr in reg " << args->reg2
@@ -338,7 +338,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
             case ST:
             {
                 auto args = (i_args *) ((instr *) instruction)->args;
-                std::cout << "--cpu-status (execute ST @ 0x" << dec_to_hex(pc) << "):\t"
+                std::cout << "--cpu-status (" << core_id << ") (execute ST):\t"
                           << " wrote val in reg " << args->breg
                           << " = " << reg[args->breg]
                           << " to addr in reg " << args->dreg
@@ -349,7 +349,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
             case LW:
             {
                 auto args = (i_args *) ((instr *) instruction)->args;
-                std::cout << "--cpu-status (execute LW @ 0x" << dec_to_hex(pc) << "):\t"
+                std::cout << "--cpu-status (" << core_id << ") (execute LW):\t"
                           << " read from addr in reg " << args->breg
                           << " = " << reg[args->breg]
                           << " + offset " << args->addr
@@ -363,7 +363,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
             case MOV:
             {
                 auto args = (r_args *) ((instr *) instruction)->args;
-                std::cout << "--cpu-status (execute MOV @ 0x" << dec_to_hex(pc) << "):\t"
+                std::cout << "--cpu-status (" << core_id << ") (execute MOV):\t"
                           << " moved reg" << args->sreg2
                           << " = " << reg[args->sreg2]
                           << " to reg " << args->sreg1
@@ -375,7 +375,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
             case ADD:
             {
                 auto args = (r_args *) ((instr *) instruction)->args;
-                std::cout << "--cpu-status (execute ADD @ 0x" << dec_to_hex(pc) << "):\t"
+                std::cout << "--cpu-status (" << core_id << ") (execute ADD):\t"
                           << " added reg " << args->sreg1
                           << " = " << reg[args->sreg1]
                           << " and reg " << args->sreg2
@@ -389,7 +389,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
             case SUB:
             {
                 auto args = (r_args *) ((instr *) instruction)->args;
-                std::cout << "--cpu-status (execute SUB @ 0x" << dec_to_hex(pc) << "):\t"
+                std::cout << "--cpu-status (" << core_id << ") (execute SUB):\t"
                           << " subtracted reg " << args->sreg1
                           << " = " << reg[args->sreg1]
                           << " and reg " << args->sreg2
@@ -403,7 +403,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
             case MUL:
             {
                 auto args = (r_args *) ((instr *) instruction)->args;
-                std::cout << "--cpu-status (execute MUL @ 0x" << dec_to_hex(pc) << "):\t"
+                std::cout << "--cpu-status (" << core_id << ") (execute MUL):\t"
                           << " multiplied reg " << args->sreg1
                           << " = " << reg[args->sreg1]
                           << " and reg " << args->sreg2
@@ -417,7 +417,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
             case DIV:
             {
                 auto args = (r_args *) ((instr *) instruction)->args;
-                std::cout << "--cpu-status (execute DIV @ 0x" << dec_to_hex(pc) << "):\t"
+                std::cout << "--cpu-status (" << core_id << ") (execute DIV):\t"
                           << " divided reg " << args->sreg1
                           << " = " << reg[args->sreg1]
                           << " and reg " << args->sreg2
@@ -431,7 +431,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
             case AND:
             {
                 auto args = (r_args *) ((instr *) instruction)->args;
-                std::cout << "--cpu-status (execute AND @ 0x" << dec_to_hex(pc) << "):\t"
+                std::cout << "--cpu-status (" << core_id << ") (execute AND):\t"
                           << " and'd reg " << args->sreg1
                           << " = " << reg[args->sreg1]
                           << " and reg " << args->sreg2
@@ -445,7 +445,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
             case OR:
             {
                 auto args = (r_args *) ((instr *) instruction)->args;
-                std::cout << "--cpu-status (execute OR @ 0x" << dec_to_hex(pc) << "):\t"
+                std::cout << "--cpu-status (" << core_id << ") (execute OR):\t"
                           << " or'd reg " << args->sreg1
                           << " = " << reg[args->sreg1]
                           << " and reg " << args->sreg2
@@ -459,7 +459,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
             case MOVI:
             {
                 auto args = (i_args *) ((instr *) instruction)->args;
-                std::cout << "--cpu-status (execute MOVI @ 0x" << dec_to_hex(pc) << "):\t"
+                std::cout << "--cpu-status (" << core_id << ") (execute MOVI):\t"
                           << " moved val " << args->addr
                           << " to reg " << args->dreg
                           << " = " << reg[args->dreg]
@@ -470,7 +470,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
             case ADDI:
             {
                 auto args = (i_args *) ((instr *) instruction)->args;
-                std::cout << "--cpu-status (execute ADDI @ 0x" << dec_to_hex(pc) << "):\t"
+                std::cout << "--cpu-status (" << core_id << ") (execute ADDI):\t"
                           << " added val " << args->addr
                           << " to reg " << args->dreg
                           << " = " << reg[args->dreg]
@@ -481,7 +481,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
             case MULI:
             {
                 auto args = (i_args *) ((instr *) instruction)->args;
-                std::cout << "--cpu-status (execute MULI @ 0x" << dec_to_hex(pc) << "): "
+                std::cout << "--cpu-status (" << core_id << ") (execute MULI): "
                           << " multiplied val " << args->addr
                           << " to reg " << args->dreg
                           << " = " << reg[args->dreg]
@@ -492,7 +492,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
             case DIVI:
             {
                 auto args = (i_args *) ((instr *) instruction)->args;
-                std::cout << "--cpu-status (execute DIVI @ 0x" << dec_to_hex(pc) << "): "
+                std::cout << "--cpu-status (" << core_id << ") (execute DIVI): "
                           << " divided val " << args->addr
                           << " to reg " << args->dreg
                           << " = " << reg[args->dreg]
@@ -503,7 +503,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
             case LDI:
             {
                 auto args = (i_args *) ((instr *) instruction)->args;
-                std::cout << "--cpu-status (execute LDI @ 0x" << dec_to_hex(pc) << "):\t"
+                std::cout << "--cpu-status (" << core_id << ") (execute LDI):\t"
                           << " moved addr 0x" << dec_to_hex(args->addr)
                           << " to reg " << args->dreg
                           << " = " << reg[args->dreg]
@@ -517,7 +517,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
                 auto args = (r_args *) ((instr *) instruction)->args;
                 if(reg[args->sreg1] < reg[args->sreg2])
                 {
-                    std::cout << "--cpu_status (execute SLT @ 0x" << dec_to_hex(pc) << "):\t"
+                    std::cout << "--cpu-status (" << core_id << ") (execute SLT):\t"
                               << " set reg " << args->dreg << " to val 1"
                               << " since reg " << args->sreg1 << " = " << reg[args->sreg1]
                               << " < reg " << args->sreg2 << " = " << reg[args->sreg2]
@@ -525,7 +525,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
                 }
                 else
                 {
-                    std::cout << "--cpu_status (execute SLT @ 0x" << dec_to_hex(pc) << "):\t"
+                    std::cout << "--cpu-status (" << core_id << ") (execute SLT):\t"
                               << " set reg " << args->dreg << " to val 0"
                               << " since reg " << args->sreg1 << " = " << reg[args->sreg1]
                               << " >= reg " << args->sreg2 << " = " << reg[args->sreg2]
@@ -543,14 +543,14 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
 
             case HLT:
             {
-                std::cout << "--cpu-status (execute HLT @ 0x" << dec_to_hex(pc) << "):\t"
+                std::cout << "--cpu-status (" << core_id << ") (execute HLT):\t"
                           << " reached program end\n";
                 break;
             }
 
             case NOP:
             {
-                std::cout << "--cpu-status (execute NOP @ 0x " << dec_to_hex(pc) << "):\t"
+                std::cout << "--cpu-status (" << core_id << ") (execute NOP):\t"
                           << " doing nothing\n";
                 break;
             }
@@ -558,7 +558,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
             case JMP:
             {
                 auto args = (j_args *) ((instr *) instruction)->args;
-                std::cout << "--cpu-status (execute JMP @ 0x" << dec_to_hex(pc) << "):\t"
+                std::cout << "--cpu-status (" << core_id << ") (execute JMP):\t"
                           << "jumped to addr 0x" << args->addr
                           << "\n";
                 break;
@@ -569,7 +569,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
                 auto args = (i_args *) ((instr *) instruction)->args;
                 if(reg[args->breg] == reg[args->dreg])
                 {
-                    std::cout << "--cpu-status (execute BEQ @ 0x" << dec_to_hex(pc) << "):\t"
+                    std::cout << "--cpu-status (" << core_id << ") (execute BEQ):\t"
                               << " branched to addr 0x" << dec_to_hex(args->addr)
                               << " since reg " << args->breg << " = " << reg[args->breg]
                               << " == reg " << args->dreg << " = " << reg[args->dreg]
@@ -577,7 +577,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
                 }
                 else
                 {
-                    std::cout << "--cpu-status (execute BEQ @ 0x" << dec_to_hex(pc) << "):\t"
+                    std::cout << "--cpu-status (" << core_id << ") (execute BEQ):\t"
                               << " did not branch\n";
                 }
 
@@ -589,7 +589,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
                 auto args = (i_args *) ((instr *) instruction)->args;
                 if(reg[args->breg] != reg[args->dreg])
                 {
-                    std::cout << "--cpu-status (execute BNE @ 0x" << dec_to_hex(pc) << "):\t"
+                    std::cout << "--cpu-status (" << core_id << ") (execute BNE):\t"
                               << " branched to addr 0x" << dec_to_hex(args->addr)
                               << " since reg " << args->breg << " = " << reg[args->breg]
                               << " != reg " << args->dreg << " = " << reg[args->dreg]
@@ -597,7 +597,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
                 }
                 else
                 {
-                    std::cout << "--cpu-status (execute BNE @ 0x" << dec_to_hex(pc) << "):\t"
+                    std::cout << "--cpu-status (" << core_id << ") (execute BNE):\t"
                               << " did not branch\n";
                 }
 
@@ -609,7 +609,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
                 auto args = (i_args *) ((instr *) instruction)->args;
                 if(reg[args->breg] == 0)
                 {
-                    std::cout << "--cpu-status (execute BEZ @ 0x" << dec_to_hex(pc) << "):\t"
+                    std::cout << "--cpu-status (" << core_id << ") (execute BEZ):\t"
                               << " branched to addr 0x" << dec_to_hex(args->addr)
                               << " since reg " << args->breg << " = " << reg[args->breg]
                               << " == 0"
@@ -617,7 +617,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
                 }
                 else
                 {
-                    std::cout << "--cpu-status (execute BEZ @ 0x" << dec_to_hex(pc) << "):\t"
+                    std::cout << "--cpu-status (" << core_id << ") (execute BEZ):\t"
                               << " did not branch\n";
                 }
 
@@ -629,7 +629,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
                 auto args = (i_args *) ((instr *) instruction)->args;
                 if(reg[args->breg] != 0)
                 {
-                    std::cout << "--cpu-status (execute BNZ @ 0x" << dec_to_hex(pc) << "):\t"
+                    std::cout << "--cpu-status (" << core_id << ") (execute BNZ):\t"
                               << " branched to addr 0x" << dec_to_hex(args->addr)
                               << " since reg " << args->breg << " = " << reg[args->breg]
                               << " != 0"
@@ -637,7 +637,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
                 }
                 else
                 {
-                    std::cout << "--cpu-status (execute BNZ @ 0x" << dec_to_hex(pc) << "):\t"
+                    std::cout << "--cpu-status (" << core_id << ") (execute BNZ):\t"
                               << " did not branch\n";
                 }
 
@@ -649,7 +649,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
                 auto args = (i_args *) ((instr *) instruction)->args;
                 if(reg[args->breg] > 0)
                 {
-                    std::cout << "--cpu-status (execute BGZ @ 0x" << dec_to_hex(pc) << "): "
+                    std::cout << "--cpu-status (" << core_id << ") (execute BGZ): "
                               << " branched to addr 0x" << args->addr
                               << " since reg " << args->breg << " = " << reg[args->breg]
                               << " > 0"
@@ -657,7 +657,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
                 }
                 else
                 {
-                    std::cout << "--cpu-status (execute BGZ @ 0x" << dec_to_hex(pc) << "):\t"
+                    std::cout << "--cpu-status (" << core_id << ") (execute BGZ):\t"
                               << " did not branch\n";
                 }
 
@@ -669,7 +669,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
                 auto args = (i_args *) ((instr *) instruction)->args;
                 if(reg[args->breg] < 0)
                 {
-                    std::cout << "--cpu-status (execute BLZ @ 0x" << dec_to_hex(pc) << "):\t"
+                    std::cout << "--cpu-status (" << core_id << ") (execute BLZ):\t"
                               << " branched to addr 0x" << args->addr
                               << " since reg " << args->breg << " = " << reg[args->breg]
                               << " < 0"
@@ -677,7 +677,7 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
                 }
                 else
                 {
-                    std::cout << "--cpu-status (execute BLZ @ 0x" << dec_to_hex(pc) << "):\t"
+                    std::cout << "--cpu-status (" << core_id << ") (execute BLZ):\t"
                               << " did not branch\n";
                 }
 
@@ -689,49 +689,49 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
     }
 }
 
-void log_status::log_cpu_start(unsigned int pcb_id)
+void log_status::log_cpu_start(unsigned int core_id, unsigned int pcb_id)
 {
     if(LOG_CPU_START)
     {
         write_lock->wait();
 
-        std::cout << "--cpu-status (start): executing PCB " << pcb_id << "\n";
+        std::cout << "--cpu-status (" << core_id << ") (start): executing PCB " << pcb_id << "\n";
 
         write_lock->notify();
     }
 }
 
-void log_status::log_cpu_stop(unsigned int pcb_id)
+void log_status::log_cpu_stop(unsigned int core_id, unsigned int pcb_id)
 {
     if(LOG_CPU_STOP)
     {
         write_lock->wait();
 
-        std::cout << "--cpu-status (stop): stopping PCB " << pcb_id << "\n";
+        std::cout << "--cpu-status (" << core_id << ") (stop): stopping PCB " << pcb_id << "\n";
 
         write_lock->notify();
     }
 }
 
-void log_status::log_cpu_set_pcb(unsigned int pcb_id)
+void log_status::log_cpu_set_pcb(unsigned int core_id, unsigned int pcb_id)
 {
     if(LOG_CPU_SET_PCB)
     {
         write_lock->wait();
 
-        std::cout << "--cpu-status (set_pcb): loading PCB " << pcb_id << "\n";
+        std::cout << "--cpu-status (" << core_id << ") (set_pcb): loading PCB " << pcb_id << "\n";
 
         write_lock->notify();
     }
 }
 
-void log_status::log_cpu_save_pcb(unsigned int pcb_id)
+void log_status::log_cpu_save_pcb(unsigned int core_id, unsigned int pcb_id)
 {
     if(LOG_CPU_SAVE_PCB)
     {
         write_lock->wait();
 
-        std::cout << "--cpu-status (save_pcb): saving PCB " << pcb_id << "\n";
+        std::cout << "--cpu-status (" << core_id << ") (save_pcb): saving PCB " << pcb_id << "\n";
 
         write_lock->notify();
     }

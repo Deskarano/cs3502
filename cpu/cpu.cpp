@@ -7,6 +7,8 @@
 #include "../log/log_status.h"
 #include "../log/log_error.h"
 
+static unsigned int next_id = 0;
+
 void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int base)
 {
     unsigned int new_pc = pc + 4;
@@ -261,7 +263,6 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
         }
     }
 
-    log_status::log_cpu_execute(pc, instruction, reg);
     pc = new_pc;
 
     delete instruction->args;
@@ -342,8 +343,6 @@ instr *decode(char instruction[8])
         log_error::cpu_decode_invalid(instruction);
     }
 
-    log_status::log_cpu_decode(instruction, result);
-
     return result;
 }
 
@@ -351,14 +350,15 @@ void cpu::cpu_main_thread()
 {
     while(state == CPU_BUSY)
     {
-        log_status::log_cpu_fetch(current_pcb->get_ID(), pc);
-
+        log_status::log_cpu_fetch(core_id, current_pcb->get_ID(), pc);
         char *fetch = ram::read_word(current_pcb->get_base_ram_address() + pc);
+
         instr *instruction = decode(fetch);
+        log_status::log_cpu_decode(core_id, fetch, instruction);
 
         if(instruction->op == HLT)
         {
-            log_status::log_cpu_stop(current_pcb->get_ID());
+            log_status::log_cpu_stop(core_id, current_pcb->get_ID());
 
             state = CPU_DONE;
             current_pcb->set_state(PCB_DONE);
@@ -368,12 +368,14 @@ void cpu::cpu_main_thread()
         else
         {
             execute(instruction, pc, reg, current_pcb->get_base_ram_address());
+            log_status::log_cpu_execute(core_id, instruction, reg);
         }
     }
 }
 
 cpu::cpu()
 {
+    this->core_id = next_id++;
     state = CPU_IDLE;
 
     pc = 0;
@@ -385,7 +387,7 @@ cpu::cpu()
 
 void cpu::start()
 {
-    log_status::log_cpu_start(current_pcb->get_ID());
+    log_status::log_cpu_start(core_id, current_pcb->get_ID());
 
     state = CPU_BUSY;
     current_pcb->set_state(PCB_RUNNING);
@@ -395,7 +397,7 @@ void cpu::start()
 
 void cpu::stop()
 {
-    log_status::log_cpu_stop(current_pcb->get_ID());
+    log_status::log_cpu_stop(core_id, current_pcb->get_ID());
 
     state = CPU_IDLE;
     current_pcb->set_state(PCB_READY);
@@ -415,7 +417,7 @@ void copy_reg(const int from[16], int to[16])
 
 void cpu::set_pcb(pcb *new_pcb)
 {
-    log_status::log_cpu_set_pcb(new_pcb->get_ID());
+    log_status::log_cpu_set_pcb(core_id, new_pcb->get_ID());
 
     this->current_pcb = new_pcb;
     this->pc = new_pcb->get_pc();
@@ -424,7 +426,7 @@ void cpu::set_pcb(pcb *new_pcb)
 
 void cpu::save_pcb()
 {
-    log_status::log_cpu_save_pcb(current_pcb->get_ID());
+    log_status::log_cpu_save_pcb(core_id, current_pcb->get_ID());
 
     current_pcb->set_pc(this->pc);
     copy_reg(this->reg, current_pcb->get_reg());

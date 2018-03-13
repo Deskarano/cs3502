@@ -56,7 +56,7 @@ int main()
 {
     disk::init(2048);
     ram::init(1024);
-    cpu_control::init(2);
+    cpu_control::init(4);
 
     load("programfile");
 

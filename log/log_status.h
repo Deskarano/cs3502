@@ -28,14 +28,14 @@
 struct log_status
 {
 public:
-    static void log_cpu_fetch(unsigned int pcb_id, unsigned int pc);
-    static void log_cpu_decode(char *fetch, void *instr);
-    static void log_cpu_execute(unsigned int pc, void *instruction, int reg[16]);
+    static void log_cpu_fetch(unsigned int core_id, unsigned int pcb_id, unsigned int pc);
+    static void log_cpu_decode(unsigned int core_id, char *fetch, void *instr);
+    static void log_cpu_execute(unsigned int core_id, void *instruction, int reg[16]);
 
-    static void log_cpu_start(unsigned int pcb_id);
-    static void log_cpu_stop(unsigned int pcb_id);
-    static void log_cpu_set_pcb(unsigned int pcb_id);
-    static void log_cpu_save_pcb(unsigned int pcb_id);
+    static void log_cpu_start(unsigned int core_id, unsigned int pcb_id);
+    static void log_cpu_stop(unsigned int core_id, unsigned int pcb_id);
+    static void log_cpu_set_pcb(unsigned int core_id, unsigned int pcb_id);
+    static void log_cpu_save_pcb(unsigned int core_id, unsigned int pcb_id);
 
     static void log_cpu_control_init(unsigned int num_cores);
     static void log_cpu_control_dispatch(unsigned int core_id, unsigned int pcb_id);
