@@ -392,7 +392,7 @@ void cpu::start()
     state = CPU_BUSY;
     current_pcb->set_state(PCB_RUNNING);
 
-    cpu_thread = std::thread(cpu_main_thread, this);
+    cpu_thread = std::thread(&cpu::cpu_main_thread, this);
 }
 
 void cpu::stop()
