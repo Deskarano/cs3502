@@ -3,7 +3,6 @@
 
 #include "../../pcb/pcb.h"
 
-
 enum sched_algo
 {
     FCFS,           //first come first serve
@@ -13,7 +12,9 @@ enum sched_algo
 struct shortterm
 {
 public:
-    static void dispatch_processes();
+    static void clear_done_processes();
+    static void dispatch_new_processes();
+
     static void receive_pcb(pcb *next_pcb);
     static void set_scheduling_algorithm(sched_algo sa);
 

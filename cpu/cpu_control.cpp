@@ -2,6 +2,7 @@
 
 #include "cpu.h"
 #include "../log/log_status.h"
+#include "../scheduler/long/longterm.h"
 
 unsigned int cpu_control::num_cores = 0;
 static cpu *cores = nullptr;
@@ -23,11 +24,17 @@ void cpu_control::dispatch_to_core(unsigned int core_id, pcb *new_pcb)
 {
     log_status::log_cpu_control_dispatch(core_id, new_pcb->get_ID());
 
-    if(get_core_state(core_id) == CPU_FULL)
+    if(get_core_state(core_id) == CPU_BUSY)
     {
         cores[core_id].stop();
     }
 
     cores[core_id].set_pcb(new_pcb);
     cores[core_id].start();
+}
+
+void cpu_control::clear_core(unsigned int core_id)
+{
+    cores[core_id].save_pcb();
+    longterm::writeback_pcb(cores[core_id].get_pcb());
 }

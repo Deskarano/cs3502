@@ -60,6 +60,14 @@ int main()
 
     load("programfile");
 
-    longterm::schedule_fcfs();
-    shortterm::dispatch_processes();
+    while(longterm::pcbs_left_total() > 0)
+    {
+        if(longterm::pcbs_left_ram() == 0)
+        {
+            longterm::schedule_fcfs();
+        }
+
+        shortterm::clear_done_processes();
+        shortterm::dispatch_new_processes();
+    }
 }

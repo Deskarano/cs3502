@@ -90,24 +90,30 @@ void shortterm::receive_pcb(pcb *next_pcb)
     }
 }
 
-//look at CPU cores and give it a process if open
-void shortterm::dispatch_processes()
+void shortterm::clear_done_processes()
 {
     unsigned int num_cores = cpu_control::get_num_cores();
 
-    //error, no cores
-    if(num_cores == 0)
+    for(int i = 0; i < num_cores; i++)
     {
-        cout << "--shortterm-error (dispatch_processes): Trying to dispatch to zero cores\n";
-        return;
+        if(cpu_control::get_core_state(i) == CPU_DONE)
+        {
+            cpu_control::clear_core(i);
+        }
     }
+}
+
+//look at CPU cores and give it a process if open
+void shortterm::dispatch_new_processes()
+{
+    unsigned int num_cores = cpu_control::get_num_cores();
 
     //iterate through cores
     for(int i = 0; i < num_cores; i++)
     {
         cpu_state current_state = cpu_control::get_core_state(i);
 
-        if(current_state == CPU_IDLE)
+        if(current_state == CPU_EMPTY)
         {
             pcb *next_process = remove_first_process();
             cpu_control::dispatch_to_core(i, next_process);

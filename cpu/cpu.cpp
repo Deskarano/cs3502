@@ -349,7 +349,7 @@ instr *decode(char instruction[8])
 
 void cpu::cpu_main_thread()
 {
-    while(state == CPU_FULL)
+    while(state == CPU_BUSY)
     {
         log_status::log_cpu_fetch(current_pcb->get_ID(), pc);
 
@@ -360,7 +360,7 @@ void cpu::cpu_main_thread()
         {
             log_status::log_cpu_stop(current_pcb->get_ID());
 
-            state = CPU_IDLE;
+            state = CPU_DONE;
             current_pcb->set_state(PCB_DONE);
 
             save_pcb();
@@ -374,7 +374,7 @@ void cpu::cpu_main_thread()
 
 cpu::cpu()
 {
-    state = CPU_IDLE;
+    state = CPU_EMPTY;
 
     pc = 0;
     for(int i = 0; i < 16; i++)
@@ -387,7 +387,7 @@ void cpu::start()
 {
     log_status::log_cpu_start(current_pcb->get_ID());
 
-    state = CPU_FULL;
+    state = CPU_BUSY;
     current_pcb->set_state(PCB_RUNNING);
 
     cpu_thread = std::thread(cpu_main_thread, this);

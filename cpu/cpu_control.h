@@ -10,7 +10,9 @@ public:
     static void init(unsigned int num_cores);
 
     static cpu_state get_core_state(unsigned int core_id);
+
     static void dispatch_to_core(unsigned int core_id, pcb *pcb);
+    static void clear_core(unsigned int core_id);
 
     static unsigned int get_num_cores()
     { return num_cores; }

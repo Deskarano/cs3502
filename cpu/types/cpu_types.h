@@ -3,8 +3,10 @@
 
 typedef enum
 {
+    CPU_EMPTY,
     CPU_IDLE,
-    CPU_FULL,
+    CPU_BUSY,
+    CPU_DONE
 } cpu_state;
 
 #endif //CS3502_CPU_TYPES_H

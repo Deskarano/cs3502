@@ -3,7 +3,6 @@
 #include "longterm.h"
 #include "../short/shortterm.h"
 
-#include "../../pcb/pcb.h"
 #include "../../pcb/pcb_node.h"
 
 #include "../../ram/ram.h"
@@ -13,7 +12,28 @@
 
 #include "../../log/log_status.h"
 
+unsigned int num_total_pcbs = 0;
+unsigned int num_loaded_pcbs = 0;
+
 static pcb_node *pcb_list_head = nullptr;
+
+void add_pcb_to_list(pcb *pcb)
+{
+    if(pcb_list_head == nullptr)
+    {
+        pcb_list_head = new pcb_node(pcb);
+    }
+    else
+    {
+        pcb_node *current = pcb_list_head;
+        while(current->next != nullptr)
+        {
+            current = current->next;
+        }
+
+        current->next = new pcb_node(pcb);
+    }
+}
 
 void longterm::create_pcb(std::string *job_section, std::string *data_section, unsigned int base_disk_address)
 {
@@ -56,23 +76,26 @@ void longterm::create_pcb(std::string *job_section, std::string *data_section, u
     temp_size = hex_to_dec(data_section->substr(0, next_space).c_str(), (unsigned int) data_section->size() - 1);
 
     pcb *new_pcb = new pcb(ID, priority, code_size, input_size, output_size, temp_size, base_disk_address);
+    add_pcb_to_list(new_pcb);
 
+    num_total_pcbs++;
     log_status::log_long_create_pcb(ID, base_disk_address);
+}
 
-    if(pcb_list_head == nullptr)
+void longterm::writeback_pcb(pcb *pcb)
+{
+    ram_to_disk(pcb->get_base_ram_address(), pcb->get_base_disk_address(), pcb->get_total_size());
+    if(pcb->get_state() == PCB_DONE)
     {
-        pcb_list_head = new pcb_node(new_pcb);
+        delete pcb;
+        num_total_pcbs--;
     }
     else
     {
-        pcb_node *current = pcb_list_head;
-        while(current->next != nullptr)
-        {
-            current = current->next;
-        }
-
-        current->next = new pcb_node(new_pcb);
+        add_pcb_to_list(pcb);
     }
+
+    num_loaded_pcbs--;
 }
 
 pcb *get_next_pcb()
@@ -159,6 +182,7 @@ void longterm::schedule_fcfs()
                     current->get_total_size());
 
         shortterm::receive_pcb(current);
+        num_loaded_pcbs++;
 
         base_addr += 4 * current->get_total_size();
         current = get_next_pcb();
@@ -188,7 +212,7 @@ void longterm::schedule_priority()
 
 int longterm::pcbs_left_ram()
 {
-
+    return num_loaded_pcbs;
 }
 
 int longterm::pcbs_left_total()

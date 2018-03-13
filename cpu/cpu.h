@@ -17,6 +17,7 @@ public:
     void set_pcb(pcb *new_pcb);
     void save_pcb();
 
+    pcb *get_pcb() { return current_pcb; }
     cpu_state get_state() { return state; }
 
 private:
