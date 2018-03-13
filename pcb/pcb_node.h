@@ -1,7 +1,3 @@
-//
-// Created by drew on 3/7/2018.
-//
-
 #ifndef CS3502_PCB_NODE_H
 #define CS3502_PCB_NODE_H
 

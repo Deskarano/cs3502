@@ -242,12 +242,6 @@ void print_instr(instr *instruction)
                       << " addr=0x" << dec_to_hex(args->addr) << "\n";
             break;
         }
-
-        case INVALID:
-        {
-            std::cout << "INVALID\n";
-            break;
-        }
     }
 }
 
@@ -674,12 +668,6 @@ void log_status::log_cpu_execute(unsigned int pc, void *instruction, int reg[16]
                 }
 
                 break;
-            }
-
-            case INVALID:
-            {
-                std::cout << "--cpu-error (execute): invalid instruction\n";
-                return;
             }
         }
     }

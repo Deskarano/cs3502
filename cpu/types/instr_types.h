@@ -8,8 +8,7 @@ enum instr_op
     MOVI, ADDI, MULI, DIVI, LDI,
     SLT, SLTI,
     HLT, NOP, JMP,
-    BEQ, BNE, BEZ, BNZ, BGZ, BLZ,
-    INVALID
+    BEQ, BNE, BEZ, BNZ, BGZ, BLZ
 };
 
 struct r_args

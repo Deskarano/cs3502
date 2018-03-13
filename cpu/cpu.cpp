@@ -1,11 +1,11 @@
 #include "cpu.h"
-#include "types/instr_types.h"
 
+#include "types/instr_types.h"
 #include "../ram/ram.h"
-#include "../log/log_status.h"
 #include "../utils/base_conversions.h"
 
-#include <iostream>
+#include "../log/log_status.h"
+#include "../log/log_error.h"
 
 void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int base)
 {
@@ -259,12 +259,6 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
 
             break;
         }
-
-        case INVALID:
-        {
-            std::cout << "--cpu-error (execute): invalid instruction\n";
-            break;
-        }
     }
 
     log_status::log_cpu_execute(pc, instruction, reg);
@@ -343,7 +337,10 @@ instr *decode(char instruction[8])
     else if(op == 0x18) result->op = BNZ;
     else if(op == 0x19) result->op = BGZ;
     else if(op == 0x1A) result->op = BLZ;
-    else result->op = INVALID;
+    else
+    {
+        log_error::cpu_decode_invalid(instruction);
+    }
 
     log_status::log_cpu_decode(instruction, result);
 
@@ -355,15 +352,18 @@ void cpu::cpu_main_thread()
     while(state == CPU_FULL)
     {
         log_status::log_cpu_fetch(current_pcb->get_ID(), pc);
+
         char *fetch = ram::read_word(current_pcb->get_base_ram_address() + pc);
         instr *instruction = decode(fetch);
 
         if(instruction->op == HLT)
         {
+            log_status::log_cpu_stop(current_pcb->get_ID());
+
+            state = CPU_IDLE;
             current_pcb->set_state(PCB_DONE);
 
-            stop();
-            return;
+            save_pcb();
         }
         else
         {
@@ -388,8 +388,9 @@ void cpu::start()
     log_status::log_cpu_start(current_pcb->get_ID());
 
     state = CPU_FULL;
+    current_pcb->set_state(PCB_RUNNING);
+
     cpu_thread = std::thread(cpu_main_thread, this);
-    cpu_thread.join();
 }
 
 void cpu::stop()
@@ -397,7 +398,9 @@ void cpu::stop()
     log_status::log_cpu_stop(current_pcb->get_ID());
 
     state = CPU_IDLE;
-    //cpu_thread.join();
+    current_pcb->set_state(PCB_READY);
+
+    cpu_thread.join();
 
     save_pcb();
 }
