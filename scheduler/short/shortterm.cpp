@@ -54,7 +54,7 @@ void shortterm::receive_pcb(pcb *next_pcb)
             //add at first spot where *current is greater
         case PRI:
             //if less than head
-            if(newnode->pcb->get_priority() < head_ptr->pcb->get_priority())
+            if(newnode->value->get_priority() < head_ptr->value->get_priority())
             {
                 newnode->next = head_ptr;
                 head_ptr = newnode;
@@ -65,7 +65,7 @@ void shortterm::receive_pcb(pcb *next_pcb)
             while(current != nullptr)
             {
                 //if less, add here in linked list
-                if(newnode->pcb->get_priority() < current->pcb->get_priority())
+                if(newnode->value->get_priority() < current->value->get_priority())
                 {
                     newnode->next = current;
                     previous->next = newnode;
@@ -128,7 +128,7 @@ pcb *shortterm::remove_first_process()
     queue_length--;
 
     //return header point pcb and delete head pointer
-    pcb *ret = head_ptr->pcb;
+    pcb *ret = head_ptr->value;
     pcb_node *del = head_ptr;
 
     //if only one in list

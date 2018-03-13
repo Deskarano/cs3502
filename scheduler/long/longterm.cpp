@@ -93,7 +93,7 @@ pcb *get_next_pcb()
     if(pcb_list_head != nullptr)
     {
         pcb_node *del = pcb_list_head;
-        pcb *ret = del->pcb;
+        pcb *ret = del->value;
 
         pcb_list_head = del->next;
 
@@ -118,18 +118,18 @@ pcb *get_highest_priority_pcb()
         while(current->next != nullptr)
         {
             current = current->next;
-            if(del->pcb->get_priority() > current->pcb->get_priority())
+            if(del->value->get_priority() > current->value->get_priority())
             {
                 del = current;
             }
         }
 
-        if(del->pcb->get_priority() > current->pcb->get_priority())
+        if(del->value->get_priority() > current->value->get_priority())
         {
             del = current;
         }
 
-        pcb *ret = del->pcb;
+        pcb *ret = del->value;
 
         //and delete it
         if(del == pcb_list_head)

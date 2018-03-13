@@ -7,11 +7,11 @@ public:
     explicit pcb_node(pcb *new_pcb)
     {
         this->next = nullptr;
-        this->pcb = new_pcb;
+        this->value = new_pcb;
     }
 
     pcb_node *next;
-    pcb *pcb;
+    pcb *value;
 };
 
 #endif //CS3502_PCB_NODE_H
