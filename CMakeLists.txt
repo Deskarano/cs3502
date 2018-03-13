@@ -34,6 +34,8 @@ set(SOURCE_FILES_MAIN
         utils/queue.h
         utils/memcpy.cpp
         utils/memcpy.h
+        utils/lock.cpp
+        utils/lock.h
 
         log/log_status.cpp
         log/log_status.h

@@ -98,7 +98,7 @@ void shortterm::clear_done_processes()
     {
         if(cpu_control::get_core_state(i) == CPU_DONE)
         {
-            cpu_control::clear_core(i);
+            cpu_control::clear_finished_core(i);
         }
     }
 }
@@ -113,7 +113,7 @@ void shortterm::dispatch_new_processes()
     {
         cpu_state current_state = cpu_control::get_core_state(i);
 
-        if(current_state == CPU_EMPTY)
+        if(current_state == CPU_IDLE)
         {
             pcb *next_process = remove_first_process();
             cpu_control::dispatch_to_core(i, next_process);

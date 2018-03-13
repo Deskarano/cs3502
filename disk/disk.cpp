@@ -15,7 +15,7 @@ void disk::init(unsigned int num_words)
 
 void disk::write_word(unsigned int addr, const char val[8])
 {
-    if(addr < num_words)
+    if(addr / 4 < num_words)
     {
         log_status::log_disk_write_word(addr, val);
         for(int i = 0; i < 8; i++)
@@ -31,7 +31,7 @@ void disk::write_word(unsigned int addr, const char val[8])
 
 char *disk::read_word(unsigned int addr)
 {
-    if(addr < num_words)
+    if(addr / 4 < num_words)
     {
         auto result = new char[8];
         for(int i = 0; i < 8; i++)

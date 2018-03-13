@@ -7,7 +7,7 @@ struct longterm
 {
 public:
     static void create_pcb(std::string *job_section, std::string *data_section, unsigned int base_disk_address);
-    static void writeback_pcb(pcb *pcb);
+    static void writeback_finished_pcb(pcb *pcb);
 
     static void schedule_fcfs();
     static void schedule_priority();

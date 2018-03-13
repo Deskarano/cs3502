@@ -12,7 +12,6 @@
 
 #include "../../log/log_status.h"
 
-unsigned int num_total_pcbs = 0;
 unsigned int num_loaded_pcbs = 0;
 
 static pcb_node *pcb_list_head = nullptr;
@@ -78,22 +77,13 @@ void longterm::create_pcb(std::string *job_section, std::string *data_section, u
     pcb *new_pcb = new pcb(ID, priority, code_size, input_size, output_size, temp_size, base_disk_address);
     add_pcb_to_list(new_pcb);
 
-    num_total_pcbs++;
     log_status::log_long_create_pcb(ID, base_disk_address);
 }
 
-void longterm::writeback_pcb(pcb *pcb)
+void longterm::writeback_finished_pcb(pcb *pcb)
 {
     ram_to_disk(pcb->get_base_ram_address(), pcb->get_base_disk_address(), pcb->get_total_size());
-    if(pcb->get_state() == PCB_DONE)
-    {
-        delete pcb;
-        num_total_pcbs--;
-    }
-    else
-    {
-        add_pcb_to_list(pcb);
-    }
+    delete pcb;
 
     num_loaded_pcbs--;
 }
@@ -227,6 +217,8 @@ int longterm::pcbs_left_total()
             count++;
             current = current->next;
         }
+
+        return count;
     }
     else
     {

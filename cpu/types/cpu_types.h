@@ -3,7 +3,6 @@
 
 typedef enum
 {
-    CPU_EMPTY,
     CPU_IDLE,
     CPU_BUSY,
     CPU_DONE

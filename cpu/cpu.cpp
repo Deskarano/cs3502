@@ -374,7 +374,7 @@ void cpu::cpu_main_thread()
 
 cpu::cpu()
 {
-    state = CPU_EMPTY;
+    state = CPU_IDLE;
 
     pc = 0;
     for(int i = 0; i < 16; i++)
