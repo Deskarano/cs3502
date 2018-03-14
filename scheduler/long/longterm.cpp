@@ -12,7 +12,8 @@
 
 #include "../../log/log_status.h"
 
-unsigned int num_loaded_pcbs = 0;
+unsigned int longterm::num_total_pcbs = 0;
+unsigned int longterm::num_loaded_pcbs = 0;
 
 static pcb_node *pcb_list_head = nullptr;
 
@@ -77,15 +78,20 @@ void longterm::create_pcb(std::string *job_section, std::string *data_section, u
     pcb *new_pcb = new pcb(ID, priority, code_size, input_size, output_size, temp_size, base_disk_address);
     add_pcb_to_list(new_pcb);
 
+    num_total_pcbs++;
+
     log_status::log_long_create_pcb(ID, base_disk_address);
 }
 
 void longterm::writeback_finished_pcb(pcb *pcb)
 {
+    log_status::log_long_writeback_pcb(pcb->get_ID());
+
     ram_to_disk(pcb->get_base_ram_address(), pcb->get_base_disk_address(), pcb->get_total_size());
     delete pcb;
 
     num_loaded_pcbs--;
+    num_total_pcbs--;
 }
 
 pcb *get_next_pcb()
@@ -160,10 +166,12 @@ pcb *get_highest_priority_pcb()
 void longterm::schedule_fcfs()
 {
     unsigned int base_addr = 0;
-    pcb *current = get_next_pcb();
+    pcb *current;
 
-    while(base_addr / 4 + current->get_total_size() < ram::size())
+    do
     {
+        current = get_next_pcb();
+
         current->set_base_ram_address(base_addr);
         log_status::log_long_schedule_fcfs(current->get_ID(), base_addr);
 
@@ -175,17 +183,19 @@ void longterm::schedule_fcfs()
         num_loaded_pcbs++;
 
         base_addr += 4 * current->get_total_size();
-        current = get_next_pcb();
     }
+    while((num_total_pcbs - num_loaded_pcbs) > 0 && base_addr / 4 + current->get_total_size() < ram::size());
 }
 
 void longterm::schedule_priority()
 {
     unsigned int base_addr = 0;
-    pcb *current = get_highest_priority_pcb();
+    pcb *current;
 
-    while(base_addr / 4 + current->get_total_size() < ram::size())
+    do
     {
+        current = get_highest_priority_pcb();
+
         current->set_base_ram_address(base_addr);
         log_status::log_long_schedule_priority(current->get_ID(), current->get_priority(), base_addr);
 
@@ -194,10 +204,11 @@ void longterm::schedule_priority()
                     current->get_total_size());
 
         shortterm::receive_pcb(current);
+        num_loaded_pcbs++;
 
         base_addr += 4 * current->get_total_size();
-        current = get_highest_priority_pcb();
     }
+    while((num_total_pcbs - num_loaded_pcbs) > 0 && base_addr / 4 + current->get_total_size() < ram::size());
 }
 
 int longterm::pcbs_left_ram()
@@ -207,21 +218,5 @@ int longterm::pcbs_left_ram()
 
 int longterm::pcbs_left_total()
 {
-    if(pcb_list_head != nullptr)
-    {
-        pcb_node *current = pcb_list_head;
-        int count = 1;
-
-        while(current->next != nullptr)
-        {
-            count++;
-            current = current->next;
-        }
-
-        return count;
-    }
-    else
-    {
-        return 0;
-    }
+    return num_total_pcbs;
 }

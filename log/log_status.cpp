@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-static lock *write_lock = new lock;
+static lock *print_lock = new lock;
 
 void print_instr(instr *instruction)
 {
@@ -253,13 +253,13 @@ void log_status::log_cpu_fetch(unsigned int core_id, unsigned int pcb_id, unsign
 {
     if(LOG_CPU_FETCH)
     {
-        write_lock->wait();
+        print_lock->wait();
 
         std::cout << "--cpu-status (" << core_id << ") (cpu_fetch): PCB " << pcb_id
                   << " fetching instruction at 0x" << dec_to_hex(pc)
                   << "\n";
 
-        write_lock->notify();
+        print_lock->notify();
     }
 }
 
@@ -267,7 +267,7 @@ void log_status::log_cpu_decode(unsigned int core_id, char *fetch, void *instruc
 {
     if(LOG_CPU_DECODE)
     {
-        write_lock->wait();
+        print_lock->wait();
 
         std::cout << "--cpu-status (" << core_id << ") (decode): decoded instruction ";
         for(int i = 0; i < 8; i++)
@@ -277,7 +277,7 @@ void log_status::log_cpu_decode(unsigned int core_id, char *fetch, void *instruc
         std::cout << " to ";
         print_instr((instr *) instruction);
 
-        write_lock->notify();
+        print_lock->notify();
     }
 }
 
@@ -285,7 +285,7 @@ void log_status::log_cpu_execute(unsigned int core_id, void *instruction, int re
 {
     if(LOG_CPU_EXECUTE)
     {
-        write_lock->wait();
+        print_lock->wait();
 
         switch(((instr *) instruction)->op)
         {
@@ -685,7 +685,7 @@ void log_status::log_cpu_execute(unsigned int core_id, void *instruction, int re
             }
         }
 
-        write_lock->notify();
+        print_lock->notify();
     }
 }
 
@@ -693,11 +693,11 @@ void log_status::log_cpu_start(unsigned int core_id, unsigned int pcb_id)
 {
     if(LOG_CPU_START)
     {
-        write_lock->wait();
+        print_lock->wait();
 
         std::cout << "--cpu-status (" << core_id << ") (start): executing PCB " << pcb_id << "\n";
 
-        write_lock->notify();
+        print_lock->notify();
     }
 }
 
@@ -705,11 +705,11 @@ void log_status::log_cpu_stop(unsigned int core_id, unsigned int pcb_id)
 {
     if(LOG_CPU_STOP)
     {
-        write_lock->wait();
+        print_lock->wait();
 
         std::cout << "--cpu-status (" << core_id << ") (stop): stopping PCB " << pcb_id << "\n";
 
-        write_lock->notify();
+        print_lock->notify();
     }
 }
 
@@ -717,11 +717,11 @@ void log_status::log_cpu_set_pcb(unsigned int core_id, unsigned int pcb_id)
 {
     if(LOG_CPU_SET_PCB)
     {
-        write_lock->wait();
+        print_lock->wait();
 
         std::cout << "--cpu-status (" << core_id << ") (set_pcb): loading PCB " << pcb_id << "\n";
 
-        write_lock->notify();
+        print_lock->notify();
     }
 }
 
@@ -729,11 +729,11 @@ void log_status::log_cpu_save_pcb(unsigned int core_id, unsigned int pcb_id)
 {
     if(LOG_CPU_SAVE_PCB)
     {
-        write_lock->wait();
+        print_lock->wait();
 
         std::cout << "--cpu-status (" << core_id << ") (save_pcb): saving PCB " << pcb_id << "\n";
 
-        write_lock->notify();
+        print_lock->notify();
     }
 }
 
@@ -741,11 +741,11 @@ void log_status::log_cpu_control_init(unsigned int num_cores)
 {
     if(LOG_CPU_CONTROL_INIT)
     {
-        write_lock->wait();
+        print_lock->wait();
 
         std::cout << "--cpu_control-status (init): initialized " << num_cores << " cores\n";
 
-        write_lock->notify();
+        print_lock->notify();
     }
 }
 
@@ -753,12 +753,25 @@ void log_status::log_cpu_control_dispatch(unsigned int core_id, unsigned int pcb
 {
     if(LOG_CPU_CONTROL_DISPATCH)
     {
-        write_lock->wait();
+        print_lock->wait();
 
         std::cout << "--cpu_control-status (dispatch_to_core): dispatching PCB "
                   << pcb_id << " to core " << core_id << "\n";
 
-        write_lock->notify();
+        print_lock->notify();
+    }
+}
+
+void log_status::log_cpu_control_clear(unsigned int core_id)
+{
+    if(LOG_CPU_CONTROL_CLEAR)
+    {
+        print_lock->wait();
+
+        std::cout << "--cpu_control-status (clear_finished_cores): clearing finished core "
+                   << core_id << "\n";
+
+        print_lock->notify();
     }
 }
 
@@ -766,11 +779,11 @@ void log_status::log_disk_init(unsigned int num_words)
 {
     if(LOG_DISK_INIT)
     {
-        write_lock->wait();
+        print_lock->wait();
 
         std::cout << "--disk-status (init): initalized disk with " << num_words << " words\n";
 
-        write_lock->notify();
+        print_lock->notify();
     }
 }
 
@@ -778,7 +791,7 @@ void log_status::log_disk_write_word(unsigned int addr, const char val[8])
 {
     if(LOG_DISK_WRITE_WORD)
     {
-        write_lock->wait();
+        print_lock->wait();
 
         std::cout << "--disk-status (write_word): wrote val ";
         for(int i = 0; i < 8; i++)
@@ -787,7 +800,7 @@ void log_status::log_disk_write_word(unsigned int addr, const char val[8])
         }
         std::cout << " to addr 0x" << dec_to_hex(addr) << "\n";
 
-        write_lock->notify();
+        print_lock->notify();
     }
 }
 
@@ -795,7 +808,7 @@ void log_status::log_disk_read_word(unsigned int addr, char val[8])
 {
     if(LOG_DISK_READ_WORD)
     {
-        write_lock->wait();
+        print_lock->wait();
 
         std::cout << "--disk-status (read_word): read val ";
         for(int i = 0; i < 8; i++)
@@ -804,7 +817,7 @@ void log_status::log_disk_read_word(unsigned int addr, char val[8])
         }
         std::cout << " from addr 0x" << dec_to_hex(addr) << "\n";
 
-        write_lock->notify();
+        print_lock->notify();
     }
 }
 
@@ -812,11 +825,11 @@ void log_status::log_ram_init(unsigned int num_words)
 {
     if(LOG_RAM_INIT)
     {
-        write_lock->wait();
+        print_lock->wait();
 
         std::cout << "--ram-status (init): initalized ram with " << num_words << " words\n";
 
-        write_lock->notify();
+        print_lock->notify();
     }
 }
 
@@ -824,7 +837,7 @@ void log_status::log_ram_write_word(unsigned int addr, char val[8])
 {
     if(LOG_RAM_WRITE_WORD)
     {
-        write_lock->wait();
+        print_lock->wait();
 
         std::cout << "--ram-status (write_word): wrote val ";
         for(int i = 0; i < 8; i++)
@@ -833,7 +846,7 @@ void log_status::log_ram_write_word(unsigned int addr, char val[8])
         }
         std::cout << " to addr 0x" << dec_to_hex(addr) << "\n";
 
-        write_lock->notify();
+        print_lock->notify();
     }
 }
 
@@ -841,7 +854,7 @@ void log_status::log_ram_read_word(unsigned int addr, char val[8])
 {
     if(LOG_RAM_READ_WORD)
     {
-        write_lock->wait();
+        print_lock->wait();
 
         std::cout << "--ram-status (read_word): read val ";
         for(int i = 0; i < 8; i++)
@@ -850,7 +863,7 @@ void log_status::log_ram_read_word(unsigned int addr, char val[8])
         }
         std::cout << " from addr 0x" << dec_to_hex(addr) << "\n";
 
-        write_lock->notify();
+        print_lock->notify();
     }
 }
 
@@ -858,13 +871,13 @@ void log_status::log_long_create_pcb(unsigned int pcb_id, unsigned int base_disk
 {
     if(LOG_LONG_CREATE_PCB)
     {
-        write_lock->wait();
+        print_lock->wait();
 
         std::cout << "--longterm-status (create_pcb): created PCB " << pcb_id
                   << " at disk address 0x" << dec_to_hex(base_disk_address)
                   << "\n";
 
-        write_lock->notify();
+        print_lock->notify();
     }
 }
 
@@ -872,13 +885,13 @@ void log_status::log_long_schedule_fcfs(unsigned int pcb_id, unsigned int base_r
 {
     if(LOG_LONG_SCHEDULE_FCFS)
     {
-        write_lock->wait();
+        print_lock->wait();
 
         std::cout << "--longterm-status (schedule_fcfs): loading PCB "
                   << pcb_id << " to RAM address 0x" << dec_to_hex(base_ram_address)
                   << "\n";
 
-        write_lock->notify();
+        print_lock->notify();
     }
 }
 
@@ -886,13 +899,26 @@ void log_status::log_long_schedule_priority(unsigned int pcb_id, unsigned int pr
 {
     if(LOG_LONG_SCHEDULE_PRIORITY)
     {
-        write_lock->wait();
+        print_lock->wait();
 
         std::cout << "--longterm-status (schedule_priority): loading PCB "
                   << pcb_id << " (priority " << priority
                   << ") to RAM address 0x" << dec_to_hex(base_ram_address)
                   << "\n";
 
-        write_lock->notify();
+        print_lock->notify();
+    }
+}
+
+void log_status::log_long_writeback_pcb(unsigned int pcb_id)
+{
+    if(LOG_LONG_WRITEBACK_PCB)
+    {
+        print_lock->wait();
+
+        std::cout << "--longterm-status (writeback_pcb): writing pcb "
+                  << pcb_id << " back to disk\n";
+
+        print_lock->notify();
     }
 }

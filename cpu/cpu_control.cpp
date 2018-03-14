@@ -33,10 +33,18 @@ void cpu_control::dispatch_to_core(unsigned int core_id, pcb *new_pcb)
     cores[core_id].start();
 }
 
-void cpu_control::clear_finished_core(unsigned int core_id)
+void cpu_control::clear_finished_cores()
 {
-    cores[core_id].save_pcb();
-    longterm::writeback_finished_pcb(cores[core_id].get_pcb());
+    for(int i = 0; i < num_cores; i++)
+    {
+        if(cores[i].get_state() == CPU_DONE)
+        {
+            log_status::log_cpu_control_clear(i);
 
-    cores[core_id].set_state(CPU_IDLE);
+            cores[i].save_pcb();
+            longterm::writeback_finished_pcb(cores[i].get_pcb());
+
+            cores[i].set_state(CPU_IDLE);
+        }
+    }
 }

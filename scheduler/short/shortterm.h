@@ -12,7 +12,6 @@ enum sched_algo
 struct shortterm
 {
 public:
-    static void clear_done_processes();
     static void dispatch_new_processes();
 
     static void receive_pcb(pcb *next_pcb);

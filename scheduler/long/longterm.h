@@ -14,6 +14,10 @@ public:
 
     static int pcbs_left_ram();
     static int pcbs_left_total();
+
+private:
+    static unsigned int num_loaded_pcbs;
+    static unsigned int num_total_pcbs;
 };
 
 

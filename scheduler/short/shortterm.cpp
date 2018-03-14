@@ -1,7 +1,5 @@
 #include "shortterm.h"
 
-#include "../../ram/ram.h"
-#include "../../pcb/pcb.h"
 #include "../../pcb/pcb_node.h"
 
 #include "../../cpu/cpu_control.h"
@@ -90,19 +88,6 @@ void shortterm::receive_pcb(pcb *next_pcb)
     }
 }
 
-void shortterm::clear_done_processes()
-{
-    unsigned int num_cores = cpu_control::get_num_cores();
-
-    for(int i = 0; i < num_cores; i++)
-    {
-        if(cpu_control::get_core_state(i) == CPU_DONE)
-        {
-            cpu_control::clear_finished_core(i);
-        }
-    }
-}
-
 //look at CPU cores and give it a process if open
 void shortterm::dispatch_new_processes()
 {
@@ -116,7 +101,12 @@ void shortterm::dispatch_new_processes()
         if(current_state == CPU_IDLE)
         {
             pcb *next_process = remove_first_process();
-            cpu_control::dispatch_to_core(i, next_process);
+
+            //skip this dispatch cycle if no processes in ready queue
+            if(next_process != nullptr)
+            {
+                cpu_control::dispatch_to_core(i, next_process);
+            }
         }
     }
 }
@@ -124,32 +114,34 @@ void shortterm::dispatch_new_processes()
 //return the pointer to first pcb and remove from queue
 pcb *shortterm::remove_first_process()
 {
-    //decrease queue length
-    queue_length--;
-
-    //return header point pcb and delete head pointer
-    pcb *ret = head_ptr->value;
-    pcb_node *del = head_ptr;
-
-    //if only one in list
-    if(head_ptr == tail_ptr)
+    if(head_ptr != nullptr)
     {
-        queue_length = 0;
-        head_ptr = nullptr;
-        tail_ptr = nullptr;
+        //return header point pcb and delete head pointer
+        pcb *ret = head_ptr->value;
+        pcb_node *del = head_ptr;
+
+        //if only one in list
+        if(head_ptr == tail_ptr)
+        {
+            head_ptr = nullptr;
+            tail_ptr = nullptr;
+        }
+        else
+        {
+            //more than one in list, move head pointer due to removing
+            head_ptr = head_ptr->next;
+        }
+
+        //delete head and return the pointer to pcb
+        queue_length--;
         delete del;
         return ret;
     }
-        //more than one in list, move head pointer due to removing
     else
-        head_ptr = head_ptr->next;
-
-    //delete head and return the pointer to pcb
-    delete del;
-    return ret;
+    {
+        return nullptr;
+    }
 }
-
-
 
 //ALL REMOVED WHEN MADE INTO STATIC CLASS
 /*

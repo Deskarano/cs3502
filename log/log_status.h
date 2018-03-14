@@ -3,7 +3,7 @@
 
 #define LOG_CPU_FETCH               false
 #define LOG_CPU_DECODE              false
-#define LOG_CPU_EXECUTE             true
+#define LOG_CPU_EXECUTE             false
 
 #define LOG_CPU_START               true
 #define LOG_CPU_STOP                true
@@ -12,6 +12,7 @@
 
 #define LOG_CPU_CONTROL_INIT        true
 #define LOG_CPU_CONTROL_DISPATCH    true
+#define LOG_CPU_CONTROL_CLEAR       true
 
 #define LOG_DISK_INIT               true
 #define LOG_DISK_WRITE_WORD         false
@@ -24,6 +25,7 @@
 #define LOG_LONG_CREATE_PCB         true
 #define LOG_LONG_SCHEDULE_FCFS      true
 #define LOG_LONG_SCHEDULE_PRIORITY  true
+#define LOG_LONG_WRITEBACK_PCB      true
 
 struct log_status
 {
@@ -39,6 +41,7 @@ public:
 
     static void log_cpu_control_init(unsigned int num_cores);
     static void log_cpu_control_dispatch(unsigned int core_id, unsigned int pcb_id);
+    static void log_cpu_control_clear(unsigned int core_id);
 
     static void log_disk_init(unsigned int num_words);
     static void log_disk_write_word(unsigned int addr, const char val[8]);
@@ -51,6 +54,7 @@ public:
     static void log_long_create_pcb(unsigned int pcb_id, unsigned int base_disk_address);
     static void log_long_schedule_fcfs(unsigned int pcb_id, unsigned int base_ram_address);
     static void log_long_schedule_priority(unsigned int pcb_id, unsigned int priority, unsigned int base_ram_address);
+    static void log_long_writeback_pcb(unsigned int pcb_id);
 };
 
 
