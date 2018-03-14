@@ -355,6 +355,7 @@ void cpu::cpu_main_thread()
 
         instr *instruction = decode(fetch);
         log_status::log_cpu_decode(core_id, fetch, instruction);
+        log_status::log_cpu_execute(core_id, instruction, reg);
 
         if(instruction->op == HLT)
         {
@@ -368,7 +369,6 @@ void cpu::cpu_main_thread()
         else
         {
             execute(instruction, pc, reg, current_pcb->get_base_ram_address());
-            log_status::log_cpu_execute(core_id, instruction, reg);
         }
     }
 }
@@ -392,7 +392,7 @@ void cpu::start()
     state = CPU_BUSY;
     current_pcb->set_state(PCB_RUNNING);
 
-    cpu_thread = std::thread(&cpu::cpu_main_thread, this);
+    cpu_thread = new std::thread(&cpu::cpu_main_thread, this);
 }
 
 void cpu::stop()
@@ -402,7 +402,8 @@ void cpu::stop()
     state = CPU_IDLE;
     current_pcb->set_state(PCB_READY);
 
-    cpu_thread.join();
+    cpu_thread->join();
+    delete cpu_thread;
 
     save_pcb();
 }

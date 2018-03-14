@@ -56,7 +56,7 @@ int main()
 {
     disk::init(2048);
     ram::init(1024);
-    cpu_control::init(4);
+    cpu_control::init(1);
 
     load("programfile");
 
@@ -70,4 +70,6 @@ int main()
         shortterm::clear_done_processes();
         shortterm::dispatch_new_processes();
     }
+
+    std::cout << "exiting program\n";
 }

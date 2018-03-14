@@ -31,7 +31,7 @@ public:
 private:
     unsigned int core_id;
 
-    std::thread cpu_thread;
+    std::thread *cpu_thread;
     void cpu_main_thread();
 
     pcb *current_pcb;
