@@ -55,6 +55,8 @@ public:
     static void log_long_schedule_fcfs(unsigned int pcb_id, unsigned int base_ram_address);
     static void log_long_schedule_priority(unsigned int pcb_id, unsigned int priority, unsigned int base_ram_address);
     static void log_long_writeback_pcb(unsigned int pcb_id);
+
+    static void dump_ram();
 };
 
 

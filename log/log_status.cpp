@@ -3,6 +3,7 @@
 #include "../utils/base_conversions.h"
 #include "../utils/lock.h"
 
+#include "../ram/ram.h"
 #include "../cpu/types/instr_types.h"
 
 #include <iostream>
@@ -920,5 +921,23 @@ void log_status::log_long_writeback_pcb(unsigned int pcb_id)
                   << pcb_id << " back to disk\n";
 
         print_lock->notify();
+    }
+}
+
+void log_status::dump_ram()
+{
+    for(int i = 0; i < ram::size(); i += 4)
+    {
+        std::cout << "0x" << dec_to_hex(4 * i) << ": ";
+        for(int j = 0; j < 4; j++)
+        {
+            char *val = ram::read_word(i + j);
+            for(int k = 0; k < 8; k++)
+            {
+                std::cout << val[k];
+            }
+            std::cout << " ";
+        }
+        std::cout << "\n";
     }
 }
