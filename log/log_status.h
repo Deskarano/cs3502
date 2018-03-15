@@ -1,18 +1,21 @@
 #ifndef CS3502_LOG_STATUS_H
 #define CS3502_LOG_STATUS_H
 
+#define LOG_CPU_CONTROL_INIT        true
+#define LOG_CPU_CONTROL_DISPATCH    true
+#define LOG_CPU_CONTROL_CLEAR       true
+
 #define LOG_CPU_FETCH               false
 #define LOG_CPU_DECODE              false
-#define LOG_CPU_EXECUTE             false
+#define LOG_CPU_EXECUTE             true
 
 #define LOG_CPU_START               true
 #define LOG_CPU_STOP                true
 #define LOG_CPU_SET_PCB             true
 #define LOG_CPU_SAVE_PCB            true
 
-#define LOG_CPU_CONTROL_INIT        true
-#define LOG_CPU_CONTROL_DISPATCH    true
-#define LOG_CPU_CONTROL_CLEAR       true
+#define LOG_CPU_CACHE_WRITE_WORD    false
+#define LOG_CPU_CACHE_READ_WORD     false
 
 #define LOG_DISK_INIT               true
 #define LOG_DISK_WRITE_WORD         false
@@ -30,6 +33,10 @@
 struct log_status
 {
 public:
+    static void log_cpu_control_init(unsigned int num_cores);
+    static void log_cpu_control_dispatch(unsigned int core_id, unsigned int pcb_id);
+    static void log_cpu_control_clear(unsigned int core_id);
+
     static void log_cpu_fetch(unsigned int core_id, unsigned int pcb_id, unsigned int pc);
     static void log_cpu_decode(unsigned int core_id, char *fetch, void *instr);
     static void log_cpu_execute(unsigned int core_id, void *instruction, int reg[16]);
@@ -39,9 +46,8 @@ public:
     static void log_cpu_set_pcb(unsigned int core_id, unsigned int pcb_id);
     static void log_cpu_save_pcb(unsigned int core_id, unsigned int pcb_id);
 
-    static void log_cpu_control_init(unsigned int num_cores);
-    static void log_cpu_control_dispatch(unsigned int core_id, unsigned int pcb_id);
-    static void log_cpu_control_clear(unsigned int core_id);
+    static void log_cpu_cache_write_word(unsigned int core_id, unsigned int addr, char val[8]);
+    static void log_cpu_cache_read_word(unsigned int core_id, unsigned int addr, char val[8]);
 
     static void log_disk_init(unsigned int num_words);
     static void log_disk_write_word(unsigned int addr, const char val[8]);

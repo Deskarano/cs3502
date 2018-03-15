@@ -3,8 +3,11 @@
 
 #include "types/cpu_types.h"
 #include "../pcb/pcb.h"
+#include "types/instr_types.h"
 
 #include <thread>
+
+#define CACHE_SIZE 300
 
 class cpu
 {
@@ -31,8 +34,15 @@ public:
 private:
     unsigned int core_id;
 
+    char cache_data[8 * CACHE_SIZE];
+    bool cache_changed[CACHE_SIZE];
+    void write_word_to_cache(unsigned int addr, char *val);
+    char *read_word_from_cache(unsigned int addr);
+
     std::thread *cpu_thread;
     void cpu_main_thread();
+    void execute(instr *instruction);
+    instr *decode(char *instruction);
 
     pcb *current_pcb;
     cpu_state state;

@@ -33,7 +33,7 @@ void ram::write_word(unsigned int addr, char val[8])
     }
     else
     {
-        log_error::ram_write_word_out_of_range(addr);
+        log_error::ram_write_word_range(addr);
     }
 }
 
@@ -56,6 +56,6 @@ char *ram::read_word(unsigned int addr)
     }
     else
     {
-        log_error::ram_read_word_out_of_range(addr);
+        log_error::ram_read_word_range(addr);
     }
 }

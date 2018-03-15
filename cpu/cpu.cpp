@@ -1,6 +1,6 @@
+#include <iostream>
 #include "cpu.h"
 
-#include "types/instr_types.h"
 #include "../ram/ram.h"
 #include "../utils/base_conversions.h"
 
@@ -9,7 +9,7 @@
 
 static unsigned int next_id = 0;
 
-void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int base)
+void cpu::execute(instr *instruction)
 {
     unsigned int new_pc = pc + 4;
     
@@ -20,13 +20,12 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
             auto args = (io_args *) instruction->args;
             if(args->reg2 == 0)
             {
-                reg[args->reg1] = hex_to_dec(ram::read_word(base + args->addr), 8);
+                reg[args->reg1] = hex_to_dec(read_word_from_cache(args->addr), 8);
             }
             else
             {
-                reg[args->reg1] = hex_to_dec(ram::read_word(base + (unsigned) reg[args->reg2]), 8);
+                reg[args->reg1] = hex_to_dec(read_word_from_cache(reg[args->reg2]), 8);
             }
-
             break;
         }
 
@@ -35,20 +34,23 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
             auto args = (io_args *) instruction->args;
             if(args->reg2 == 0)
             {
-                ram::write_word(base + args->addr, dec_to_hex(reg[args->reg1]));
+                write_word_to_cache(args->addr, dec_to_hex(reg[args->reg1]));
+                cache_changed[args->addr / 4] = true;
             }
             else
             {
-                ram::write_word(base + (unsigned) reg[args->reg2], dec_to_hex(reg[args->reg1]));
+                write_word_to_cache(reg[args->reg2], dec_to_hex(reg[args->reg1]));
+                cache_changed[reg[args->reg2] / 4] = true;
             }
-
             break;
         }
 
         case ST:
         {
             auto args = (i_args *) instruction->args;
-            ram::write_word(base + (unsigned) reg[args->dreg], dec_to_hex(reg[args->breg]));
+
+            write_word_to_cache(reg[args->dreg], dec_to_hex(reg[args->breg]));
+            cache_changed[reg[args->dreg] / 4] = true;
 
             break;
         }
@@ -56,8 +58,8 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
         case LW:
         {
             auto args = (i_args *) instruction->args;
-            reg[args->dreg] = hex_to_dec(ram::read_word(base + reg[args->breg] + args->addr), 8);
-            
+            reg[args->dreg] = hex_to_dec(read_word_from_cache(reg[args->breg] + args->addr), 8);
+
             break;
         }
 
@@ -269,7 +271,7 @@ void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int bas
     delete instruction;
 }
 
-instr *decode(char instruction[8])
+instr *cpu::decode(char instruction[8])
 {
     auto result = new instr;
     int type = hex_to_dec(instruction, 1) >> 2;
@@ -346,12 +348,51 @@ instr *decode(char instruction[8])
     return result;
 }
 
+void cpu::write_word_to_cache(unsigned int addr, char *val)
+{
+    if(addr < CACHE_SIZE)
+    {
+        log_status::log_cpu_cache_write_word(core_id, addr, val);
+
+        for(int i = 0; i < 8; i++)
+        {
+            cache_data[2 * addr + i] = val[i];
+        }
+    }
+    else
+    {
+        log_error::cpu_cache_write_word_range(addr);
+    }
+}
+
+char *cpu::read_word_from_cache(unsigned int addr)
+{
+    if(addr < CACHE_SIZE)
+    {
+        auto result = new char[8];
+
+        for(int i = 0; i < 8; i++)
+        {
+            result[i] = cache_data[2 * addr + i];
+        }
+
+        log_status::log_cpu_cache_read_word(core_id, addr, result);
+        return result;
+    }
+    else
+    {
+        log_error::cpu_cache_read_word_range(addr);
+    }
+
+}
+
+
 void cpu::cpu_main_thread()
 {
     while(state == CPU_BUSY)
     {
         log_status::log_cpu_fetch(core_id, current_pcb->get_ID(), pc);
-        char *fetch = ram::read_word(current_pcb->get_base_ram_address() + pc);
+        char *fetch = read_word_from_cache(pc);
 
         instr *instruction = decode(fetch);
         log_status::log_cpu_decode(core_id, fetch, instruction);
@@ -368,7 +409,7 @@ void cpu::cpu_main_thread()
         }
         else
         {
-            execute(instruction, pc, reg, current_pcb->get_base_ram_address());
+            execute(instruction);
         }
     }
 }
@@ -423,6 +464,15 @@ void cpu::set_pcb(pcb *new_pcb)
     this->current_pcb = new_pcb;
     this->pc = new_pcb->get_pc();
     copy_reg(current_pcb->get_reg(), this->reg);
+
+    //copy program data into cache
+    for(int i = 0; i < current_pcb->get_total_size(); i++)
+    {
+        char *val = ram::read_word(current_pcb->get_base_ram_address() + 4 * i);
+        write_word_to_cache(4 * i, val);
+
+        cache_changed[i] = false;
+    }
 }
 
 void cpu::save_pcb()
@@ -431,4 +481,13 @@ void cpu::save_pcb()
 
     current_pcb->set_pc(this->pc);
     copy_reg(this->reg, current_pcb->get_reg());
+
+    for(int i = 0; i < current_pcb->get_total_size(); i++)
+    {
+        if(cache_changed[i])
+        {
+            char *val = read_word_from_cache(4 * i);
+            ram::write_word(current_pcb->get_base_ram_address() + 4 * i, val);
+        }
+    }
 }

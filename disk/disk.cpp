@@ -25,7 +25,7 @@ void disk::write_word(unsigned int addr, const char val[8])
     }
     else
     {
-        log_error::disk_write_word_out_of_range(addr);
+        log_error::disk_write_word_range(addr);
     }
 }
 
@@ -44,6 +44,6 @@ char *disk::read_word(unsigned int addr)
     }
     else
     {
-        log_error::disk_read_word_out_of_range(addr);
+        log_error::disk_read_word_range(addr);
     }
 }
