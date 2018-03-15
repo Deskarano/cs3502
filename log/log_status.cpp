@@ -770,7 +770,7 @@ void log_status::log_cpu_cache_write_word(unsigned int core_id, unsigned int add
     {
         print_lock->wait();
 
-        std::cout << "--cpu-status (write_word_to_cache): wrote val ";
+        std::cout << "--cpu-status (" << core_id << ") (write_word_to_cache): wrote val ";
         for(int i = 0; i < 8; i++)
         {
             std::cout << val[i];
@@ -787,7 +787,7 @@ void log_status::log_cpu_cache_read_word(unsigned int core_id, unsigned int addr
     {
         print_lock->wait();
 
-        std::cout << "--cpu-status (read_word_from_cache): read val ";
+        std::cout << "--cpu-status (" << core_id << " (read_word_from_cache): read val ";
         for(int i = 0; i < 8; i++)
         {
             std::cout << val[i];
