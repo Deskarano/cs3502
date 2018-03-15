@@ -1,13 +1,18 @@
-#include <iostream>
-
 #include "cpu.h"
-#include "types/instr_types.h"
 
+#include "types/instr_types.h"
 #include "../ram/ram.h"
 #include "../utils/base_conversions.h"
 
-void execute(instr *instruction, unsigned int &pc, int reg[16])
+#include "../log/log_status.h"
+#include "../log/log_error.h"
+
+static unsigned int next_id = 0;
+
+void execute(instr *instruction, unsigned int &pc, int reg[16], unsigned int base)
 {
+    unsigned int new_pc = pc + 4;
+    
     switch(instruction->op)
     {
         case RD:
@@ -15,15 +20,14 @@ void execute(instr *instruction, unsigned int &pc, int reg[16])
             auto args = (io_args *) instruction->args;
             if(args->reg2 == 0)
             {
-                reg[args->reg1] = hex_to_dec(ram::read_word(args->addr), 8);
+                reg[args->reg1] = hex_to_dec(ram::read_word(base + args->addr), 8);
             }
             else
             {
-                reg[args->reg1] = hex_to_dec(ram::read_word((unsigned) reg[args->reg2]), 8);
+                reg[args->reg1] = hex_to_dec(ram::read_word(base + (unsigned) reg[args->reg2]), 8);
             }
 
-            pc += 4;
-            return;
+            break;
         }
 
         case WR:
@@ -31,33 +35,30 @@ void execute(instr *instruction, unsigned int &pc, int reg[16])
             auto args = (io_args *) instruction->args;
             if(args->reg2 == 0)
             {
-                ram::write_word(args->addr, dec_to_hex(reg[args->reg1]));
+                ram::write_word(base + args->addr, dec_to_hex(reg[args->reg1]));
             }
             else
             {
-                ram::write_word((unsigned) reg[args->reg2], dec_to_hex(reg[args->reg1]));
+                ram::write_word(base + (unsigned) reg[args->reg2], dec_to_hex(reg[args->reg1]));
             }
 
-            pc += 4;
-            return;
+            break;
         }
 
         case ST:
         {
             auto args = (i_args *) instruction->args;
-            ram::write_word((unsigned) reg[args->dreg], dec_to_hex(reg[args->breg]));
+            ram::write_word(base + (unsigned) reg[args->dreg], dec_to_hex(reg[args->breg]));
 
-            pc += 4;
-            return;
+            break;
         }
 
         case LW:
         {
             auto args = (i_args *) instruction->args;
-            reg[args->dreg] = hex_to_dec(ram::read_word(reg[args->breg] + args->addr), 8);
-
-            pc += 4;
-            return;
+            reg[args->dreg] = hex_to_dec(ram::read_word(base + reg[args->breg] + args->addr), 8);
+            
+            break;
         }
 
         case MOV:
@@ -65,8 +66,7 @@ void execute(instr *instruction, unsigned int &pc, int reg[16])
             auto args = (r_args *) instruction->args;
             reg[args->sreg1] = reg[args->sreg2];
 
-            pc += 4;
-            return;
+            break;
         }
 
         case ADD:
@@ -74,31 +74,31 @@ void execute(instr *instruction, unsigned int &pc, int reg[16])
             auto args = (r_args *) instruction->args;
             reg[args->dreg] = reg[args->sreg1] + reg[args->sreg2];
 
-            pc += 4;
-            return;
+            break;
         }
 
         case SUB:
         {
-            //not implemented. instruction is never used
-            pc += 4;
-            return;
+            auto args = (r_args *) instruction->args;
+            reg[args->dreg] = reg[args->sreg1] - reg[args->sreg2];
+
+            break;
         }
 
         case MUL:
         {
-            //not implemented. instruction is never used
-            pc += 4;
-            return;
+            auto args = (r_args *) instruction->args;
+            reg[args->dreg] = reg[args->sreg1] * reg[args->sreg2];
+
+            break;
         }
 
         case DIV:
         {
             auto args = (r_args *) instruction->args;
             reg[args->dreg] = reg[args->sreg1] / reg[args->sreg2];
-
-            pc += 4;
-            return;
+            
+            break;
         }
 
         case AND:
@@ -106,8 +106,7 @@ void execute(instr *instruction, unsigned int &pc, int reg[16])
             auto args = (r_args *) instruction->args;
             reg[args->dreg] = reg[args->sreg1] & reg[args->sreg2];
 
-            pc += 4;
-            return;
+            break;
         }
 
         case OR:
@@ -115,8 +114,7 @@ void execute(instr *instruction, unsigned int &pc, int reg[16])
             auto args = (r_args *) instruction->args;
             reg[args->dreg] = reg[args->sreg1] | reg[args->sreg2];
 
-            pc += 4;
-            return;
+            break;
         }
 
         case MOVI:
@@ -124,8 +122,7 @@ void execute(instr *instruction, unsigned int &pc, int reg[16])
             auto args = (i_args *) instruction->args;
             reg[args->dreg] = args->addr;
 
-            pc += 4;
-            return;
+            break;
         }
 
         case ADDI:
@@ -133,22 +130,23 @@ void execute(instr *instruction, unsigned int &pc, int reg[16])
             auto args = (i_args *) instruction->args;
             reg[args->dreg] += args->addr;
 
-            pc += 4;
-            return;
+            break;
         }
 
         case MULI:
         {
-            //not implemented. instruction is never used
-            pc += 4;
-            return;
+            auto args = (i_args *) instruction->args;
+            reg[args->dreg] *= args->addr;
+
+            break;
         }
 
         case DIVI:
         {
-            //not implemented. instruction is never used
-            pc += 4;
-            return;
+            auto args = (i_args *) instruction->args;
+            reg[args->dreg] /= args->addr;
+
+            break;
         }
 
         case LDI:
@@ -156,8 +154,7 @@ void execute(instr *instruction, unsigned int &pc, int reg[16])
             auto args = (i_args *) instruction->args;
             reg[args->dreg] = args->addr;
 
-            pc += 4;
-            return;
+            break;
         }
 
         case SLT:
@@ -172,35 +169,31 @@ void execute(instr *instruction, unsigned int &pc, int reg[16])
                 reg[args->dreg] = 0;
             }
 
-            pc += 4;
-            return;
+            break;
         }
 
         case SLTI:
         {
-            //not implemented. instruction is never used
-            pc += 4;
-            return;
+            //TODO
+            break;
         }
 
         case HLT:
         {
-            //TODO: implement this. pass PCB to execute()?
-            return;
+            break;
         }
 
         case NOP:
         {
-            pc += 4;
-            return;;
+            break;
         }
 
         case JMP:
         {
             auto args = (j_args *) instruction->args;
-            pc = args->addr;
+            new_pc = args->addr;
 
-            return;
+            break;
         }
 
         case BEQ:
@@ -208,14 +201,10 @@ void execute(instr *instruction, unsigned int &pc, int reg[16])
             auto args = (i_args *) instruction->args;
             if(reg[args->breg] == reg[args->dreg])
             {
-                pc = args->addr;
-            }
-            else
-            {
-                pc += 4;
+                new_pc = args->addr;
             }
 
-            return;
+            break;
         }
 
         case BNE:
@@ -223,14 +212,10 @@ void execute(instr *instruction, unsigned int &pc, int reg[16])
             auto args = (i_args *) instruction->args;
             if(reg[args->breg] != reg[args->dreg])
             {
-                pc = args->addr;
-            }
-            else
-            {
-                pc += 4;
+                new_pc = args->addr;
             }
 
-            return;
+            break;
         }
 
         case BEZ:
@@ -238,14 +223,10 @@ void execute(instr *instruction, unsigned int &pc, int reg[16])
             auto args = (i_args *) instruction->args;
             if(reg[args->breg] == 0)
             {
-                pc = args->addr;
-            }
-            else
-            {
-                pc += 4;
+                new_pc = args->addr;
             }
 
-            return;
+            break;
         }
 
         case BNZ:
@@ -253,14 +234,10 @@ void execute(instr *instruction, unsigned int &pc, int reg[16])
             auto args = (i_args *) instruction->args;
             if(reg[args->breg] != 0)
             {
-                pc = args->addr;
-            }
-            else
-            {
-                pc += 4;
+                new_pc = args->addr;
             }
 
-            return;
+            break;
         }
 
         case BGZ:
@@ -268,14 +245,10 @@ void execute(instr *instruction, unsigned int &pc, int reg[16])
             auto args = (i_args *) instruction->args;
             if(reg[args->breg] > 0)
             {
-                pc = args->addr;
-            }
-            else
-            {
-                pc += 4;
+                new_pc = args->addr;
             }
 
-            return;
+            break;
         }
 
         case BLZ:
@@ -283,28 +256,23 @@ void execute(instr *instruction, unsigned int &pc, int reg[16])
             auto args = (i_args *) instruction->args;
             if(reg[args->breg] < 0)
             {
-                pc = args->addr;
-            }
-            else
-            {
-                pc += 4;
+                new_pc = args->addr;
             }
 
-            return;
-        }
-
-        case INVALID:
-        {
-            std::cout << "--cpu-error (execute): invalid instruction\n";
-            return;
+            break;
         }
     }
+
+    pc = new_pc;
+
+    delete instruction->args;
+    delete instruction;
 }
 
 instr *decode(char instruction[8])
 {
     auto result = new instr;
-    int type = hex_to_dec(instruction, 1) >> 6;
+    int type = hex_to_dec(instruction, 1) >> 2;
 
     if(type == 0b00)
     {
@@ -370,40 +338,72 @@ instr *decode(char instruction[8])
     else if(op == 0x18) result->op = BNZ;
     else if(op == 0x19) result->op = BGZ;
     else if(op == 0x1A) result->op = BLZ;
-    else result->op = INVALID;
+    else
+    {
+        log_error::cpu_decode_invalid(instruction);
+    }
 
     return result;
 }
 
 void cpu::cpu_main_thread()
 {
-    while(state == CPU_FULL)
+    while(state == CPU_BUSY)
     {
-        instr *instruction = decode(ram::read_word(current_pcb->get_base_ram_address() + pc));
+        log_status::log_cpu_fetch(core_id, current_pcb->get_ID(), pc);
+        char *fetch = ram::read_word(current_pcb->get_base_ram_address() + pc);
+
+        instr *instruction = decode(fetch);
+        log_status::log_cpu_decode(core_id, fetch, instruction);
+        log_status::log_cpu_execute(core_id, instruction, reg);
 
         if(instruction->op == HLT)
         {
+            log_status::log_cpu_stop(core_id, current_pcb->get_ID());
+
+            state = CPU_DONE;
             current_pcb->set_state(PCB_DONE);
 
-            stop();
-            return;
+            save_pcb();
         }
         else
         {
-            execute(instruction, pc, reg);
+            execute(instruction, pc, reg, current_pcb->get_base_ram_address());
         }
+    }
+}
+
+cpu::cpu()
+{
+    this->core_id = next_id++;
+    state = CPU_IDLE;
+
+    pc = 0;
+    for(int i = 0; i < 16; i++)
+    {
+        reg[i] = 0;
     }
 }
 
 void cpu::start()
 {
-    *cpu_thread = std::thread (cpu_main_thread, this);
+    log_status::log_cpu_start(core_id, current_pcb->get_ID());
+
+    state = CPU_BUSY;
+    current_pcb->set_state(PCB_RUNNING);
+
+    cpu_thread = new std::thread(&cpu::cpu_main_thread, this);
 }
 
 void cpu::stop()
 {
+    log_status::log_cpu_stop(core_id, current_pcb->get_ID());
+
     state = CPU_IDLE;
+    current_pcb->set_state(PCB_READY);
+
     cpu_thread->join();
+    delete cpu_thread;
 
     save_pcb();
 }
@@ -418,14 +418,17 @@ void copy_reg(const int from[16], int to[16])
 
 void cpu::set_pcb(pcb *new_pcb)
 {
-    this->current_pcb = new_pcb;
+    log_status::log_cpu_set_pcb(core_id, new_pcb->get_ID());
 
+    this->current_pcb = new_pcb;
     this->pc = new_pcb->get_pc();
     copy_reg(current_pcb->get_reg(), this->reg);
 }
 
 void cpu::save_pcb()
 {
-    copy_reg(this->reg, current_pcb->get_reg());
+    log_status::log_cpu_save_pcb(core_id, current_pcb->get_ID());
+
     current_pcb->set_pc(this->pc);
+    copy_reg(this->reg, current_pcb->get_reg());
 }

@@ -12,13 +12,9 @@ public:
     static unsigned int size()
     { return num_words; }
 
-    static bool is_full();
-
 private:
     static unsigned int num_words;
     static char *data;
-
-    static unsigned int used_memory;
 };
 
 #endif //CS3502_RAM_H

@@ -1,6 +1,8 @@
 #ifndef CS3502_BASE_CONVERSIONS_H
 #define CS3502_BASE_CONVERSIONS_H
 
+#include <cstdio>
+
 static unsigned int hex_to_dec(const char *hex, unsigned int length)
 {
     unsigned int result = 0;
@@ -19,12 +21,12 @@ static unsigned int hex_to_dec(const char *hex, unsigned int length)
         if(hex[i] == '7') result += (7 << shift);
         if(hex[i] == '8') result += (8 << shift);
         if(hex[i] == '9') result += (9 << shift);
-        if(hex[i] == 'A') result += (10 << shift);
-        if(hex[i] == 'B') result += (11 << shift);
-        if(hex[i] == 'C') result += (12 << shift);
-        if(hex[i] == 'D') result += (13 << shift);
-        if(hex[i] == 'E') result += (14 << shift);
-        if(hex[i] == 'F') result += (15 << shift);
+        if(hex[i] == 'A' || hex[i] == 'a') result += (10 << shift);
+        if(hex[i] == 'B' || hex[i] == 'b') result += (11 << shift);
+        if(hex[i] == 'C' || hex[i] == 'c') result += (12 << shift);
+        if(hex[i] == 'D' || hex[i] == 'd') result += (13 << shift);
+        if(hex[i] == 'E' || hex[i] == 'e') result += (14 << shift);
+        if(hex[i] == 'F' || hex[i] == 'f') result += (15 << shift);
     }
 
     return result;
@@ -33,8 +35,7 @@ static unsigned int hex_to_dec(const char *hex, unsigned int length)
 static char *dec_to_hex(int dec)
 {
     auto result = new char[8];
-    snprintf(result, 8, "%0x", dec);
-
+    sprintf(result, "%08x", dec);
     return result;
 }
 #endif //CS3502_BASE_CONVERSIONS_H

@@ -1,23 +1,23 @@
 #include "shortterm.h"
-#include "../../ram/ram.h"
-#include "../../pcb/pcb.h"
+
 #include "../../pcb/pcb_node.h"
+
 #include "../../cpu/cpu_control.h"
 #include "../../cpu/cpu.h"
-#include "../long/longterm.h"
+
 #include <iostream>
 
-sched_algo shortterm::scheduling_algorithm;
-pcb_node *shortterm::head_ptr;
-pcb_node *shortterm::tail_ptr;
-int shortterm::queue_length;
+sched_algo scheduling_algorithm;
+pcb_node *head_ptr;
+pcb_node *tail_ptr;
+int queue_length;
 
 using namespace std;
 
 //set scheduling algorithm
 void shortterm::set_scheduling_algorithm(sched_algo sa)
 {
-    shortterm::scheduling_algorithm = sa;
+    scheduling_algorithm = sa;
 }
 
 //take a PCB and add it to appropriate point in linked list
@@ -42,7 +42,7 @@ void shortterm::receive_pcb(pcb *next_pcb)
     queue_length++;
 
     pcb_node *newnode = new pcb_node(next_pcb);
-    switch(shortterm::scheduling_algorithm)
+    switch(scheduling_algorithm)
     {
         //add to end
         case FCFS:
@@ -52,7 +52,7 @@ void shortterm::receive_pcb(pcb *next_pcb)
             //add at first spot where *current is greater
         case PRI:
             //if less than head
-            if(newnode->pcb->get_priority() < head_ptr->pcb->get_priority())
+            if(newnode->value->get_priority() < head_ptr->value->get_priority())
             {
                 newnode->next = head_ptr;
                 head_ptr = newnode;
@@ -63,7 +63,7 @@ void shortterm::receive_pcb(pcb *next_pcb)
             while(current != nullptr)
             {
                 //if less, add here in linked list
-                if(newnode->pcb->get_priority() < current->pcb->get_priority())
+                if(newnode->value->get_priority() < current->value->get_priority())
                 {
                     newnode->next = current;
                     previous->next = newnode;
@@ -89,35 +89,24 @@ void shortterm::receive_pcb(pcb *next_pcb)
 }
 
 //look at CPU cores and give it a process if open
-void shortterm::dispatch_processes()
+void shortterm::dispatch_new_processes()
 {
-    cpu_state current_state;
     unsigned int num_cores = cpu_control::get_num_cores();
-
-    //error, no cores
-    if(num_cores == 0)
-    {
-        cout << "--shortterm-error (dispatch_processes): Trying to dispatch to zero cores\n";
-        return;
-    }
 
     //iterate through cores
     for(int i = 0; i < num_cores; i++)
     {
-        current_state = cpu_control::get_core_state(i);
-        pcb *next_process;
+        cpu_state current_state = cpu_control::get_core_state(i);
 
-        switch(current_state)
+        if(current_state == CPU_IDLE)
         {
-            //CPU needs to get back to work
-            case CPU_IDLE:
-                next_process = remove_first_process();
-                cpu_control::dispatch_to_core(i, next_process);
-                break;
+            pcb *next_process = remove_first_process();
 
-                //TODO: when working with preemption
-            case CPU_FULL:
-                break;
+            //skip this dispatch cycle if no processes in ready queue
+            if(next_process != nullptr)
+            {
+                cpu_control::dispatch_to_core(i, next_process);
+            }
         }
     }
 }
@@ -125,32 +114,34 @@ void shortterm::dispatch_processes()
 //return the pointer to first pcb and remove from queue
 pcb *shortterm::remove_first_process()
 {
-    //decrease queue length
-    queue_length--;
-
-    //return header point pcb and delete head pointer
-    pcb *ret = head_ptr->pcb;
-    pcb_node *del = head_ptr;
-
-    //if only one in list
-    if(head_ptr == tail_ptr)
+    if(head_ptr != nullptr)
     {
-        queue_length = 0;
-        head_ptr = nullptr;
-        tail_ptr = nullptr;
+        //return header point pcb and delete head pointer
+        pcb *ret = head_ptr->value;
+        pcb_node *del = head_ptr;
+
+        //if only one in list
+        if(head_ptr == tail_ptr)
+        {
+            head_ptr = nullptr;
+            tail_ptr = nullptr;
+        }
+        else
+        {
+            //more than one in list, move head pointer due to removing
+            head_ptr = head_ptr->next;
+        }
+
+        //delete head and return the pointer to pcb
+        queue_length--;
         delete del;
         return ret;
     }
-        //more than one in list, move head pointer due to removing
     else
-        head_ptr = head_ptr->next;
-
-    //delete head and return the pointer to pcb
-    delete del;
-    return ret;
+    {
+        return nullptr;
+    }
 }
-
-
 
 //ALL REMOVED WHEN MADE INTO STATIC CLASS
 /*

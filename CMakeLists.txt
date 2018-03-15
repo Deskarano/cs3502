@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.8)
 project(cs3502)
 
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_FLAGS "-lpthread")
 
 set(SOURCE_FILES_MAIN
         driver.cpp
@@ -33,6 +34,13 @@ set(SOURCE_FILES_MAIN
         utils/queue.cpp
         utils/queue.h
         utils/memcpy.cpp
-        utils/memcpy.h)
+        utils/memcpy.h
+        utils/lock.cpp
+        utils/lock.h
+
+        log/log_status.cpp
+        log/log_status.h
+        log/log_error.cpp
+        log/log_error.h)
 
 add_executable(cs3502 ${SOURCE_FILES_MAIN})

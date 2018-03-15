@@ -8,7 +8,8 @@ class pcb
 public:
     pcb(unsigned int ID, unsigned int priority,
         unsigned int code_size, unsigned int input_size,
-        unsigned int output_size, unsigned int temp_size);
+        unsigned int output_size, unsigned int temp_size,
+        unsigned int base_disk_address);
 
     unsigned int get_ID()
     { return ID; }
@@ -34,26 +35,14 @@ public:
     unsigned int get_total_size()
     { return code_size + input_size + output_size + temp_size; }
 
-    void set_ID(unsigned int ID)
-    { this->ID = ID; }
-
-    void set_priority(unsigned int priority)
-    { this->priority = priority; }
-
     void set_state(pcb_state state)
     { this->state = state; }
 
     void set_pc(unsigned int pc)
     { this->pc = pc; }
 
-    void set_base_disk_address(unsigned int base_disk_address)
-    { this->base_disk_address = base_disk_address; }
-
     void set_base_ram_address(unsigned int base_ram_address)
     { this->base_ram_address = base_ram_address; }
-
-    void set_code_size(unsigned int code_size)
-    { this->code_size = code_size; }
 
 private:
     //scheduler-related info

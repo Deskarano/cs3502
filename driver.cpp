@@ -4,6 +4,8 @@
 #include "disk/disk.h"
 #include "ram/ram.h"
 #include "scheduler/long/longterm.h"
+#include "scheduler/short/shortterm.h"
+#include "cpu/cpu_control.h"
 
 void load(const std::string programfile)
 {
@@ -38,14 +40,14 @@ void load(const std::string programfile)
             }
             else
             {
-                disk::write_word(addr, line.c_str());
+                disk::write_word(addr, line.substr(2).c_str());
                 addr += 4;
             }
         }
     }
     else
     {
-        std::cout << "unable to open program file\n";
+        std::cout << "--loader-error: unable to open program file\n";
         exit(1);
     }
 }
@@ -54,6 +56,21 @@ int main()
 {
     disk::init(2048);
     ram::init(1024);
+    cpu_control::init(4);
+
     load("programfile");
 
+    while(longterm::pcbs_left_total() > 0)
+    {
+        cpu_control::clear_finished_cores();
+
+        if(longterm::pcbs_left_ram() == 0 && longterm::pcbs_left_total() > 0)
+        {
+            longterm::schedule_fcfs();
+        }
+
+        shortterm::dispatch_new_processes();
+    }
+
+    std::cout << "done!\n";
 }
