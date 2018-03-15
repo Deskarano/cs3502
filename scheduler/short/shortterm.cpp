@@ -41,7 +41,7 @@ void shortterm::receive_pcb(pcb *next_pcb)
     //added one to queue
     queue_length++;
 
-    pcb_node *newnode = new pcb_node(next_pcb);
+    auto *newnode = new pcb_node(next_pcb);
     switch(scheduling_algorithm)
     {
         //add to end
@@ -94,7 +94,7 @@ void shortterm::dispatch_new_processes()
     unsigned int num_cores = cpu_control::get_num_cores();
 
     //iterate through cores
-    for(int i = 0; i < num_cores; i++)
+    for(unsigned int i = 0; i < num_cores; i++)
     {
         cpu_state current_state = cpu_control::get_core_state(i);
 

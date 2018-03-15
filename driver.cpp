@@ -68,7 +68,6 @@ int main()
         {
             longterm::schedule_fcfs();
         }
-
         shortterm::dispatch_new_processes();
     }
 
