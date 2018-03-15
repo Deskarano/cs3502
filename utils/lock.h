@@ -2,6 +2,7 @@
 #define CS3502_LOCK_H
 
 #include <mutex>
+#include <condition_variable>
 
 class lock
 {

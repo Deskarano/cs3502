@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.8)
 project(cs3502)
 
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_FLAGS "-lpthread")
 
 set(SOURCE_FILES_MAIN
         driver.cpp
