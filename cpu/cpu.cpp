@@ -465,7 +465,6 @@ void cpu::set_pcb(pcb *new_pcb)
     this->pc = new_pcb->get_pc();
     copy_reg(current_pcb->get_reg(), this->reg);
 
-    //copy program data into cache
     for(int i = 0; i < current_pcb->get_total_size(); i++)
     {
         char *val = ram::read_word(current_pcb->get_base_ram_address() + 4 * i);
@@ -488,6 +487,8 @@ void cpu::save_pcb()
         {
             char *val = read_word_from_cache(4 * i);
             ram::write_word(current_pcb->get_base_ram_address() + 4 * i, val);
+
+            cache_changed[i] = false;
         }
     }
 }
