@@ -2,6 +2,7 @@
 #define CS3502_PCB_H
 
 #include "pcb_types.h"
+#include <ctime>
 
 class pcb
 {
@@ -44,6 +45,20 @@ public:
     void set_base_ram_address(unsigned int base_ram_address)
     { this->base_ram_address = base_ram_address; }
 
+    //setting the clock variables
+    void set_clock_birth()  { this->time_birth = clock(); };
+    void set_clock_onram()  { this->time_onram = clock(); };
+    void set_clock_oncpu()  { this->time_oncpu = clock(); };
+    void set_clock_offcpu() { this->time_offcpu = clock(); };
+    void set_clock_death()  { this->time_death = clock(); };
+
+    //giving clock variables
+    clock_t get_clock_birth()   { return time_birth; };
+    clock_t get_clock_onram()   { return time_onram; };
+    clock_t get_clock_oncpu()   { return time_oncpu; };
+    clock_t get_clock_offcpu()   { return time_offcpu; };
+    clock_t get_clock_death()   { return time_death; };
+
 private:
     //scheduler-related info
     unsigned int ID;
@@ -63,6 +78,13 @@ private:
     unsigned int input_size;
     unsigned int output_size;
     unsigned int temp_size;
+
+    //time stamps of when things happened
+    clock_t time_birth;
+    clock_t time_onram;
+    clock_t time_oncpu;
+    clock_t time_offcpu;
+    clock_t time_death;
 };
 
 

@@ -43,7 +43,6 @@ void cpu_control::clear_finished_cores()
 
             cores[i].save_pcb();
             longterm::writeback_finished_pcb(cores[i].get_pcb());
-
             cores[i].set_state(CPU_IDLE);
         }
     }

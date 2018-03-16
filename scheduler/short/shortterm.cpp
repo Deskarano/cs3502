@@ -23,6 +23,8 @@ void shortterm::set_scheduling_algorithm(sched_algo sa)
 //take a PCB and add it to appropriate point in linked list
 void shortterm::receive_pcb(pcb *next_pcb)
 {
+    next_pcb -> set_clock_onram();   //set time of when put on ram
+
     //if list is empty
     if(queue_length == 0)
     {
@@ -106,6 +108,7 @@ void shortterm::dispatch_new_processes()
             if(next_process != nullptr)
             {
                 cpu_control::dispatch_to_core(i, next_process);
+                next_process -> set_clock_oncpu();  //set time of when process goes on cpu
             }
         }
     }

@@ -5,27 +5,34 @@
 #define LOG_CPU_DECODE              false
 #define LOG_CPU_EXECUTE             false
 
-#define LOG_CPU_START               true
-#define LOG_CPU_STOP                true
-#define LOG_CPU_SET_PCB             true
-#define LOG_CPU_SAVE_PCB            true
+#define LOG_CPU_START               false
+#define LOG_CPU_STOP                false
+#define LOG_CPU_SET_PCB             false
+#define LOG_CPU_SAVE_PCB            false
 
-#define LOG_CPU_CONTROL_INIT        true
-#define LOG_CPU_CONTROL_DISPATCH    true
-#define LOG_CPU_CONTROL_CLEAR       true
+#define LOG_CPU_CONTROL_INIT        false
+#define LOG_CPU_CONTROL_DISPATCH    false
+#define LOG_CPU_CONTROL_CLEAR       false
 
-#define LOG_DISK_INIT               true
+#define LOG_DISK_INIT               false
 #define LOG_DISK_WRITE_WORD         false
 #define LOG_DISK_READ_WORD          false
 
-#define LOG_RAM_INIT                true
+#define LOG_RAM_INIT                false
 #define LOG_RAM_WRITE_WORD          false
 #define LOG_RAM_READ_WORD           false
 
-#define LOG_LONG_CREATE_PCB         true
-#define LOG_LONG_SCHEDULE_FCFS      true
-#define LOG_LONG_SCHEDULE_PRIORITY  true
-#define LOG_LONG_WRITEBACK_PCB      true
+#define LOG_LONG_CREATE_PCB         false
+#define LOG_LONG_SCHEDULE_FCFS      false
+#define LOG_LONG_SCHEDULE_PRIORITY  false
+#define LOG_LONG_WRITEBACK_PCB      false
+
+#define LOG_PCB_TIMES               true
+#define LOG_PCB_STATS               true
+
+#define LOG_DUMP_RAM                false
+
+#include <ctime>
 
 struct log_status
 {
@@ -56,6 +63,8 @@ public:
     static void log_long_schedule_priority(unsigned int pcb_id, unsigned int priority, unsigned int base_ram_address);
     static void log_long_writeback_pcb(unsigned int pcb_id);
 
+    static void log_pcb_times(unsigned int pcb_id, clock_t time_toRAM, clock_t time_toCPU, clock_t time_offCPU);
+    static void log_pcb_summary(unsigned int pcb_id, clock_t time_waiting, clock_t time_running);
     static void dump_ram();
 };
 
