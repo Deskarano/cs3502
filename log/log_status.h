@@ -17,6 +17,9 @@
 #define LOG_CPU_CACHE_WRITE_WORD    true
 #define LOG_CPU_CACHE_READ_WORD     true
 
+#define LOG_CPU_CACHE_WRITE_WORD    false
+#define LOG_CPU_CACHE_READ_WORD     false
+
 #define LOG_DISK_INIT               false
 #define LOG_DISK_WRITE_WORD         false
 #define LOG_DISK_READ_WORD          false

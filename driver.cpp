@@ -71,6 +71,7 @@ int main()
             //longterm::schedule_fcfs();
             log_status::dump_ram();
         }
+
         shortterm::dispatch_new_processes();
     }
 
