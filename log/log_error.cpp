@@ -14,26 +14,38 @@ void log_error::cpu_decode_invalid(char *instruction)
     exit(CPU_DECODE_INVALID);
 }
 
-void log_error::disk_write_word_out_of_range(unsigned int addr)
+void log_error::cpu_cache_write_word_range(unsigned int addr)
 {
-    std::cout << "--disk_error (write_word): address 0x" << dec_to_hex(addr) << " is out of range\n";
-    exit(DISK_WRITE_WORD_OUT_OF_RANGE);
+    std::cout << "--cpu-error (write_word_to_cache): address 0x" << dec_to_hex(addr) << " is out of range\n";
+    exit(CPU_CACHE_WRITE_WORD_RANGE);
 }
 
-void log_error::disk_read_word_out_of_range(unsigned int addr)
+void log_error::cpu_cache_read_word_range(unsigned int addr)
 {
-    std::cout << "--disk_error (read_word): address 0x" << dec_to_hex(addr) << " is out of range\n";
-    exit(DISK_READ_WORD_OUT_OF_RANGE);
+    std::cout << "--cpu-error (read_word_from_cache): address 0x" << dec_to_hex(addr) << " is out of range\n";
+    exit(CPU_CACHE_READ_WORD_RANGE);
 }
 
-void log_error::ram_write_word_out_of_range(unsigned int addr)
+void log_error::disk_write_word_range(unsigned int addr)
 {
-    std::cout << "--disk_error (write_word): address 0x" << dec_to_hex(addr) << " is out of range\n";
+    std::cout << "--disk-error (write_word): address 0x" << dec_to_hex(addr) << " is out of range\n";
+    exit(DISK_WRITE_WORD_RANGE);
+}
+
+void log_error::disk_read_word_range(unsigned int addr)
+{
+    std::cout << "--disk-error (read_word): address 0x" << dec_to_hex(addr) << " is out of range\n";
+    exit(DISK_READ_WORD_RANGE);
+}
+
+void log_error::ram_write_word_range(unsigned int addr)
+{
+    std::cout << "--ram-error (write_word): address 0x" << dec_to_hex(addr) << " is out of range\n";
     exit(RAM_WRITE_WORD_OUT_OF_RANGE);
 }
 
-void log_error::ram_read_word_out_of_range(unsigned int addr)
+void log_error::ram_read_word_range(unsigned int addr)
 {
-    std::cout << "--disk_error (read_word): address 0x" << dec_to_hex(addr) << " is out of range\n";
+    std::cout << "--ram-error (read_word): address 0x" << dec_to_hex(addr) << " is out of range\n";
     exit(RAM_READ_WORD_OUT_OF_RANGE);
 }
