@@ -403,7 +403,7 @@ void log_status::log_cpu_execute(unsigned int core_id, void *instruction, int re
             {
                 auto args = (r_args *) ((instr *) instruction)->args;
                 std::cout << "--cpu-status (" << core_id << ") (execute MOV):"
-                          << " moved reg" << args->sreg2
+                          << " moved reg " << args->sreg2
                           << " = " << reg[args->sreg2]
                           << " to reg " << args->sreg1
                           << " = " << reg[args->sreg1]
