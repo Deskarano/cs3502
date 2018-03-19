@@ -14,9 +14,6 @@
 #define LOG_CPU_SET_PCB             false
 #define LOG_CPU_SAVE_PCB            false
 
-#define LOG_CPU_CACHE_WRITE_WORD    true
-#define LOG_CPU_CACHE_READ_WORD     true
-
 #define LOG_CPU_CACHE_WRITE_WORD    false
 #define LOG_CPU_CACHE_READ_WORD     false
 
