@@ -7,7 +7,6 @@
 #include "../cpu/types/instr_types.h"
 
 #include <iostream>
-#include <time.h>
 
 static lock *print_lock = new lock;
 
@@ -959,7 +958,8 @@ void log_status::log_long_writeback_pcb(unsigned int pcb_id)
     }
 }
 
-void log_status::log_pcb_times(unsigned int pcb_id, clock_t time_toRAM, clock_t time_toCPU, clock_t time_offCPU) {
+void log_status::log_pcb_times(unsigned int pcb_id, clock_t time_toRAM, clock_t time_toCPU, clock_t time_offCPU)
+{
     if(LOG_PCB_TIMES)
     {
         print_lock->wait();
@@ -970,7 +970,8 @@ void log_status::log_pcb_times(unsigned int pcb_id, clock_t time_toRAM, clock_t 
     }
 }
 
-void log_status::log_pcb_summary(unsigned int pcb_id, clock_t time_waiting, clock_t time_running) {
+void log_status::log_pcb_summary(unsigned int pcb_id, clock_t time_waiting, clock_t time_running)
+{
     if(LOG_PCB_STATS)
     {
         print_lock->wait();

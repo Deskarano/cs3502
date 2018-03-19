@@ -7,28 +7,28 @@
 
 #define LOG_CPU_FETCH               false
 #define LOG_CPU_DECODE              false
-#define LOG_CPU_EXECUTE             false
+#define LOG_CPU_EXECUTE             true
 
-#define LOG_CPU_START               false
-#define LOG_CPU_STOP                false
-#define LOG_CPU_SET_PCB             false
-#define LOG_CPU_SAVE_PCB            false
+#define LOG_CPU_START               true
+#define LOG_CPU_STOP                true
+#define LOG_CPU_SET_PCB             true
+#define LOG_CPU_SAVE_PCB            true
 
 #define LOG_CPU_CACHE_WRITE_WORD    false
 #define LOG_CPU_CACHE_READ_WORD     false
 
-#define LOG_DISK_INIT               false
+#define LOG_DISK_INIT               true
 #define LOG_DISK_WRITE_WORD         false
 #define LOG_DISK_READ_WORD          false
 
-#define LOG_RAM_INIT                false
+#define LOG_RAM_INIT                true
 #define LOG_RAM_WRITE_WORD          false
 #define LOG_RAM_READ_WORD           false
 
-#define LOG_LONG_CREATE_PCB         false
-#define LOG_LONG_SCHEDULE_FCFS      false
-#define LOG_LONG_SCHEDULE_PRIORITY  false
-#define LOG_LONG_WRITEBACK_PCB      false
+#define LOG_LONG_CREATE_PCB         true
+#define LOG_LONG_SCHEDULE_FCFS      true
+#define LOG_LONG_SCHEDULE_PRIORITY  true
+#define LOG_LONG_WRITEBACK_PCB      true
 
 #define LOG_PCB_TIMES               true
 #define LOG_PCB_STATS               true
