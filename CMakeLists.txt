@@ -41,6 +41,6 @@ set(SOURCE_FILES_MAIN
         log/log_status.cpp
         log/log_status.h
         log/log_error.cpp
-        log/log_error.h)
+        log/log_error.h utils/custom_clock.cpp utils/custom_clock.h)
 
 add_executable(cs3502 ${SOURCE_FILES_MAIN})
