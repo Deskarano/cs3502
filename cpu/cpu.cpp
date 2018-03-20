@@ -135,7 +135,6 @@ void cpu::cpu_main_thread()
 
         instr *instruction = decode(fetch);
         log_status::log_cpu_decode(core_id, fetch, instruction);
-        log_status::log_cpu_execute(core_id, instruction, reg);
 
         if(instruction->op == HLT)
         {
@@ -149,6 +148,7 @@ void cpu::cpu_main_thread()
         else
         {
             execute(instruction);
+            log_status::log_cpu_execute(core_id, instruction, reg);
         }
     }
 }
