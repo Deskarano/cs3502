@@ -79,6 +79,9 @@ private:
     unsigned int output_size;
     unsigned int temp_size;
 
+    //summary info
+    unsigned int num_io_operations;
+
     //time stamps of when things happened
     clock_t time_birth;
     clock_t time_onram;

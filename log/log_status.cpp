@@ -958,6 +958,18 @@ void log_status::log_long_writeback_pcb(unsigned int pcb_id)
     }
 }
 
+void log_status::log_pcb_size(unsigned int pcb_id, unsigned int size_code, unsigned int size_input, unsigned int size_output, unsigned int size_temp)
+{
+    if(LOG_PCB_SIZES)
+    {
+        print_lock->wait();
+
+        std::cout << pcb_id << "," << size_code << "," << size_input << "," << size_output  << "," << size_temp << "\n";
+
+        print_lock->notify();
+    }
+}
+
 void log_status::log_pcb_times(unsigned int pcb_id, clock_t time_toRAM, clock_t time_toCPU, clock_t time_offCPU)
 {
     if(LOG_PCB_TIMES)
@@ -970,13 +982,13 @@ void log_status::log_pcb_times(unsigned int pcb_id, clock_t time_toRAM, clock_t 
     }
 }
 
-void log_status::log_pcb_summary(unsigned int pcb_id, clock_t time_waiting, clock_t time_running)
+void log_status::log_pcb_summary(unsigned int pcb_id, clock_t time_birth, clock_t time_ram, clock_t time_cpu, clock_t time_death, clock_t elapsed_waiting, clock_t elapsed_running)
 {
-    if(LOG_PCB_STATS)
+    if(LOG_PCB_SUMMARY)
     {
         print_lock->wait();
 
-        std::cout << "--pcb-times (pcb id: " << pcb_id << "):\t Waiting - " << time_waiting << "\t Running - " << time_running << "\n";
+        std::cout << pcb_id << "," << time_birth << "," << time_ram << "," << time_cpu << "," << time_death << "," << elapsed_waiting << "," << elapsed_running << "\n";
 
         print_lock->notify();
     }
