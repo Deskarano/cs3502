@@ -7,6 +7,9 @@ static unsigned int hex_to_dec(const char *hex, unsigned int length)
 {
     unsigned int result = 0;
 
+    //needed to work with clion
+    if(hex[length - 1] == '\r') length -= 1;
+
     for(int i = 0; i < length; i++)
     {
         int shift = 4 * (length - i - 1);

@@ -44,27 +44,16 @@ void longterm::create_pcb(std::string *job_section, std::string *data_section, u
     job_section->erase(0, next_space + 1);
     next_space = (int) job_section->find(' ');
 
-    std::cout << *job_section << "\n";
-
     job_section->erase(0, next_space + 1);
     next_space = (int) job_section->find(' ');
     ID = hex_to_dec(job_section->substr(0, next_space).c_str(), next_space);
-
-    std::cout << "ID = " << ID << "\n";
-    std::cout << *job_section << "\n";
 
     job_section->erase(0, next_space + 1);
     next_space = (int) job_section->find(' ');
     code_size = hex_to_dec(job_section->substr(0, next_space).c_str(), next_space);
 
-    std::cout << "code_size = " << code_size << "\n";
-    std::cout << *job_section << "\n";
-
     job_section->erase(0, next_space + 1);
-    priority = hex_to_dec(job_section->c_str(), (unsigned int) job_section->size() - 1);
-
-    std::cout << "priority = " << priority << "\n";
-    std::cout << *job_section << "\n";
+    priority = hex_to_dec(job_section->c_str(), (unsigned int) job_section->size());
 
     //analyze data_section
     unsigned int input_size, output_size, temp_size;
@@ -73,27 +62,16 @@ void longterm::create_pcb(std::string *job_section, std::string *data_section, u
     data_section->erase(0, next_space + 1);
     next_space = (int) data_section->find(' ');
 
-    std::cout << *data_section << "\n";
-
     data_section->erase(0, next_space + 1);
     next_space = (int) data_section->find(' ');
     input_size = hex_to_dec(data_section->substr(0, next_space).c_str(), next_space);
-
-    std::cout << "input_size = " << input_size << "\n";
-    std::cout << *data_section << "\n";
 
     data_section->erase(0, next_space + 1);
     next_space = (int) data_section->find(' ');
     output_size = hex_to_dec(data_section->substr(0, next_space).c_str(), next_space);
 
-    std::cout << "output_size = " << output_size << "\n";
-    std::cout << *data_section << "\n";
-
     data_section->erase(0, next_space + 1);
-    temp_size = hex_to_dec(data_section->c_str(), (unsigned int) data_section->size() - 1);
-
-    std::cout << "temp_size = " << temp_size << "\n";
-    std::cout << *data_section << "\n";
+    temp_size = hex_to_dec(data_section->c_str(), (unsigned int) data_section->size());
 
     auto *new_pcb = new pcb(ID, priority, code_size, input_size, output_size, temp_size, base_disk_address);
     log_status::log_pcb_size(ID, code_size, input_size, output_size, temp_size);
