@@ -53,8 +53,7 @@ void longterm::create_pcb(std::string *job_section, std::string *data_section, u
     code_size = hex_to_dec(job_section->substr(0, next_space).c_str(), next_space);
 
     job_section->erase(0, next_space + 1);
-    next_space = (int) job_section->find(' ');
-    priority = hex_to_dec(job_section->substr(0, next_space).c_str(), (unsigned int) job_section->size() - 1);
+    priority = hex_to_dec(job_section->c_str(), (unsigned int) job_section->size() - 1);
 
     //analyze data_section
     unsigned int input_size, output_size, temp_size;
@@ -72,8 +71,7 @@ void longterm::create_pcb(std::string *job_section, std::string *data_section, u
     output_size = hex_to_dec(data_section->substr(0, next_space).c_str(), next_space);
 
     data_section->erase(0, next_space + 1);
-    next_space = (int) data_section->find(' ');
-    temp_size = hex_to_dec(data_section->substr(0, next_space).c_str(), (unsigned int) data_section->size() - 1);
+    temp_size = hex_to_dec(data_section->c_str(), (unsigned int) data_section->size() - 1);
 
     auto *new_pcb = new pcb(ID, priority, code_size, input_size, output_size, temp_size, base_disk_address);
     log_status::log_pcb_size(ID, code_size, input_size, output_size, temp_size);
