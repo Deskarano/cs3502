@@ -7,8 +7,8 @@ static unsigned int hex_to_dec(const char *hex, unsigned int length)
 {
     unsigned int result = 0;
 
-    //needed to work with clion
-    if(hex[length - 1] == '\r') length -= 1;
+    //needed to work with clion loader
+    if(hex[length - 1] == '\r') length--;
 
     for(int i = 0; i < length; i++)
     {
