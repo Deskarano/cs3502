@@ -44,16 +44,24 @@ void longterm::create_pcb(std::string *job_section, std::string *data_section, u
     job_section->erase(0, next_space + 1);
     next_space = (int) job_section->find(' ');
 
+    std::cout << *job_section << "\n";
+
     job_section->erase(0, next_space + 1);
     next_space = (int) job_section->find(' ');
     ID = hex_to_dec(job_section->substr(0, next_space).c_str(), next_space);
+
+    std::cout << *job_section << "\n";
 
     job_section->erase(0, next_space + 1);
     next_space = (int) job_section->find(' ');
     code_size = hex_to_dec(job_section->substr(0, next_space).c_str(), next_space);
 
+    std::cout << *job_section << "\n";
+
     job_section->erase(0, next_space + 1);
     priority = hex_to_dec(job_section->c_str(), (unsigned int) job_section->size() - 1);
+
+    std::cout << *job_section << "\n";
 
     //analyze data_section
     unsigned int input_size, output_size, temp_size;
