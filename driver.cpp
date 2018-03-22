@@ -58,6 +58,7 @@ int main()
     disk::init(2048);
     ram::init(1024);
     cpu_control::init(1);
+    shortterm::set_scheduling_algorithm(PRI);
 
     load("programfile");
 
