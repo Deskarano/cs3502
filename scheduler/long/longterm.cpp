@@ -80,6 +80,7 @@ void longterm::create_pcb(std::string *job_section, std::string *data_section, u
     num_total_pcbs++;
 
     log_status::log_long_create_pcb(ID, base_disk_address);
+    log_status::log_pcb_priority(ID, priority);
 }
 
 void longterm::writeback_finished_pcb(pcb *pcb)
