@@ -994,6 +994,18 @@ void log_status::log_pcb_summary(unsigned int pcb_id, clock_t time_birth, clock_
     }
 }
 
+void log_status::log_pcb_priority(unsigned int pcb_id, unsigned int priority)
+{
+    if(LOG_PCB_PRIORITIES)
+    {
+        print_lock->wait();
+
+        std::cout << pcb_id << "," << priority << "\n";
+
+        print_lock->notify();
+    }
+}
+
 void log_status::dump_ram()
 {
     if(LOG_DUMP_RAM) {
