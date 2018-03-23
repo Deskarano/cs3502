@@ -189,7 +189,6 @@ instr *cpu::decode(char instruction[8])
         args->reg1 = hex_to_dec(instruction + 2, 1);
         args->reg2 = hex_to_dec(instruction + 3, 1);
         args->addr = hex_to_dec(instruction + 4, 4);
-
         result->args = args;
     }
 
@@ -247,6 +246,7 @@ void cpu::execute(instr *instruction)
             {
                 reg[args->reg1] = hex_to_dec(read_word_from_cache((unsigned) reg[args->reg2]), 8);
             }
+            current_pcb->new_input_operation();
             break;
         }
 
@@ -263,6 +263,7 @@ void cpu::execute(instr *instruction)
                 write_word_to_cache((unsigned) reg[args->reg2], dec_to_hex(reg[args->reg1]));
                 cache_changed[reg[args->reg2] / 4] = true;
             }
+            current_pcb->new_output_operation();
             break;
         }
 
@@ -272,7 +273,7 @@ void cpu::execute(instr *instruction)
 
             write_word_to_cache((unsigned) reg[args->dreg], dec_to_hex(reg[args->breg]));
             cache_changed[reg[args->dreg] / 4] = true;
-
+            current_pcb->new_output_operation();
             break;
         }
 
@@ -280,7 +281,7 @@ void cpu::execute(instr *instruction)
         {
             auto args = (i_args *) instruction->args;
             reg[args->dreg] = hex_to_dec(read_word_from_cache(reg[args->breg] + args->addr), 8);
-
+            current_pcb->new_input_operation();
             break;
         }
 

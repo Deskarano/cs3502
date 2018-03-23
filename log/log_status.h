@@ -11,7 +11,7 @@
 
 #define LOG_CPU_START               false
 #define LOG_CPU_STOP                false
-#define LOG_CPU_SET_PCB             false
+#define LOG_CPU_SET_PCB             true
 #define LOG_CPU_SAVE_PCB            false
 
 #define LOG_CPU_CACHE_WRITE_WORD    false
@@ -32,8 +32,9 @@
 
 #define LOG_PCB_SIZES               false
 #define LOG_PCB_TIMES               false
-#define LOG_PCB_SUMMARY             true
-#define LOG_PCB_PRIORITIES          true
+#define LOG_PCB_SUMMARY             false
+#define LOG_PCB_PRIORITIES          false
+#define LOG_PCB_IO                  false
 
 #define LOG_DUMP_RAM                false
 
@@ -71,10 +72,11 @@ public:
     static void log_long_schedule_priority(unsigned int pcb_id, unsigned int priority, unsigned int base_ram_address);
     static void log_long_writeback_pcb(unsigned int pcb_id);
 
-    static void log_pcb_size(unsigned int pcb_id, unsigned int size_code, unsigned int size_input, unsigned int size_output, unsigned int size_temp);
+    static void log_pcb_size(unsigned int pcb_id, unsigned int size_code, unsigned int size_input, unsigned int size_output, unsigned int size_temp, unsigned int size_total);
     static void log_pcb_times(unsigned int pcb_id, clock_t time_toRAM, clock_t time_toCPU, clock_t time_offCPU);
     static void log_pcb_summary(unsigned int pcb_id, clock_t time_birth, clock_t time_ram, clock_t time_cpu, clock_t time_death, clock_t elapsed_waiting, clock_t elapsed_running);
     static void log_pcb_priority(unsigned int pcb_id, unsigned int priority);
+    static void log_pcb_io_operations(unsigned int pcb_id, unsigned int num_input, unsigned int num_output, unsigned int num_total);
     static void dump_ram();
 };
 

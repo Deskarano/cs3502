@@ -57,8 +57,9 @@ int main()
 {
     disk::init(2048);
     ram::init(1024);
-    cpu_control::init(1);
-    shortterm::set_scheduling_algorithm(PRI);
+    cpu_control::init(4);
+    //shortterm::set_scheduling_algorithm(PRI);
+    shortterm::set_scheduling_algorithm(FCFS);
 
     load("programfile");
 
@@ -68,8 +69,8 @@ int main()
 
         if(longterm::pcbs_left_ram() == 0 && longterm::pcbs_left_total() > 0)
         {
-            longterm::schedule_priority();
-            //longterm::schedule_fcfs();
+            //longterm::schedule_priority();
+            longterm::schedule_fcfs();
             log_status::dump_ram();
         }
 

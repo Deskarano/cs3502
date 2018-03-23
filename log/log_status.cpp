@@ -958,13 +958,13 @@ void log_status::log_long_writeback_pcb(unsigned int pcb_id)
     }
 }
 
-void log_status::log_pcb_size(unsigned int pcb_id, unsigned int size_code, unsigned int size_input, unsigned int size_output, unsigned int size_temp)
+void log_status::log_pcb_size(unsigned int pcb_id, unsigned int size_code, unsigned int size_input, unsigned int size_output, unsigned int size_temp, unsigned int size_total)
 {
     if(LOG_PCB_SIZES)
     {
         print_lock->wait();
 
-        std::cout << pcb_id << "," << size_code << "," << size_input << "," << size_output  << "," << size_temp << "\n";
+        std::cout << pcb_id << "," << size_code << "," << size_input << "," << size_output  << "," << size_temp << "," << size_total << "\n";
 
         print_lock->notify();
     }
@@ -1001,6 +1001,18 @@ void log_status::log_pcb_priority(unsigned int pcb_id, unsigned int priority)
         print_lock->wait();
 
         std::cout << pcb_id << "," << priority << "\n";
+
+        print_lock->notify();
+    }
+}
+
+void log_status::log_pcb_io_operations(unsigned int pcb_id, unsigned int num_input, unsigned int num_output, unsigned int num_total)
+{
+    if(LOG_PCB_IO)
+    {
+        print_lock->wait();
+
+        std::cout << pcb_id << "," << num_input << "," << num_output << "," << num_total << "\n";
 
         print_lock->notify();
     }

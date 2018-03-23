@@ -59,6 +59,13 @@ public:
     clock_t get_clock_offcpu()   { return time_offcpu; };
     clock_t get_clock_death()   { return time_death; };
 
+    //IO operations
+    void new_input_operation() { num_input++; };
+    void new_output_operation() { num_output++; };
+    unsigned int get_num_input() { return num_input; }
+    unsigned int get_num_output() { return num_output; }
+    unsigned int get_num_io_operations() { return num_input + num_output; }
+
 private:
     //scheduler-related info
     unsigned int ID;
@@ -80,7 +87,8 @@ private:
     unsigned int temp_size;
 
     //summary info
-    unsigned int num_io_operations;
+    unsigned int num_input = 0;
+    unsigned int num_output = 0;
 
     //time stamps of when things happened
     clock_t time_birth;

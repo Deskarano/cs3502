@@ -74,7 +74,7 @@ void longterm::create_pcb(std::string *job_section, std::string *data_section, u
     temp_size = hex_to_dec(data_section->c_str(), (unsigned int) data_section->size());
 
     auto *new_pcb = new pcb(ID, priority, code_size, input_size, output_size, temp_size, base_disk_address);
-    log_status::log_pcb_size(ID, code_size, input_size, output_size, temp_size);
+    log_status::log_pcb_size(ID, code_size, input_size, output_size, temp_size, new_pcb->get_total_size());
     add_pcb_to_list(new_pcb);
     new_pcb->set_clock_birth(); //set the time of birth
     num_total_pcbs++;
@@ -91,6 +91,7 @@ void longterm::writeback_finished_pcb(pcb *pcb)
     pcb->set_clock_death(); //set time of death
     log_status::log_pcb_times(pcb->get_ID(), pcb->get_clock_birth(), pcb->get_clock_oncpu(), pcb->get_clock_death());
     log_status::log_pcb_summary(pcb->get_ID(), pcb->get_clock_birth(), pcb->get_clock_onram(), pcb->get_clock_oncpu(), pcb->get_clock_death(), pcb->get_clock_oncpu() - pcb->get_clock_birth(), pcb->get_clock_death() - pcb->get_clock_oncpu());
+    log_status::log_pcb_io_operations(pcb->get_ID(), pcb->get_num_input(), pcb->get_num_output(), pcb->get_num_io_operations());
     //end of pcb lifecycle
     delete pcb;
 
