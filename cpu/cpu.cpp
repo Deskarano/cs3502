@@ -27,7 +27,6 @@ void cpu::start()
 
     state = CPU_BUSY;
     current_pcb->set_state(PCB_RUNNING);
-
     cpu_thread = new std::thread(&cpu::cpu_main_thread, this);
 }
 
@@ -37,7 +36,6 @@ void cpu::stop()
 
     state = CPU_IDLE;
     current_pcb->set_state(PCB_READY);
-
     cpu_thread->join();
     delete cpu_thread;
 
@@ -128,6 +126,7 @@ char *cpu::read_word_from_cache(unsigned int addr)
 
 void cpu::cpu_main_thread()
 {
+    current_pcb->set_clock_oncpu();
     while(state == CPU_BUSY)
     {
         log_status::log_cpu_fetch(core_id, current_pcb->get_ID(), pc);
@@ -151,6 +150,7 @@ void cpu::cpu_main_thread()
             log_status::log_cpu_execute(core_id, instruction, reg);
         }
     }
+    current_pcb->set_clock_offcpu();
 }
 
 instr *cpu::decode(char instruction[8])

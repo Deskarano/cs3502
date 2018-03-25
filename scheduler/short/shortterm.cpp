@@ -108,7 +108,6 @@ void shortterm::dispatch_new_processes()
             if(next_process != nullptr)
             {
                 cpu_control::dispatch_to_core(i, next_process);
-                next_process -> set_clock_oncpu();  //set time of when process goes on cpu
             }
         }
     }

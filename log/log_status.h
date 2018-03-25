@@ -32,9 +32,9 @@
 
 #define LOG_PCB_SIZES               false
 #define LOG_PCB_TIMES               false
-#define LOG_PCB_SUMMARY             false
+#define LOG_PCB_SUMMARY             true
 #define LOG_PCB_PRIORITIES          false
-#define LOG_PCB_IO                  true
+#define LOG_PCB_IO                  false
 
 #define LOG_DUMP_RAM                false
 
