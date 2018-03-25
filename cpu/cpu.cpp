@@ -90,7 +90,7 @@ void cpu::save_pcb()
 
 void cpu::write_word_to_cache(unsigned int addr, char *val)
 {
-    if(addr < CACHE_SIZE)
+    if(addr < CACHE_SIZE * 4)
     {
         log_status::log_cpu_cache_write_word(core_id, addr, val);
 
@@ -107,7 +107,7 @@ void cpu::write_word_to_cache(unsigned int addr, char *val)
 
 char *cpu::read_word_from_cache(unsigned int addr)
 {
-    if(addr < CACHE_SIZE)
+    if(addr < CACHE_SIZE * 4)
     {
         auto result = new char[8];
 

@@ -7,7 +7,7 @@
 
 #include <thread>
 
-#define CACHE_SIZE 300
+#define CACHE_SIZE 74
 
 class cpu
 {

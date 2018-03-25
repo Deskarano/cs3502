@@ -11,7 +11,7 @@
 
 #define LOG_CPU_START               false
 #define LOG_CPU_STOP                false
-#define LOG_CPU_SET_PCB             true
+#define LOG_CPU_SET_PCB             false
 #define LOG_CPU_SAVE_PCB            false
 
 #define LOG_CPU_CACHE_WRITE_WORD    false
@@ -34,7 +34,7 @@
 #define LOG_PCB_TIMES               false
 #define LOG_PCB_SUMMARY             false
 #define LOG_PCB_PRIORITIES          false
-#define LOG_PCB_IO                  false
+#define LOG_PCB_IO                  true
 
 #define LOG_DUMP_RAM                false
 
