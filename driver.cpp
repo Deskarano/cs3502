@@ -1,12 +1,15 @@
-#include <iostream>
-#include <fstream>
-
 #include "disk/disk.h"
 #include "ram/ram.h"
-#include "scheduler/long/longterm.h"
-#include "scheduler/short/shortterm.h"
+
+#include "sched/sched_control.h"
+
 #include "cpu/cpu_control.h"
 #include "log/log_status.h"
+
+#include "utils/base_conversions.h"
+
+#include <iostream>
+#include <fstream>
 
 void load(const std::string programfile)
 {
@@ -36,7 +39,7 @@ void load(const std::string programfile)
                 }
                 else // line[3] == 'E'
                 {
-                    longterm::create_pcb(&job_line, &data_line, base_disk_address);
+                    sched_control::create_pcb(&job_line, &data_line, base_disk_address);
                 }
             }
             else
@@ -58,23 +61,14 @@ int main()
     disk::init(2048);
     ram::init(1024);
     cpu_control::init(4);
-    //shortterm::set_scheduling_algorithm(PRI);
-    shortterm::set_scheduling_algorithm(FCFS);
+
+    sched_control::set_algorithm(SCHED_SJF);
 
     load("programfile");
 
-    while(longterm::pcbs_left_total() > 0)
+    while(sched_control::pcbs_left())
     {
-        cpu_control::clear_finished_cores();
-
-        if(longterm::pcbs_left_ram() == 0 && longterm::pcbs_left_total() > 0)
-        {
-            //longterm::schedule_priority();
-            longterm::schedule_fcfs();
-            log_status::dump_ram();
-        }
-
-        shortterm::dispatch_new_processes();
+        sched_control::schedule_and_run();
     }
 
     std::cout << "done!\n";

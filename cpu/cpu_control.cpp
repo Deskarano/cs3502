@@ -2,7 +2,7 @@
 
 #include "cpu.h"
 #include "../log/log_status.h"
-#include "../scheduler/long/longterm.h"
+#include "../sched/long/longterm.h"
 
 unsigned int cpu_control::num_cores = 0;
 static cpu *cores = nullptr;
@@ -15,22 +15,32 @@ void cpu_control::init(unsigned int num_cores)
     cores = new cpu[num_cores];
 }
 
-cpu_state cpu_control::get_core_state(unsigned int core_id)
+unsigned int cpu_control::num_idle_cores()
 {
-    return cores[core_id].get_state();
-}
+    unsigned int count = 0;
 
-void cpu_control::dispatch_to_core(unsigned int core_id, pcb *new_pcb)
-{
-    log_status::log_cpu_control_dispatch(core_id, new_pcb->get_ID());
-
-    if(get_core_state(core_id) == CPU_BUSY)
+    for(int i = 0; i < num_cores; i++)
     {
-        cores[core_id].stop();
+        if(cores[i].get_state() == CPU_IDLE) count++;
     }
 
-    cores[core_id].set_pcb(new_pcb);
-    cores[core_id].start();
+    return count;
+}
+
+void cpu_control::dispatch(pcb *pcb)
+{
+    for(int i = 0; i < num_cores; i++)
+    {
+        if(cores[i].get_state() == CPU_IDLE)
+        {
+            log_status::log_cpu_control_dispatch(i, pcb->ID);
+
+            cores[i].set_pcb(pcb);
+            cores[i].start();
+
+            break;
+        }
+    }
 }
 
 void cpu_control::clear_finished_cores()

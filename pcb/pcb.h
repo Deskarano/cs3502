@@ -12,38 +12,8 @@ public:
         unsigned int output_size, unsigned int temp_size,
         unsigned int base_disk_address);
 
-    unsigned int get_ID()
-    { return ID; }
-
-    unsigned int get_priority()
-    { return priority; }
-
-    pcb_state get_state()
-    { return state; }
-
-    unsigned int get_pc()
-    { return pc; }
-
-    int *get_reg()
-    { return reg; }
-
-    unsigned int get_base_disk_address()
-    { return base_disk_address; }
-
-    unsigned int get_base_ram_address()
-    { return base_ram_address; }
-
     unsigned int get_total_size()
     { return code_size + input_size + output_size + temp_size; }
-
-    void set_state(pcb_state state)
-    { this->state = state; }
-
-    void set_pc(unsigned int pc)
-    { this->pc = pc; }
-
-    void set_base_ram_address(unsigned int base_ram_address)
-    { this->base_ram_address = base_ram_address; }
 
     //setting the clock variables
     void set_clock_birth()  { this->time_birth = clock(); };
@@ -66,8 +36,7 @@ public:
     unsigned int get_num_output() { return num_output; }
     unsigned int get_num_io_operations() { return num_input + num_output; }
 
-private:
-    //scheduler-related info
+    //sched-related info
     unsigned int ID;
     unsigned int priority;
     pcb_state state;
@@ -86,6 +55,7 @@ private:
     unsigned int output_size;
     unsigned int temp_size;
 
+private:
     //summary info
     unsigned int num_input = 0;
     unsigned int num_output = 0;

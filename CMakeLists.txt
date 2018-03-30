@@ -25,14 +25,15 @@ set(SOURCE_FILES_MAIN
         ram/ram.cpp
         ram/ram.h
 
-        scheduler/short/shortterm.cpp
-        scheduler/short/shortterm.h
-        scheduler/long/longterm.cpp
-        scheduler/long/longterm.h
+        sched/short/shortterm.cpp
+        sched/short/shortterm.h
+        sched/long/longterm.cpp
+        sched/long/longterm.h
+        sched/sched_control.cpp
+        sched/sched_control.h
+        sched/sched_types.h
 
         utils/base_conversions.h
-        utils/queue.cpp
-        utils/queue.h
         utils/memcpy.cpp
         utils/memcpy.h
         utils/lock.cpp
@@ -41,6 +42,6 @@ set(SOURCE_FILES_MAIN
         log/log_status.cpp
         log/log_status.h
         log/log_error.cpp
-        log/log_error.h utils/custom_clock.cpp utils/custom_clock.h)
+        log/log_error.h)
 
 add_executable(cs3502 ${SOURCE_FILES_MAIN})

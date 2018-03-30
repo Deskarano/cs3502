@@ -5,6 +5,7 @@
 
 #include "../ram/ram.h"
 #include "../cpu/types/instr_types.h"
+#include "../disk/disk.h"
 
 #include <iostream>
 
@@ -288,13 +289,13 @@ void log_status::log_cpu_control_clear(unsigned int core_id)
     }
 }
 
-void log_status::log_cpu_fetch(unsigned int core_id, unsigned int pcb_id, unsigned int pc)
+void log_status::log_cpu_fetch(unsigned int core_id, unsigned int pc)
 {
     if(LOG_CPU_FETCH)
     {
         print_lock->wait();
 
-        std::cout << "--cpu-status (" << core_id << ") (cpu_fetch): PCB " << pcb_id
+        std::cout << "--cpu-status (" << core_id << ") (cpu_fetch): "
                   << " fetching instruction at 0x" << dec_to_hex(pc)
                   << "\n";
 
@@ -902,6 +903,18 @@ void log_status::log_ram_read_word(unsigned int addr, char val[8])
     }
 }
 
+void log_status::log_short_receive_pcb(unsigned int pcb_id)
+{
+    if(LOG_SHORT_RECEIVE_PCB)
+    {
+        print_lock->wait();
+
+        std::cout << "--shortterm-status (receive_pcb): received PCB " << pcb_id << "\n";
+
+        print_lock->notify();
+    }
+}
+
 void log_status::log_long_create_pcb(unsigned int pcb_id, unsigned int base_disk_address)
 {
     if(LOG_LONG_CREATE_PCB)
@@ -918,11 +931,11 @@ void log_status::log_long_create_pcb(unsigned int pcb_id, unsigned int base_disk
 
 void log_status::log_long_schedule_fcfs(unsigned int pcb_id, unsigned int base_ram_address)
 {
-    if(LOG_LONG_SCHEDULE_FCFS)
+    if(LOG_LONG_SCHEDULE)
     {
         print_lock->wait();
 
-        std::cout << "--longterm-status (schedule_fcfs): loading PCB "
+        std::cout << "--longterm-status (schedule FCFS): loading PCB "
                   << pcb_id << " to RAM address 0x" << dec_to_hex(base_ram_address)
                   << "\n";
 
@@ -932,12 +945,27 @@ void log_status::log_long_schedule_fcfs(unsigned int pcb_id, unsigned int base_r
 
 void log_status::log_long_schedule_priority(unsigned int pcb_id, unsigned int priority, unsigned int base_ram_address)
 {
-    if(LOG_LONG_SCHEDULE_PRIORITY)
+    if(LOG_LONG_SCHEDULE)
     {
         print_lock->wait();
 
-        std::cout << "--longterm-status (schedule_priority): loading PCB "
+        std::cout << "--longterm-status (schedule PRI): loading PCB "
                   << pcb_id << " (priority " << priority
+                  << ") to RAM address 0x" << dec_to_hex(base_ram_address)
+                  << "\n";
+
+        print_lock->notify();
+    }
+}
+
+void log_status::log_long_schedule_sjf(unsigned int pcb_id, unsigned int total_size, unsigned int base_ram_address)
+{
+    if(LOG_LONG_SCHEDULE)
+    {
+        print_lock->wait();
+
+        std::cout << "--longterm-status (schedule SJF): loading PCB "
+                  << pcb_id << " (size " << total_size
                   << ") to RAM address 0x" << dec_to_hex(base_ram_address)
                   << "\n";
 
@@ -958,13 +986,15 @@ void log_status::log_long_writeback_pcb(unsigned int pcb_id)
     }
 }
 
-void log_status::log_pcb_size(unsigned int pcb_id, unsigned int size_code, unsigned int size_input, unsigned int size_output, unsigned int size_temp, unsigned int size_total)
+void log_status::log_pcb_size(unsigned int pcb_id, unsigned int size_code, unsigned int size_input, unsigned int size_output,
+                              unsigned int size_temp, unsigned int size_total)
 {
     if(LOG_PCB_SIZES)
     {
         print_lock->wait();
 
-        std::cout << pcb_id << "," << size_code << "," << size_input << "," << size_output  << "," << size_temp << "," << size_total << "\n";
+        std::cout << pcb_id << "," << size_code << "," << size_input << "," << size_output << "," << size_temp << ","
+                  << size_total << "\n";
 
         print_lock->notify();
     }
@@ -976,19 +1006,22 @@ void log_status::log_pcb_times(unsigned int pcb_id, clock_t time_toRAM, clock_t 
     {
         print_lock->wait();
 
-        std::cout << "--pcb-times (pcb id: " << pcb_id << "):\t RAM - " << time_toRAM << "\t CPU - " << time_toCPU << "\t COMPLETE - " << time_offCPU << "\n";
+        std::cout << "--pcb-times (pcb id: " << pcb_id << "):\t RAM - " << time_toRAM << "\t CPU - " << time_toCPU
+                  << "\t COMPLETE - " << time_offCPU << "\n";
 
         print_lock->notify();
     }
 }
 
-void log_status::log_pcb_summary(unsigned int pcb_id, clock_t time_birth, clock_t time_ram, clock_t time_cpu, clock_t time_death, clock_t elapsed_waiting, clock_t elapsed_running)
+void log_status::log_pcb_summary(unsigned int pcb_id, clock_t time_birth, clock_t time_ram, clock_t time_cpu,
+                                 clock_t time_death, clock_t elapsed_waiting, clock_t elapsed_running)
 {
     if(LOG_PCB_SUMMARY)
     {
         print_lock->wait();
 
-        std::cout << pcb_id << "," << time_birth << "," << time_ram << "," << time_cpu << "," << time_death << "," << elapsed_waiting << "," << elapsed_running << "\n";
+        std::cout << pcb_id << "," << time_birth << "," << time_ram << "," << time_cpu << "," << time_death << ","
+                  << elapsed_waiting << "," << elapsed_running << "\n";
 
         print_lock->notify();
     }
@@ -1006,7 +1039,8 @@ void log_status::log_pcb_priority(unsigned int pcb_id, unsigned int priority)
     }
 }
 
-void log_status::log_pcb_io_operations(unsigned int pcb_id, unsigned int num_input, unsigned int num_output, unsigned int num_total)
+void log_status::log_pcb_io_operations(unsigned int pcb_id, unsigned int num_input, unsigned int num_output,
+                                       unsigned int num_total)
 {
     if(LOG_PCB_IO)
     {
@@ -1020,17 +1054,36 @@ void log_status::log_pcb_io_operations(unsigned int pcb_id, unsigned int num_inp
 
 void log_status::dump_ram()
 {
-    if(LOG_DUMP_RAM) {
-        for (int i = 0; i < ram::size(); i += 4) {
-            std::cout << "0x" << dec_to_hex(4 * i) << ": ";
-            for (int j = 0; j < 4; j++) {
-                char *val = ram::read_word(i + j);
-                for (int k = 0; k < 8; k++) {
-                    std::cout << val[k];
-                }
-                std::cout << " ";
+    for(int i = 0; i < ram::size(); i += 4)
+    {
+        std::cout << "0x" << dec_to_hex(4 * i) << ": ";
+        for(int j = 0; j < 4; j++)
+        {
+            char *val = ram::read_word(4 * (i + j));
+            for(int k = 0; k < 8; k++)
+            {
+                std::cout << val[k];
             }
-            std::cout << "\n";
+            std::cout << " ";
         }
+        std::cout << "\n";
+    }
+}
+
+void log_status::dump_disk()
+{
+    for(int i = 0; i < disk::size(); i += 4)
+    {
+        std::cout << "0x" << dec_to_hex(4 * i) << ": ";
+        for(int j = 0; j < 4; j++)
+        {
+            char *val = disk::read_word(4 * (i + j));
+            for(int k = 0; k < 8; k++)
+            {
+                std::cout << val[k];
+            }
+            std::cout << " ";
+        }
+        std::cout << "\n";
     }
 }

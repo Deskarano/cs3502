@@ -23,23 +23,22 @@ cpu::cpu()
 
 void cpu::start()
 {
-    log_status::log_cpu_start(core_id, current_pcb->get_ID());
+    log_status::log_cpu_start(core_id, current_pcb->ID);
 
     state = CPU_BUSY;
-    current_pcb->set_state(PCB_RUNNING);
+    current_pcb->state = PCB_RUNNING;
     cpu_thread = new std::thread(&cpu::cpu_main_thread, this);
 }
 
 void cpu::stop()
 {
-    log_status::log_cpu_stop(core_id, current_pcb->get_ID());
+    log_status::log_cpu_stop(core_id, current_pcb->ID);
 
     state = CPU_IDLE;
-    current_pcb->set_state(PCB_READY);
+    current_pcb->state = PCB_READY;
+
     cpu_thread->join();
     delete cpu_thread;
-
-    save_pcb();
 }
 
 void copy_reg(const int from[16], int to[16])
@@ -52,15 +51,15 @@ void copy_reg(const int from[16], int to[16])
 
 void cpu::set_pcb(pcb *new_pcb)
 {
-    log_status::log_cpu_set_pcb(core_id, new_pcb->get_ID());
+    log_status::log_cpu_set_pcb(core_id, new_pcb->ID);
 
     this->current_pcb = new_pcb;
-    this->pc = new_pcb->get_pc();
-    copy_reg(current_pcb->get_reg(), this->reg);
+    this->pc = new_pcb->pc;
+    copy_reg(current_pcb->reg, this->reg);
 
     for(unsigned int i = 0; i < current_pcb->get_total_size(); i++)
     {
-        char *val = ram::read_word(current_pcb->get_base_ram_address() + 4 * i);
+        char *val = ram::read_word(current_pcb->base_ram_address + 4 * i);
         write_word_to_cache(4 * i, val);
 
         cache_changed[i] = false;
@@ -69,17 +68,17 @@ void cpu::set_pcb(pcb *new_pcb)
 
 void cpu::save_pcb()
 {
-    log_status::log_cpu_save_pcb(core_id, current_pcb->get_ID());
+    log_status::log_cpu_save_pcb(core_id, current_pcb->ID);
 
-    current_pcb->set_pc(this->pc);
-    copy_reg(this->reg, current_pcb->get_reg());
+    current_pcb->pc = this->pc;
+    copy_reg(this->reg, current_pcb->reg);
 
     for(unsigned int i = 0; i < current_pcb->get_total_size(); i++)
     {
         if(cache_changed[i])
         {
             char *val = read_word_from_cache(4 * i);
-            ram::write_word(current_pcb->get_base_ram_address() + 4 * i, val);
+            ram::write_word(current_pcb->base_ram_address + 4 * i, val);
 
             cache_changed[i] = false;
         }
@@ -121,7 +120,6 @@ char *cpu::read_word_from_cache(unsigned int addr)
     {
         log_error::cpu_cache_read_word_range(addr);
     }
-
 }
 
 void cpu::cpu_main_thread()
@@ -129,7 +127,7 @@ void cpu::cpu_main_thread()
     current_pcb->set_clock_oncpu();
     while(state == CPU_BUSY)
     {
-        log_status::log_cpu_fetch(core_id, current_pcb->get_ID(), pc);
+        log_status::log_cpu_fetch(core_id, pc);
         char *fetch = read_word_from_cache(pc);
 
         instr *instruction = decode(fetch);
@@ -137,17 +135,19 @@ void cpu::cpu_main_thread()
 
         if(instruction->op == HLT)
         {
-            log_status::log_cpu_stop(core_id, current_pcb->get_ID());
+            log_status::log_cpu_execute(core_id, instruction, reg);
+            log_status::log_cpu_stop(core_id, current_pcb->ID);
 
             state = CPU_DONE;
-            current_pcb->set_state(PCB_DONE);
-
-            save_pcb();
+            current_pcb->state = PCB_DONE;
         }
         else
         {
             execute(instruction);
             log_status::log_cpu_execute(core_id, instruction, reg);
+
+            delete instruction->args;
+            delete instruction;
         }
     }
     current_pcb->set_clock_offcpu();
@@ -488,7 +488,4 @@ void cpu::execute(instr *instruction)
     }
 
     pc = new_pc;
-
-    delete instruction->args;
-    delete instruction;
 }
