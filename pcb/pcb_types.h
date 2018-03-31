@@ -6,6 +6,7 @@ enum pcb_state
     PCB_NEW,
     PCB_READY,
     PCB_RUNNING,
+    PCB_WAITING,
     PCB_DONE
 };
 

@@ -40,10 +40,14 @@ void longterm::create_pcb(unsigned int ID, unsigned int priority, unsigned int c
                           unsigned int input_size, unsigned int output_size, unsigned int temp_size,
                           unsigned int base_disk_address)
 {
-    auto *new_pcb = new pcb(ID, priority, code_size, input_size, output_size, temp_size, base_disk_address);
+    auto *new_pcb = new pcb(ID, priority, code_size,
+                            input_size, output_size, temp_size,
+                            base_disk_address);
     log_status::log_pcb_size(ID, code_size, input_size, output_size, temp_size, new_pcb->get_total_size());
+
     add_pcb_to_list(new_pcb);
     new_pcb->set_clock_birth(); //set the time of birth
+
     num_total_pcbs++;
 
     log_status::log_long_create_pcb(ID, base_disk_address);
@@ -57,8 +61,11 @@ void longterm::writeback_finished_pcb(pcb *pcb)
     ram_to_disk(pcb->base_ram_address, pcb->base_disk_address, pcb->get_total_size());
     pcb->set_clock_death(); //set time of death
     log_status::log_pcb_times(pcb->ID, pcb->get_clock_birth(), pcb->get_clock_oncpu(), pcb->get_clock_death());
-    log_status::log_pcb_summary(pcb->ID, pcb->get_clock_birth(), pcb->get_clock_onram(), pcb->get_clock_oncpu(), pcb->get_clock_offcpu(), pcb->get_clock_oncpu() - pcb->get_clock_birth(), pcb->get_clock_offcpu() - pcb->get_clock_oncpu());
-    log_status::log_pcb_io_operations(pcb->ID, pcb->get_num_input(), pcb->get_num_output(), pcb->get_num_io_operations());
+    log_status::log_pcb_summary(pcb->ID, pcb->get_clock_birth(), pcb->get_clock_onram(), pcb->get_clock_oncpu(),
+                                pcb->get_clock_offcpu(), pcb->get_clock_oncpu() - pcb->get_clock_birth(),
+                                pcb->get_clock_offcpu() - pcb->get_clock_oncpu());
+    log_status::log_pcb_io_operations(pcb->ID, pcb->get_num_input(), pcb->get_num_output(),
+                                      pcb->get_num_io_operations());
     //end of pcb lifecycle
     delete pcb;
 
@@ -216,18 +223,20 @@ void longterm::schedule()
             }
         }
 
-        current->base_ram_address = base_addr;
-
         disk_to_ram(current->base_disk_address,
                     base_addr,
                     current->get_total_size());
+
+        current->base_ram_address = base_addr;
+        current->state = PCB_READY;
 
         shortterm::receive_pcb(current);
         num_loaded_pcbs++;
 
         base_addr += 4 * current->get_total_size();
     }
-    while((num_total_pcbs - num_loaded_pcbs) > 0 && base_addr / 4 + current->get_total_size() < ram::size());
+    while((num_total_pcbs - num_loaded_pcbs) > 0 &&
+          (base_addr / 4 + current->get_total_size()) < ram::size());
 }
 
 void longterm::set_scheduling_algorithm(sched_algorithm sa)

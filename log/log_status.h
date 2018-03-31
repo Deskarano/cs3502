@@ -7,7 +7,7 @@
 
 #define LOG_CPU_FETCH               false
 #define LOG_CPU_DECODE              false
-#define LOG_CPU_EXECUTE             false
+#define LOG_CPU_EXECUTE             true
 
 #define LOG_CPU_START               true
 #define LOG_CPU_STOP                true
@@ -25,7 +25,7 @@
 #define LOG_RAM_WRITE_WORD          false
 #define LOG_RAM_READ_WORD           false
 
-#define LOG_SHORT_RECEIVE_PCB       true
+#define LOG_SHORT_RECEIVE_PCB       false
 #define LOG_LONG_CREATE_PCB         true
 #define LOG_LONG_SCHEDULE           true
 #define LOG_LONG_WRITEBACK_PCB      true

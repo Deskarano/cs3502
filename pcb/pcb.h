@@ -16,25 +16,52 @@ public:
     { return code_size + input_size + output_size + temp_size; }
 
     //setting the clock variables
-    void set_clock_birth()  { this->time_birth = clock(); };
-    void set_clock_onram()  { this->time_onram = clock(); };
-    void set_clock_oncpu()  { this->time_oncpu = clock(); };
-    void set_clock_offcpu() { this->time_offcpu = clock(); };
-    void set_clock_death()  { this->time_death = clock(); };
+    void set_clock_birth()
+    { this->time_birth = clock(); };
 
-    //giving clock variables
-    clock_t get_clock_birth()   { return time_birth; };
-    clock_t get_clock_onram()   { return time_onram; };
-    clock_t get_clock_oncpu()   { return time_oncpu; };
-    clock_t get_clock_offcpu()   { return time_offcpu; };
-    clock_t get_clock_death()   { return time_death; };
+    void set_clock_onram()
+    { this->time_onram = clock(); };
+
+    void set_clock_oncpu()
+    { this->time_oncpu = clock(); };
+
+    void set_clock_offcpu()
+    { this->time_offcpu = clock(); };
+
+    void set_clock_death()
+    { this->time_death = clock(); };
+
+    //getting clock variables
+    clock_t get_clock_birth()
+    { return time_birth; };
+
+    clock_t get_clock_onram()
+    { return time_onram; };
+
+    clock_t get_clock_oncpu()
+    { return time_oncpu; };
+
+    clock_t get_clock_offcpu()
+    { return time_offcpu; };
+
+    clock_t get_clock_death()
+    { return time_death; };
 
     //IO operations
-    void new_input_operation() { num_input++; };
-    void new_output_operation() { num_output++; };
-    unsigned int get_num_input() { return num_input; }
-    unsigned int get_num_output() { return num_output; }
-    unsigned int get_num_io_operations() { return num_input + num_output; }
+    void new_input_operation()
+    { num_input++; };
+
+    void new_output_operation()
+    { num_output++; };
+
+    unsigned int get_num_input()
+    { return num_input; }
+
+    unsigned int get_num_output()
+    { return num_output; }
+
+    unsigned int get_num_io_operations()
+    { return num_input + num_output; }
 
     //sched-related info
     unsigned int ID;

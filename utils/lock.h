@@ -16,8 +16,7 @@ public:
 private:
     std::mutex mutex;
     std::condition_variable condition;
-    unsigned int count = 0;
+    unsigned int count;
 };
-
 
 #endif //CS3502_LOCK_H
