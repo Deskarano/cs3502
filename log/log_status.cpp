@@ -3,9 +3,10 @@
 #include "../utils/base_conversions.h"
 #include "../utils/lock.h"
 
-#include "../ram/ram.h"
 #include "../cpu/types/instr_types.h"
-#include "../disk/disk.h"
+
+#include "../storage/ram/ram.h"
+#include "../storage/disk/disk.h"
 
 #include <iostream>
 

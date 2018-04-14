@@ -19,11 +19,19 @@ set(SOURCE_FILES_MAIN
         pcb/pcb.cpp
         pcb/pcb.h
 
-        disk/disk.cpp
-        disk/disk.h
+        pcb/page_table/page_table.cpp
+        pcb/page_table/page_table.h
+        pcb/page_table/page_table_entry.cpp
+        pcb/page_table/page_table_entry.h
 
-        ram/ram.cpp
-        ram/ram.h
+        storage/disk/disk.cpp
+        storage/disk/disk.h
+        storage/ram/ram.cpp
+        storage/ram/ram.h
+
+        storage/page_frame.h
+        storage/page_manager.cpp
+        storage/page_manager.h
 
         sched/short/shortterm.cpp
         sched/short/shortterm.h
@@ -42,6 +50,6 @@ set(SOURCE_FILES_MAIN
         log/log_status.cpp
         log/log_status.h
         log/log_error.cpp
-        log/log_error.h pcb/page_table.cpp pcb/page_table.h utils/linked_list.cpp utils/linked_list.h)
+        log/log_error.h )
 
 add_executable(cs3502 ${SOURCE_FILES_MAIN})

@@ -1,7 +1,7 @@
 #include "memcpy.h"
 
-#include "../disk/disk.h"
-#include "../ram/ram.h"
+#include "../storage/disk/disk.h"
+#include "../storage/ram/ram.h"
 
 void disk_to_ram(unsigned int disk_addr, unsigned int ram_addr, unsigned int num_words)
 {

@@ -5,7 +5,7 @@
 
 #include "../../pcb/pcb_node.h"
 
-#include "../../ram/ram.h"
+#include "../../storage/ram/ram.h"
 
 #include "../../utils/base_conversions.h"
 #include "../../utils/memcpy.h"

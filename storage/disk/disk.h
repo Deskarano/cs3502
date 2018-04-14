@@ -1,12 +1,14 @@
-#ifndef CS3502_RAM_H
-#define CS3502_RAM_H
+#ifndef CS3502_DISK_H
+#define CS3502_DISK_H
 
-struct ram
+#include "../page_frame.h"
+
+struct disk
 {
 public:
     static void init(unsigned int num_words);
 
-    static void write_word(unsigned int addr, char val[8]);
+    static void write_word(unsigned int addr, const char val[8]);
     static char *read_word(unsigned int addr);
 
     static unsigned int size()
@@ -14,7 +16,7 @@ public:
 
 private:
     static unsigned int num_words;
-    static char *data;
+    static page_frame *pages;
 };
 
-#endif //CS3502_RAM_H
+#endif //CS3502_DISK_H

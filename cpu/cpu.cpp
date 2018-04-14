@@ -1,7 +1,7 @@
 #include <iostream>
 #include "cpu.h"
 
-#include "../ram/ram.h"
+#include "../storage/ram/ram.h"
 #include "../utils/base_conversions.h"
 
 #include "../log/log_status.h"
@@ -133,6 +133,8 @@ void cpu::cpu_main_thread()
         instr *instruction = decode(fetch);
         log_status::log_cpu_decode(core_id, fetch, instruction);
 
+        delete fetch;
+
         if(instruction->op == HLT)
         {
             log_status::log_cpu_execute(core_id, instruction, reg);
@@ -145,10 +147,10 @@ void cpu::cpu_main_thread()
         {
             execute(instruction);
             log_status::log_cpu_execute(core_id, instruction, reg);
-
-            delete instruction->args;
-            delete instruction;
         }
+
+        delete instruction->args;
+        delete instruction;
     }
     current_pcb->set_clock_offcpu();
 }

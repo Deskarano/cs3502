@@ -1,5 +1,5 @@
-#include "disk/disk.h"
-#include "ram/ram.h"
+#include "storage/disk/disk.h"
+#include "storage/ram/ram.h"
 
 #include "sched/sched_control.h"
 
@@ -62,7 +62,7 @@ int main()
     ram::init(1024);
     cpu_control::init(4);
 
-    sched_control::set_algorithm(SCHED_SJF);
+    sched_control::set_algorithm(SCHED_FCFS);
 
     load("programfile");
 
