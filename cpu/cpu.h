@@ -2,12 +2,11 @@
 #define CS3502_CPU_H
 
 #include "types/cpu_types.h"
-#include "../pcb/pcb.h"
 #include "types/instr_types.h"
 
-#include <thread>
+#include "../pcb/pcb.h"
 
-#define CACHE_SIZE 100
+#include <thread>
 
 class cpu
 {
@@ -31,10 +30,8 @@ public:
 private:
     unsigned int core_id;
 
-    char cache_data[8 * CACHE_SIZE];
-    bool cache_changed[CACHE_SIZE];
-
     std::thread *cpu_thread;
+    bool page_fault;
 
     pcb *current_pcb;
     cpu_state state;
@@ -42,12 +39,13 @@ private:
     unsigned int pc;
     int reg[16];
 
-    void write_word_to_cache(unsigned int addr, char *val);
-    char *read_word_from_cache(unsigned int addr);
-
     void cpu_main_thread();
     void execute(instr *instruction);
     instr *decode(char *instruction);
+
+    void handle_page_fault();
+    char *read_or_page_fault(unsigned int addr);
+    void write_or_page_fault(unsigned int addr, int val);
 };
 
 #endif //CS3502_CPU_H

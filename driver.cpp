@@ -7,6 +7,7 @@
 #include "log/log_status.h"
 
 #include "utils/base_conversions.h"
+#include "storage/page_manager.h"
 
 #include <iostream>
 #include <fstream>
@@ -31,6 +32,12 @@ void load(const std::string programfile)
                 if(line[3] == 'J')
                 {
                     job_line = line;
+                    while(addr % 16 != 0)
+                    {
+                        disk::write_word(addr, "00000000");
+                        addr += 4;
+                    }
+
                     base_disk_address = addr;
                 }
                 else if(line[3] == 'D')
@@ -60,9 +67,11 @@ int main()
 {
     disk::init(2048);
     ram::init(1024);
-    cpu_control::init(4);
 
-    sched_control::set_algorithm(SCHED_FCFS);
+    cpu_control::init(4);
+    page_manager::init();
+
+    sched_control::set_algorithm(SCHED_PRI);
 
     load("programfile");
 
@@ -70,6 +79,8 @@ int main()
     {
         sched_control::schedule_and_run();
     }
+
+    log_status::dump_disk();
 
     std::cout << "done!\n";
 }

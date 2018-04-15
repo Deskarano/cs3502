@@ -1,7 +1,7 @@
 #include <iostream>
 #include "cpu.h"
 
-#include "../storage/ram/ram.h"
+#include "../storage/page_manager.h"
 #include "../utils/base_conversions.h"
 
 #include "../log/log_status.h"
@@ -26,7 +26,9 @@ void cpu::start()
     log_status::log_cpu_start(core_id, current_pcb->ID);
 
     state = CPU_BUSY;
+    page_fault = false;
     current_pcb->state = PCB_RUNNING;
+
     cpu_thread = new std::thread(&cpu::cpu_main_thread, this);
 }
 
@@ -57,13 +59,7 @@ void cpu::set_pcb(pcb *new_pcb)
     this->pc = new_pcb->pc;
     copy_reg(current_pcb->reg, this->reg);
 
-    for(unsigned int i = 0; i < current_pcb->get_total_size(); i++)
-    {
-        char *val = ram::read_word(current_pcb->base_ram_address + 4 * i);
-        write_word_to_cache(4 * i, val);
-
-        cache_changed[i] = false;
-    }
+    page_fault = false;
 }
 
 void cpu::save_pcb()
@@ -72,63 +68,21 @@ void cpu::save_pcb()
 
     current_pcb->pc = this->pc;
     copy_reg(this->reg, current_pcb->reg);
-
-    for(unsigned int i = 0; i < current_pcb->get_total_size(); i++)
-    {
-        if(cache_changed[i])
-        {
-            char *val = read_word_from_cache(4 * i);
-            ram::write_word(current_pcb->base_ram_address + 4 * i, val);
-
-            cache_changed[i] = false;
-        }
-    }
-}
-
-void cpu::write_word_to_cache(unsigned int addr, char *val)
-{
-    if(addr < CACHE_SIZE * 4)
-    {
-        log_status::log_cpu_cache_write_word(core_id, addr, val);
-
-        for(int i = 0; i < 8; i++)
-        {
-            cache_data[2 * addr + i] = val[i];
-        }
-    }
-    else
-    {
-        log_error::cpu_cache_write_word_range(addr);
-    }
-}
-
-char *cpu::read_word_from_cache(unsigned int addr)
-{
-    if(addr < CACHE_SIZE * 4)
-    {
-        auto result = new char[8];
-
-        for(int i = 0; i < 8; i++)
-        {
-            result[i] = cache_data[2 * addr + i];
-        }
-
-        log_status::log_cpu_cache_read_word(core_id, addr, result);
-        return result;
-    }
-    else
-    {
-        log_error::cpu_cache_read_word_range(addr);
-    }
 }
 
 void cpu::cpu_main_thread()
 {
     current_pcb->set_clock_oncpu();
-    while(state == CPU_BUSY)
+    while(!page_fault)
     {
         log_status::log_cpu_fetch(core_id, pc);
-        char *fetch = read_word_from_cache(pc);
+
+        char *fetch = read_or_page_fault(pc);
+        if(page_fault)
+        {
+            state = CPU_IDLE;
+            return;
+        }
 
         instr *instruction = decode(fetch);
         log_status::log_cpu_decode(core_id, fetch, instruction);
@@ -142,16 +96,26 @@ void cpu::cpu_main_thread()
 
             state = CPU_DONE;
             current_pcb->state = PCB_DONE;
+
+            return;
         }
         else
         {
             execute(instruction);
-            log_status::log_cpu_execute(core_id, instruction, reg);
+            if(!page_fault)
+            {
+                log_status::log_cpu_execute(core_id, instruction, reg);
+            }
+            else
+            {
+                state = CPU_IDLE;
+            }
         }
 
         delete instruction->args;
         delete instruction;
     }
+
     current_pcb->set_clock_offcpu();
 }
 
@@ -231,23 +195,72 @@ instr *cpu::decode(char instruction[8])
     return result;
 }
 
+void cpu::handle_page_fault()
+{
+    save_pcb();
+
+    current_pcb->state = PCB_WAITING;
+    page_fault = true;
+}
+
+char *cpu::read_or_page_fault(unsigned int addr)
+{
+    char *read = new char[8];
+
+    if(page_manager::read_word(current_pcb, addr, read) == PAGE_FAULT)
+    {
+        delete read;
+        handle_page_fault();
+
+        page_manager::receive_pcb(current_pcb, addr);
+        return nullptr;
+    }
+    else
+    {
+        return read;
+    }
+}
+
+void cpu::write_or_page_fault(unsigned int addr, int val)
+{
+    if(page_manager::write_word(current_pcb, addr, dec_to_hex(val)) == PAGE_FAULT)
+    {
+        handle_page_fault();
+
+        page_manager::receive_pcb(current_pcb, addr);
+    }
+}
+
 void cpu::execute(instr *instruction)
 {
     unsigned int new_pc = pc + 4;
-    
+
     switch(instruction->op)
     {
         case RD:
         {
             auto args = (io_args *) instruction->args;
+            char *read;
+
             if(args->reg2 == 0)
             {
-                reg[args->reg1] = hex_to_dec(read_word_from_cache(args->addr), 8);
+                read = read_or_page_fault(args->addr);
             }
             else
             {
-                reg[args->reg1] = hex_to_dec(read_word_from_cache((unsigned) reg[args->reg2]), 8);
+                read = read_or_page_fault((unsigned) reg[args->reg2]);
             }
+
+            if(page_fault)
+            {
+                return;
+            }
+            else
+            {
+                reg[args->reg1] = hex_to_dec(read, 8);
+                delete read;
+            }
+
             current_pcb->new_input_operation();
             break;
         }
@@ -255,16 +268,18 @@ void cpu::execute(instr *instruction)
         case WR:
         {
             auto args = (io_args *) instruction->args;
+
             if(args->reg2 == 0)
             {
-                write_word_to_cache(args->addr, dec_to_hex(reg[args->reg1]));
-                cache_changed[args->addr / 4] = true;
+                write_or_page_fault(args->addr, reg[args->reg1]);
             }
             else
             {
-                write_word_to_cache((unsigned) reg[args->reg2], dec_to_hex(reg[args->reg1]));
-                cache_changed[reg[args->reg2] / 4] = true;
+                write_or_page_fault((unsigned) reg[args->reg2], reg[args->reg1]);
             }
+
+            if(page_fault) return;
+
             current_pcb->new_output_operation();
             break;
         }
@@ -273,8 +288,9 @@ void cpu::execute(instr *instruction)
         {
             auto args = (i_args *) instruction->args;
 
-            write_word_to_cache((unsigned) reg[args->dreg], dec_to_hex(reg[args->breg]));
-            cache_changed[reg[args->dreg] / 4] = true;
+            write_or_page_fault((unsigned) reg[args->dreg], reg[args->breg]);
+            if(page_fault) return;
+
             current_pcb->new_output_operation();
             break;
         }
@@ -282,7 +298,20 @@ void cpu::execute(instr *instruction)
         case LW:
         {
             auto args = (i_args *) instruction->args;
-            reg[args->dreg] = hex_to_dec(read_word_from_cache(reg[args->breg] + args->addr), 8);
+
+            char *read;
+
+            read = read_or_page_fault(reg[args->breg] + args->addr);
+            if(page_fault)
+            {
+                return;
+            }
+            else
+            {
+                reg[args->dreg] = hex_to_dec(read, 8);
+                delete read;
+            }
+
             current_pcb->new_input_operation();
             break;
         }
@@ -323,7 +352,7 @@ void cpu::execute(instr *instruction)
         {
             auto args = (r_args *) instruction->args;
             reg[args->dreg] = reg[args->sreg1] / reg[args->sreg2];
-            
+
             break;
         }
 

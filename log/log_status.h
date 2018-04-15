@@ -14,9 +14,6 @@
 #define LOG_CPU_SET_PCB             true
 #define LOG_CPU_SAVE_PCB            true
 
-#define LOG_CPU_CACHE_WRITE_WORD    false
-#define LOG_CPU_CACHE_READ_WORD     false
-
 #define LOG_DISK_INIT               true
 #define LOG_DISK_WRITE_WORD         false
 #define LOG_DISK_READ_WORD          false
@@ -25,7 +22,13 @@
 #define LOG_RAM_WRITE_WORD          false
 #define LOG_RAM_READ_WORD           false
 
-#define LOG_SHORT_RECEIVE_PCB       false
+#define LOG_PAGER_INIT              true
+#define LOG_PAGER_LOOKUP            true
+#define LOG_PAGER_INIT_FRAMES       false
+#define LOG_PAGER_RECEIVE_PCB       true
+#define LOG_PAGER_LOAD_UPDATE       true
+
+#define LOG_SHORT_RECEIVE_PCB       true
 #define LOG_LONG_CREATE_PCB         true
 #define LOG_LONG_SCHEDULE           true
 #define LOG_LONG_WRITEBACK_PCB      true
@@ -54,9 +57,6 @@ public:
     static void log_cpu_set_pcb(unsigned int core_id, unsigned int pcb_id);
     static void log_cpu_save_pcb(unsigned int core_id, unsigned int pcb_id);
 
-    static void log_cpu_cache_write_word(unsigned int core_id, unsigned int addr, char val[8]);
-    static void log_cpu_cache_read_word(unsigned int core_id, unsigned int addr, char val[8]);
-
     static void log_disk_init(unsigned int num_words);
     static void log_disk_write_word(unsigned int addr, const char val[8]);
     static void log_disk_read_word(unsigned int addr, char val[8]);
@@ -65,12 +65,18 @@ public:
     static void log_ram_write_word(unsigned int addr, char val[8]);
     static void log_ram_read_word(unsigned int addr, char val[8]);
 
+    static void log_pager_init();
+    static void log_pager_lookup(unsigned int pcb_id, unsigned int addr, unsigned int result);
+    static void log_pager_init_frames(unsigned int pcb_id);
+    static void log_pager_receive_pcb(unsigned int pcb_id, unsigned int addr);
+    static void log_pager_load_update(unsigned int pcb_id, unsigned int log_addr, unsigned int phys_addr);
+
     static void log_short_receive_pcb(unsigned int pcb_id);
 
     static void log_long_create_pcb(unsigned int pcb_id, unsigned int base_disk_address);
-    static void log_long_schedule_fcfs(unsigned int pcb_id, unsigned int base_ram_address);
-    static void log_long_schedule_priority(unsigned int pcb_id, unsigned int priority, unsigned int base_ram_address);
-    static void log_long_schedule_sjf(unsigned int pcb_id, unsigned int total_size, unsigned int base_ram_address);
+    static void log_long_schedule_fcfs(unsigned int pcb_id);
+    static void log_long_schedule_priority(unsigned int pcb_id, unsigned int priority);
+    static void log_long_schedule_sjf(unsigned int pcb_id, unsigned int total_size);
     static void log_long_writeback_pcb(unsigned int pcb_id);
 
     static void log_pcb_size(unsigned int pcb_id, unsigned int size_code, unsigned int size_input, unsigned int size_output, unsigned int size_temp, unsigned int size_total);

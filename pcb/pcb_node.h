@@ -12,6 +12,7 @@ public:
 
     pcb_node *next;
     pcb *value;
+    unsigned int misc;
 };
 
 #endif //CS3502_PCB_NODE_H

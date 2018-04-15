@@ -7,6 +7,7 @@
 
 #include "../storage/ram/ram.h"
 #include "../storage/disk/disk.h"
+#include "../pcb/page_table/page_table.h"
 
 #include <iostream>
 
@@ -766,40 +767,6 @@ void log_status::log_cpu_set_pcb(unsigned int core_id, unsigned int pcb_id)
     }
 }
 
-void log_status::log_cpu_cache_write_word(unsigned int core_id, unsigned int addr, char *val)
-{
-    if(LOG_CPU_CACHE_WRITE_WORD)
-    {
-        print_lock->wait();
-
-        std::cout << "--cpu-status (" << core_id << ") (write_word_to_cache): wrote val ";
-        for(int i = 0; i < 8; i++)
-        {
-            std::cout << val[i];
-        }
-        std::cout << " to addr 0x" << dec_to_hex(addr) << "\n";
-
-        print_lock->notify();
-    }
-}
-
-void log_status::log_cpu_cache_read_word(unsigned int core_id, unsigned int addr, char *val)
-{
-    if(LOG_CPU_CACHE_READ_WORD)
-    {
-        print_lock->wait();
-
-        std::cout << "--cpu-status (" << core_id << ") (read_word_from_cache): read val ";
-        for(int i = 0; i < 8; i++)
-        {
-            std::cout << val[i];
-        }
-        std::cout << " from addr 0x" << dec_to_hex(addr) << "\n";
-
-        print_lock->notify();
-    }
-}
-
 void log_status::log_cpu_save_pcb(unsigned int core_id, unsigned int pcb_id)
 {
     if(LOG_CPU_SAVE_PCB)
@@ -904,6 +871,81 @@ void log_status::log_ram_read_word(unsigned int addr, char val[8])
     }
 }
 
+void log_status::log_pager_init()
+{
+    if(LOG_PAGER_INIT)
+    {
+        print_lock->wait();
+
+        std::cout << "--pager-status (init): initialized page manager\n";
+
+        print_lock->notify();
+    }
+}
+
+void log_status::log_pager_lookup(unsigned int pcb_id, unsigned int addr, unsigned int result)
+{
+    if(LOG_PAGER_LOOKUP)
+    {
+        print_lock->wait();
+
+        std::cout << "--pager-status (lookup): table lookup in PCB " << pcb_id
+                  << " for logical addr 0x" << dec_to_hex(addr)
+                  << " resulted in";
+
+        if(result == PAGE_FAULT)
+        {
+            std::cout << " PAGE FAULT\n";
+        }
+        else
+        {
+            std::cout << " physical addr 0x" << dec_to_hex(result) << "\n";
+        }
+
+        print_lock->notify();
+    }
+}
+
+void log_status::log_pager_init_frames(unsigned int pcb_id)
+{
+    if(LOG_PAGER_INIT_FRAMES)
+    {
+        print_lock->wait();
+
+        std::cout << "--pager-status (init_frames): loading initial frames for PCB " << pcb_id << "\n";
+
+        print_lock->notify();
+    }
+}
+
+void log_status::log_pager_receive_pcb(unsigned int pcb_id, unsigned int addr)
+{
+    if(LOG_PAGER_RECEIVE_PCB)
+    {
+        print_lock->wait();
+
+        std::cout << "--pager-status (receive_pcb): received PCB " << pcb_id
+                  << " with faulting addr 0x" << dec_to_hex(addr) << "\n";
+
+        print_lock->notify();
+    }
+}
+
+void log_status::log_pager_load_update(unsigned int pcb_id, unsigned int log_addr, unsigned int phys_addr)
+{
+    if(LOG_PAGER_LOAD_UPDATE)
+    {
+        print_lock->wait();
+
+        std::cout << "--pager_status (load_and_update):"
+                  << " added entry in PCB " << pcb_id
+                  << " for logical address 0x" << dec_to_hex(log_addr)
+                  << ": 0x" << dec_to_hex(phys_addr) << "\n";
+
+        print_lock->notify();
+    }
+}
+
 void log_status::log_short_receive_pcb(unsigned int pcb_id)
 {
     if(LOG_SHORT_RECEIVE_PCB)
@@ -930,45 +972,40 @@ void log_status::log_long_create_pcb(unsigned int pcb_id, unsigned int base_disk
     }
 }
 
-void log_status::log_long_schedule_fcfs(unsigned int pcb_id, unsigned int base_ram_address)
+void log_status::log_long_schedule_fcfs(unsigned int pcb_id)
 {
     if(LOG_LONG_SCHEDULE)
     {
         print_lock->wait();
 
         std::cout << "--longterm-status (schedule FCFS): loading PCB "
-                  << pcb_id << " to RAM address 0x" << dec_to_hex(base_ram_address)
-                  << "\n";
+                  << pcb_id << "\n";
 
         print_lock->notify();
     }
 }
 
-void log_status::log_long_schedule_priority(unsigned int pcb_id, unsigned int priority, unsigned int base_ram_address)
+void log_status::log_long_schedule_priority(unsigned int pcb_id, unsigned int priority)
 {
     if(LOG_LONG_SCHEDULE)
     {
         print_lock->wait();
 
         std::cout << "--longterm-status (schedule PRI): loading PCB "
-                  << pcb_id << " (priority " << priority
-                  << ") to RAM address 0x" << dec_to_hex(base_ram_address)
-                  << "\n";
+                  << pcb_id << " (priority " << priority << ")\n";
 
         print_lock->notify();
     }
 }
 
-void log_status::log_long_schedule_sjf(unsigned int pcb_id, unsigned int total_size, unsigned int base_ram_address)
+void log_status::log_long_schedule_sjf(unsigned int pcb_id, unsigned int total_size)
 {
     if(LOG_LONG_SCHEDULE)
     {
         print_lock->wait();
 
         std::cout << "--longterm-status (schedule SJF): loading PCB "
-                  << pcb_id << " (size " << total_size
-                  << ") to RAM address 0x" << dec_to_hex(base_ram_address)
-                  << "\n";
+                  << pcb_id << " (size " << total_size << ")\n";
 
         print_lock->notify();
     }

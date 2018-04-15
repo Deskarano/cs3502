@@ -1,3 +1,4 @@
+#include <iostream>
 #include "shortterm.h"
 
 #include "../../cpu/cpu_control.h"
@@ -34,9 +35,18 @@ void push_to_ready_queue(pcb *pcb)
 
             case SCHED_PRI:
             {
+                if(current->value->priority > pcb->priority)
+                {
+                    pcb_node *temp = current;
+                    pcb_list_head = new pcb_node(pcb);
+                    pcb_list_head->next = temp;
+
+                    return;
+                }
+
                 while(current->next != nullptr)
                 {
-                    if(current->value->priority < pcb->priority &&
+                    if(current->value->priority <= pcb->priority &&
                        current->next->value->priority >= pcb->priority)
                     {
                         break;
@@ -44,10 +54,21 @@ void push_to_ready_queue(pcb *pcb)
 
                     current = current->next;
                 }
+
+                break;
             }
 
             case SCHED_SJF:
             {
+                if(current->value->get_total_size() > pcb->get_total_size())
+                {
+                    pcb_node *temp = current;
+                    pcb_list_head = new pcb_node(pcb);
+                    pcb_list_head->next = temp;
+
+                    return;
+                }
+
                 while(current->next != nullptr)
                 {
                     if(current->value->get_total_size() < pcb->get_total_size() &&
@@ -58,6 +79,8 @@ void push_to_ready_queue(pcb *pcb)
 
                     current = current->next;
                 }
+
+                break;
             }
         }
 

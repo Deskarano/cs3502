@@ -5,7 +5,7 @@
 
 #include "../../pcb/pcb_node.h"
 
-#include "../../storage/ram/ram.h"
+#include "../../storage/page_manager.h"
 
 #include "../../utils/base_conversions.h"
 #include "../../utils/memcpy.h"
@@ -58,7 +58,8 @@ void longterm::writeback_finished_pcb(pcb *pcb)
 {
     log_status::log_long_writeback_pcb(pcb->ID);
 
-    ram_to_disk(pcb->base_ram_address, pcb->base_disk_address, pcb->get_total_size());
+    page_manager::release_frames(pcb);
+
     pcb->set_clock_death(); //set time of death
     log_status::log_pcb_times(pcb->ID, pcb->get_clock_birth(), pcb->get_clock_oncpu(), pcb->get_clock_death());
     log_status::log_pcb_summary(pcb->ID, pcb->get_clock_birth(), pcb->get_clock_onram(), pcb->get_clock_oncpu(),
@@ -194,7 +195,6 @@ pcb *get_shortest_pcb()
 
 void longterm::schedule()
 {
-    unsigned int base_addr = 0;
     pcb *current = nullptr;
 
     do
@@ -204,39 +204,33 @@ void longterm::schedule()
             case SCHED_FCFS:
             {
                 current = get_next_pcb();
-                log_status::log_long_schedule_fcfs(current->ID, base_addr);
+                log_status::log_long_schedule_fcfs(current->ID);
                 break;
             }
 
             case SCHED_PRI:
             {
                 current = get_highest_priority_pcb();
-                log_status::log_long_schedule_priority(current->ID, current->priority, base_addr);
+                log_status::log_long_schedule_priority(current->ID, current->priority);
                 break;
             }
 
             case SCHED_SJF:
             {
                 current = get_shortest_pcb();
-                log_status::log_long_schedule_sjf(current->ID, current->get_total_size(), base_addr);
+                log_status::log_long_schedule_sjf(current->ID, current->get_total_size());
                 break;
             }
         }
 
-        disk_to_ram(current->base_disk_address,
-                    base_addr,
-                    current->get_total_size());
+        page_manager::init_frames(current);
 
-        current->base_ram_address = base_addr;
         current->state = PCB_READY;
 
         shortterm::receive_pcb(current);
         num_loaded_pcbs++;
-
-        base_addr += 4 * current->get_total_size();
     }
-    while((num_total_pcbs - num_loaded_pcbs) > 0 &&
-          (base_addr / 4 + current->get_total_size()) < ram::size());
+    while((num_total_pcbs - num_loaded_pcbs) > 0);
 }
 
 void longterm::set_scheduling_algorithm(sched_algorithm sa)

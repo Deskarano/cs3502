@@ -41,7 +41,7 @@ char *disk::read_word(unsigned int addr)
         {
             unsigned int f = (2 * addr) / 32;
             unsigned int d = (2 * addr) % 32 + i;
-            
+
             result[i] = pages[f].data[d];
         }
 

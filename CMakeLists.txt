@@ -21,8 +21,6 @@ set(SOURCE_FILES_MAIN
 
         pcb/page_table/page_table.cpp
         pcb/page_table/page_table.h
-        pcb/page_table/page_table_entry.cpp
-        pcb/page_table/page_table_entry.h
 
         storage/disk/disk.cpp
         storage/disk/disk.h

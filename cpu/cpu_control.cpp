@@ -1,3 +1,4 @@
+#include <iostream>
 #include "cpu_control.h"
 
 #include "cpu.h"
@@ -21,7 +22,10 @@ unsigned int cpu_control::num_idle_cores()
 
     for(int i = 0; i < num_cores; i++)
     {
-        if(cores[i].get_state() == CPU_IDLE) count++;
+        if(cores[i].get_state() == CPU_IDLE)
+        {
+            count++;
+        }
     }
 
     return count;

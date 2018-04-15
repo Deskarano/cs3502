@@ -1,58 +1,39 @@
 #include "page_table.h"
 
-page_table::page_table()
+page_table::page_table(unsigned int num_words)
 {
-    page_table_head = nullptr;
+    entries = new unsigned int[(num_words / 4) + 1];
+    valid = new bool[(num_words / 4) + 1];
+
+    for(int i = 0; i < (num_words / 4) + 1; i++)
+    {
+        entries[i] = 0;
+        valid[i] = false;
+    }
 }
 
-void page_table::add_page(unsigned int logical_address, unsigned int physical_address)
+page_table::~page_table()
 {
-    if(logical_address % 16 == 0 && physical_address % 16 == 0)
+    delete entries;
+    delete valid;
+}
+
+void page_table::add_page(unsigned int frame_num, unsigned int page_num)
+{
+    entries[frame_num] = page_num;
+    valid[frame_num] = true;
+}
+
+unsigned int page_table::lookup_page(unsigned int logical_address)
+{
+    unsigned int frame_num = logical_address / 16;
+
+    if(valid[frame_num])
     {
-        auto new_entry = new page_table_entry(logical_address, physical_address);
-
-        if(page_table_head == nullptr)
-        {
-            page_table_head = new_entry;
-        }
-        else
-        {
-            page_table_entry *current = page_table_head;
-            while(current->next != nullptr)
-            {
-                current = current->next;
-            }
-
-            current->next = new_entry;
-        }
+        return 16 * entries[frame_num] + (logical_address - 16 * frame_num);
     }
     else
-    {
-        //TODO: put an error here
-    }
-}
-
-unsigned int page_table::request_page(unsigned int logical_address)
-{
-    if(page_table_head == nullptr)
     {
         return PAGE_FAULT;
     }
-    else
-    {
-        page_table_entry *current = page_table_head;
-
-        while(current->next != nullptr)
-        {
-            if(logical_address >= current->logical_address &&
-               logical_address < current->logical_address + 4)
-            {
-                return current->physical_address + (logical_address - current->logical_address);
-            }
-
-            current = current->next;
-        }
-    }
-
-    return PAGE_FAULT;
 }

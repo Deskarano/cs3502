@@ -2,6 +2,7 @@
 #define CS3502_PCB_H
 
 #include "pcb_types.h"
+#include "page_table/page_table.h"
 #include <ctime>
 
 class pcb
@@ -74,7 +75,7 @@ public:
 
     //memory-related info
     unsigned int base_disk_address;
-    unsigned int base_ram_address;
+    page_table *table;
 
     //size-related info
     unsigned int code_size;
