@@ -148,6 +148,8 @@ void page_manager::load_and_update(pcb *pcb, unsigned int log_addr)
 
 void page_manager::release_frames(pcb *pcb)
 {
+    log_status::log_pager_release_frames(pcb->ID);
+
     for(unsigned int i = 0; i < pcb->get_total_size(); i += 4)
     {
         unsigned int log_addr = pcb->table->lookup_page(4 * i);

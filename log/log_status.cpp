@@ -946,6 +946,19 @@ void log_status::log_pager_load_update(unsigned int pcb_id, unsigned int log_add
     }
 }
 
+void log_status::log_pager_release_frames(unsigned int pcb_id)
+{
+    if(LOG_PAGER_RELEASE_FRAMES)
+    {
+        print_lock->wait();
+
+        std::cout << "--pager-status (release_frames):"
+                  << " releasing all frames from PCB " << pcb_id << "\n";
+
+        print_lock->notify();
+    }
+}
+
 void log_status::log_short_receive_pcb(unsigned int pcb_id)
 {
     if(LOG_SHORT_RECEIVE_PCB)
