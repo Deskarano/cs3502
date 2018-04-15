@@ -5,8 +5,8 @@
 #define LOG_CPU_CONTROL_DISPATCH    true
 #define LOG_CPU_CONTROL_CLEAR       true
 
-#define LOG_CPU_FETCH               false
-#define LOG_CPU_DECODE              false
+#define LOG_CPU_FETCH               true
+#define LOG_CPU_DECODE              true
 #define LOG_CPU_EXECUTE             true
 
 #define LOG_CPU_START               true
@@ -15,16 +15,16 @@
 #define LOG_CPU_SAVE_PCB            true
 
 #define LOG_DISK_INIT               true
-#define LOG_DISK_WRITE_WORD         false
-#define LOG_DISK_READ_WORD          false
+#define LOG_DISK_WRITE_WORD         true
+#define LOG_DISK_READ_WORD          true
 
 #define LOG_RAM_INIT                true
-#define LOG_RAM_WRITE_WORD          false
-#define LOG_RAM_READ_WORD           false
+#define LOG_RAM_WRITE_WORD          true
+#define LOG_RAM_READ_WORD           true
 
 #define LOG_PAGER_INIT              true
 #define LOG_PAGER_LOOKUP            true
-#define LOG_PAGER_INIT_FRAMES       false
+#define LOG_PAGER_INIT_FRAMES       true
 #define LOG_PAGER_RECEIVE_PCB       true
 #define LOG_PAGER_LOAD_UPDATE       true
 
