@@ -14,7 +14,7 @@ std::thread *page_manager::work_thread = nullptr;
 pcb_node *page_manager::work_head = nullptr;
 pcb_node *page_manager::work_tail = nullptr;
 
-static lock *receive_lock = new lock;
+static lock *recv_lock = new lock;
 
 void page_manager::init()
 {
@@ -94,7 +94,7 @@ void page_manager::process_work()
 
 void page_manager::receive_pcb(pcb *pcb, unsigned int log_addr)
 {
-    receive_lock->wait();
+    recv_lock->wait();
 
     log_status::log_pager_receive_pcb(pcb->ID, log_addr);
 
@@ -114,7 +114,7 @@ void page_manager::receive_pcb(pcb *pcb, unsigned int log_addr)
         work_tail = node;
     }
 
-    receive_lock->notify();
+    recv_lock->notify();
 }
 
 void page_manager::load_and_update(pcb *pcb, unsigned int log_addr)

@@ -32,17 +32,6 @@ void cpu::start()
     cpu_thread = new std::thread(&cpu::cpu_main_thread, this);
 }
 
-void cpu::stop()
-{
-    log_status::log_cpu_stop(core_id, current_pcb->ID);
-
-    state = CPU_IDLE;
-    current_pcb->state = PCB_READY;
-
-    cpu_thread->join();
-    delete cpu_thread;
-}
-
 void copy_reg(const int from[16], int to[16])
 {
     for(int i = 0; i < 16; i++)

@@ -14,7 +14,6 @@ public:
     cpu();
 
     void start();
-    void stop();
 
     void set_pcb(pcb *new_pcb);
     void save_pcb();

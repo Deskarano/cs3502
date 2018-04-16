@@ -4,9 +4,12 @@
 #include "../../cpu/cpu_control.h"
 #include "../../pcb/pcb_node.h"
 #include "../../log/log_status.h"
+#include "../../utils/lock.h"
 
 static sched_algorithm algorithm;
 static pcb_node *pcb_list_head;
+
+static lock *recv_lock = new lock;
 
 void shortterm::set_scheduling_algorithm(sched_algorithm sa)
 {
@@ -31,6 +34,8 @@ void push_to_ready_queue(pcb *pcb)
                 {
                     current = current->next;
                 }
+
+                break;
             }
 
             case SCHED_PRI:
@@ -92,9 +97,13 @@ void push_to_ready_queue(pcb *pcb)
 
 void shortterm::receive_pcb(pcb *next_pcb)
 {
+    recv_lock->wait();
+
     log_status::log_short_receive_pcb(next_pcb->ID);
     next_pcb->set_clock_onram();
     push_to_ready_queue(next_pcb);
+
+    recv_lock->notify();
 }
 
 pcb *pop_from_ready_queue()

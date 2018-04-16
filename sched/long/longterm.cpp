@@ -13,8 +13,8 @@
 #include "../../log/log_status.h"
 
 static sched_algorithm algorithm;
-static unsigned int num_total_pcbs = 0;
 static unsigned int num_loaded_pcbs = 0;
+static unsigned int num_total_pcbs = 0;
 
 static pcb_node *pcb_list_head = nullptr;
 
@@ -68,6 +68,7 @@ void longterm::writeback_finished_pcb(pcb *pcb)
     log_status::log_pcb_io_operations(pcb->ID, pcb->get_num_input(), pcb->get_num_output(),
                                       pcb->get_num_io_operations());
     //end of pcb lifecycle
+    delete pcb->table;
     delete pcb;
 
     num_loaded_pcbs--;
