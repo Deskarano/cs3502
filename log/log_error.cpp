@@ -14,18 +14,6 @@ void log_error::cpu_decode_invalid(char *instruction)
     exit(CPU_DECODE_INVALID);
 }
 
-void log_error::cpu_cache_write_word_range(unsigned int addr)
-{
-    std::cout << "--cpu-error (write_word_to_cache): address 0x" << dec_to_hex(addr) << " is out of range\n";
-    exit(CPU_CACHE_WRITE_WORD_RANGE);
-}
-
-void log_error::cpu_cache_read_word_range(unsigned int addr)
-{
-    std::cout << "--cpu-error (read_word_from_cache): address 0x" << dec_to_hex(addr) << " is out of range\n";
-    exit(CPU_CACHE_READ_WORD_RANGE);
-}
-
 void log_error::disk_write_word_range(unsigned int addr)
 {
     std::cout << "--disk-error (write_word): address 0x" << dec_to_hex(addr) << " is out of range\n";

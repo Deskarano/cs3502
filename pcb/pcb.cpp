@@ -24,5 +24,5 @@ pcb::pcb(unsigned int ID, unsigned int priority,
 
     this->base_disk_address = base_disk_address;
 
-    this->table = new page_table(this->get_total_size());
+    this->table = new page_table(this->get_total_size(), this->base_disk_address, this->ID);
 }

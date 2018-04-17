@@ -196,7 +196,7 @@ char *cpu::read_or_page_fault(unsigned int addr)
 {
     char *read = new char[8];
 
-    if(page_manager::read_word(current_pcb, addr, read) == PAGE_FAULT)
+    if(page_manager::read_word(current_pcb->table, addr, read) == PAGE_FAULT)
     {
         delete read;
         handle_page_fault();
@@ -212,7 +212,7 @@ char *cpu::read_or_page_fault(unsigned int addr)
 
 void cpu::write_or_page_fault(unsigned int addr, int val)
 {
-    if(page_manager::write_word(current_pcb, addr, dec_to_hex(val)) == PAGE_FAULT)
+    if(page_manager::write_word(current_pcb->table, addr, dec_to_hex(val)) == PAGE_FAULT)
     {
         handle_page_fault();
 
