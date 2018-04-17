@@ -1,4 +1,5 @@
 #include "page_table.h"
+
 #include "../../storage/page_manager.h"
 
 page_table::page_table(unsigned int num_words, unsigned int base_disk_address, unsigned int pcb_id)
@@ -15,6 +16,7 @@ page_table::page_table(unsigned int num_words, unsigned int base_disk_address, u
     {
         this->entries[i] = 0;
         this->valid[i] = false;
+        this->count[i] = 0;
     }
 }
 
@@ -47,6 +49,7 @@ unsigned int page_table::lookup_page(unsigned int logical_address)
         {
             count[i]--;
         }
+
         return PAGE_FAULT;
     }
 }
@@ -56,6 +59,7 @@ void page_table::invalidate_page(unsigned int logical_address)
     unsigned int frame_num = logical_address / 16;
 
     valid[frame_num] = false;
+    entries[frame_num] = 0;
     count[frame_num] = 0;
 }
 

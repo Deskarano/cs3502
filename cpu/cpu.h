@@ -6,8 +6,6 @@
 
 #include "../pcb/pcb.h"
 
-#include <thread>
-
 class cpu
 {
 public:
@@ -29,9 +27,6 @@ public:
 private:
     unsigned int core_id;
 
-    std::thread *cpu_thread;
-    bool page_fault;
-
     pcb *current_pcb;
     cpu_state state;
 
@@ -42,7 +37,9 @@ private:
     void execute(instr *instruction);
     instr *decode(char *instruction);
 
-    void handle_page_fault();
+    bool page_fault;
+
+    void handle_page_fault(unsigned int addr);
     char *read_or_page_fault(unsigned int addr);
     void write_or_page_fault(unsigned int addr, int val);
 };

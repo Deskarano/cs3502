@@ -1133,6 +1133,8 @@ void log_status::dump_ram()
                 std::cout << val[k];
             }
             std::cout << " ";
+
+            delete val;
         }
     }
 
@@ -1145,7 +1147,7 @@ void log_status::dump_disk()
 
     for(int i = 0; i < disk::size(); i += 4)
     {
-        //std::cout << "0x" << dec_to_hex(4 * i) << ": ";
+        std::cout << "0x" << dec_to_hex(4 * i) << ": ";
         for(int j = 0; j < 4; j++)
         {
             char *val = disk::read_word(4 * (i + j));
@@ -1154,6 +1156,8 @@ void log_status::dump_disk()
                 std::cout << val[k];
             }
             std::cout << " ";
+
+            delete val;
         }
         std::cout << "\n";
     }

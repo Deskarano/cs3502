@@ -1,4 +1,3 @@
-#include <iostream>
 #include "cpu.h"
 
 #include "../storage/page_manager.h"
@@ -6,6 +5,8 @@
 
 #include "../log/log_status.h"
 #include "../log/log_error.h"
+
+#include <thread>
 
 static unsigned int next_id = 0;
 
@@ -29,7 +30,7 @@ void cpu::start()
     page_fault = false;
     current_pcb->state = PCB_RUNNING;
 
-    cpu_thread = new std::thread(&cpu::cpu_main_thread, this);
+    new std::thread(&cpu::cpu_main_thread, this);
 }
 
 void copy_reg(const int from[16], int to[16])
@@ -184,12 +185,14 @@ instr *cpu::decode(char instruction[8])
     return result;
 }
 
-void cpu::handle_page_fault()
+void cpu::handle_page_fault(unsigned int addr)
 {
     save_pcb();
 
     current_pcb->state = PCB_WAITING;
     page_fault = true;
+
+    page_manager::receive_pcb(current_pcb, addr);
 }
 
 char *cpu::read_or_page_fault(unsigned int addr)
@@ -198,10 +201,9 @@ char *cpu::read_or_page_fault(unsigned int addr)
 
     if(page_manager::read_word(current_pcb->table, addr, read) == PAGE_FAULT)
     {
-        delete read;
-        handle_page_fault();
+        handle_page_fault(addr);
 
-        page_manager::receive_pcb(current_pcb, addr);
+        delete read;
         return nullptr;
     }
     else
@@ -214,9 +216,7 @@ void cpu::write_or_page_fault(unsigned int addr, int val)
 {
     if(page_manager::write_word(current_pcb->table, addr, dec_to_hex(val)) == PAGE_FAULT)
     {
-        handle_page_fault();
-
-        page_manager::receive_pcb(current_pcb, addr);
+        handle_page_fault(addr);
     }
 }
 
@@ -418,7 +418,17 @@ void cpu::execute(instr *instruction)
 
         case SLTI:
         {
-            //TODO
+            auto args = (i_args *) instruction->args;
+
+            if(reg[args->breg < args->addr])
+            {
+                reg[args->dreg] = 1;
+            }
+            else
+            {
+                reg[args->dreg] = 0;
+            }
+
             break;
         }
 

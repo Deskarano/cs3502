@@ -71,7 +71,7 @@ int main()
     cpu_control::init(4);
     page_manager::init();
 
-    sched_control::set_algorithm(SCHED_PRI);
+    sched_control::set_algorithm(SCHED_FCFS);
 
     load("programfile");
 

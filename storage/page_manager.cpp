@@ -1,4 +1,3 @@
-#include <iostream>
 #include "page_manager.h"
 
 #include "ram/ram.h"
@@ -29,11 +28,11 @@ void page_manager::init()
     log_status::log_pager_init();
 }
 
-int page_manager::write_word(page_table *table, unsigned int addr, char *val)
+int page_manager::write_word(page_table *table, unsigned int log_addr, char *val)
 {
-    unsigned int phys_addr = table->lookup_page(addr);
+    unsigned int phys_addr = table->lookup_page(log_addr);
 
-    log_status::log_pager_lookup(table->pcb_id, addr, phys_addr);
+    log_status::log_pager_lookup(table->pcb_id, log_addr, phys_addr);
 
     if(phys_addr == PAGE_FAULT)
     {
@@ -44,11 +43,11 @@ int page_manager::write_word(page_table *table, unsigned int addr, char *val)
     return 0;
 }
 
-int page_manager::read_word(page_table *table, unsigned int addr, char *target)
+int page_manager::read_word(page_table *table, unsigned int log_addr, char *target)
 {
-    unsigned int phys_addr = table->lookup_page(addr);
+    unsigned int phys_addr = table->lookup_page(log_addr);
 
-    log_status::log_pager_lookup(table->pcb_id, addr, phys_addr);
+    log_status::log_pager_lookup(table->pcb_id, log_addr, phys_addr);
 
     if(phys_addr == PAGE_FAULT)
     {
@@ -113,7 +112,9 @@ void page_manager::receive_pcb(pcb *pcb, unsigned int log_addr)
 void page_manager::load_and_update(page_table *table, unsigned int log_addr)
 {
     unsigned int page_num = (table->base_disk_address + log_addr) / 16;
-    unsigned int frame_num = 0xFFFFFFFF;
+    unsigned int frame_num = 0;
+
+    bool free_frame_found = false;
 
     //find the first free frame
     for(unsigned int i = 0; i < ram::size() / 4; i++)
@@ -121,36 +122,36 @@ void page_manager::load_and_update(page_table *table, unsigned int log_addr)
         if(free_frames[i])
         {
             frame_num = i;
+            free_frame_found = true;
 
             break;
         }
     }
 
-    if(frame_num == 0xFFFFFFFF)
+    if(!free_frame_found)
     {
         unsigned int old_log_addr = table->least_used_frame();
-        frame_num = table->lookup_page(old_log_addr) / 16;
 
-        release_frame(table, old_log_addr);
+        frame_num = release_frame(table, old_log_addr);
         table->invalidate_page(old_log_addr);
     }
 
     log_status::log_pager_load_update(table->pcb_id, log_addr / 16 * 16, 16 * frame_num);
 
     free_frames[frame_num] = false;
-
     disk_to_ram(16 * page_num, 16 * frame_num, 4);
     table->add_page(log_addr / 16, frame_num);
 }
 
-void page_manager::release_frame(page_table *table, unsigned int log_addr)
+unsigned int page_manager::release_frame(page_table *table, unsigned int log_addr)
 {
     unsigned int phys_addr = table->lookup_page(log_addr);
-
     log_status::log_pager_release_frame(table->pcb_id, log_addr, phys_addr);
 
     ram_to_disk(phys_addr, table->base_disk_address + log_addr, 4);
     free_frames[phys_addr / 16] = true;
+
+    return phys_addr / 16;
 }
 
 void page_manager::release_all_frames(page_table *table)
@@ -160,6 +161,7 @@ void page_manager::release_all_frames(page_table *table)
     for(unsigned int i = 0; i < table->num_frames; i++)
     {
         unsigned int phys_addr = table->lookup_page(16 * i);
+        
         if(phys_addr != PAGE_FAULT)
         {
             release_frame(table, 16 * i);

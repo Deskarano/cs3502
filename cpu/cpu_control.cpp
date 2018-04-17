@@ -1,4 +1,3 @@
-#include <iostream>
 #include "cpu_control.h"
 
 #include "cpu.h"

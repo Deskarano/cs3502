@@ -1,7 +1,5 @@
 #include "pcb.h"
 
-#include "../storage/page_manager.h"
-
 pcb::pcb(unsigned int ID, unsigned int priority,
          unsigned int code_size, unsigned int input_size,
          unsigned int output_size, unsigned int temp_size,
