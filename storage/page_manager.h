@@ -20,7 +20,7 @@ public:
     static void init_frames(page_table *table);
     static void receive_pcb(pcb *pcb, unsigned int log_addr);
 
-    static void release_frame(page_table *table, unsigned int phys_addr);
+    static void release_frame(page_table *table, unsigned int log_addr);
     static void release_all_frames(page_table *table);
 
 private:

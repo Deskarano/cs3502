@@ -30,8 +30,27 @@ void push_to_ready_queue(pcb *pcb)
         {
             case SCHED_FCFS:
             {
+                /*
+                if(current->value->ID > pcb->ID)
+                {
+                    pcb_node *temp = current;
+                    pcb_list_head = new pcb_node(pcb);
+                    pcb_list_head->next = temp;
+
+                    return;
+                }
+                 */
+
                 while(current->next != nullptr)
                 {
+                    /*
+                    if(current->value->ID <= pcb->ID &&
+                       current->next->value->ID >= pcb->ID)
+                    {
+                        break;
+                    }
+                     */
+
                     current = current->next;
                 }
 

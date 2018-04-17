@@ -1,39 +1,39 @@
 #ifndef CS3502_LOG_STATUS_H
 #define CS3502_LOG_STATUS_H
 
-#define LOG_CPU_CONTROL_INIT        	false
-#define LOG_CPU_CONTROL_DISPATCH    	false
-#define LOG_CPU_CONTROL_CLEAR       	false
+#define LOG_CPU_CONTROL_INIT        	true
+#define LOG_CPU_CONTROL_DISPATCH    	true
+#define LOG_CPU_CONTROL_CLEAR       	true
 
-#define LOG_CPU_FETCH               	false
-#define LOG_CPU_DECODE              	false
-#define LOG_CPU_EXECUTE             	false
+#define LOG_CPU_FETCH               	true
+#define LOG_CPU_DECODE              	true
+#define LOG_CPU_EXECUTE             	true
 
-#define LOG_CPU_START               	false
-#define LOG_CPU_STOP                	false
-#define LOG_CPU_SET_PCB             	false
-#define LOG_CPU_SAVE_PCB            	false
+#define LOG_CPU_START               	true
+#define LOG_CPU_STOP                	true
+#define LOG_CPU_SET_PCB             	true
+#define LOG_CPU_SAVE_PCB            	true
 
-#define LOG_DISK_INIT               	false
-#define LOG_DISK_WRITE_WORD             false
+#define LOG_DISK_INIT               	true
+#define LOG_DISK_WRITE_WORD             true
 #define LOG_DISK_READ_WORD              false
 
-#define LOG_RAM_INIT                	false
-#define LOG_RAM_WRITE_WORD          	false
+#define LOG_RAM_INIT                	true
+#define LOG_RAM_WRITE_WORD          	true
 #define LOG_RAM_READ_WORD           	false
 
-#define LOG_PAGER_INIT              	false
+#define LOG_PAGER_INIT              	true
 #define LOG_PAGER_LOOKUP            	true
-#define LOG_PAGER_INIT_FRAMES       	false
-#define LOG_PAGER_RECEIVE_PCB       	false
-#define LOG_PAGER_LOAD_UPDATE       	false
+#define LOG_PAGER_INIT_FRAMES       	true
+#define LOG_PAGER_RECEIVE_PCB       	true
+#define LOG_PAGER_LOAD_UPDATE       	true
 #define LOG_PAGER_RELEASE_FRAME         true
-#define LOG_PAGER_RELEASE_ALL_FRAMES    false
+#define LOG_PAGER_RELEASE_ALL_FRAMES    true
 
-#define LOG_SHORT_RECEIVE_PCB       	false
-#define LOG_LONG_CREATE_PCB         	false
-#define LOG_LONG_SCHEDULE           	false
-#define LOG_LONG_WRITEBACK_PCB      	false
+#define LOG_SHORT_RECEIVE_PCB       	true
+#define LOG_LONG_CREATE_PCB         	true
+#define LOG_LONG_SCHEDULE           	true
+#define LOG_LONG_WRITEBACK_PCB      	true
 
 #define LOG_PCB_SIZES                   false
 #define LOG_PCB_TIMES                   false
