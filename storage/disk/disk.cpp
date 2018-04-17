@@ -10,7 +10,7 @@ void disk::init(unsigned int num_words)
 {
     log_status::log_disk_init(num_words);
     disk::num_words = num_words;
-    disk::data = new char[(num_words / 4) + 1];
+    disk::data = new char[8 * num_words];
 }
 
 void disk::write_word(unsigned int addr, const char val[8])

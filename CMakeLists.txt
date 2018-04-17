@@ -27,7 +27,6 @@ set(SOURCE_FILES_MAIN
         storage/ram/ram.cpp
         storage/ram/ram.h
 
-        storage/page_frame.h
         storage/page_manager.cpp
         storage/page_manager.h
 
