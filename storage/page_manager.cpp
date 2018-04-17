@@ -40,7 +40,7 @@ int page_manager::write_word(page_table *table, unsigned int addr, char *val)
         return PAGE_FAULT;
     }
 
-    ram::write_word(phys_addr, val, table->pcb_id);
+    ram::write_word(phys_addr, val);
     return 0;
 }
 
@@ -55,7 +55,7 @@ int page_manager::read_word(page_table *table, unsigned int addr, char *target)
         return PAGE_FAULT;
     }
 
-    char *val = ram::read_word(phys_addr, table->pcb_id);
+    char *val = ram::read_word(phys_addr);
     for(int i = 0; i < 8; i++)
     {
         target[i] = val[i];
@@ -139,8 +139,7 @@ void page_manager::load_and_update(page_table *table, unsigned int log_addr)
 
     free_frames[frame_num] = false;
 
-    ram::set_frame_owner(16 * frame_num, table->pcb_id);
-    disk_to_ram(16 * page_num, 16 * frame_num, 4, table->pcb_id);
+    disk_to_ram(16 * page_num, 16 * frame_num, 4);
     table->add_page(log_addr / 16, frame_num);
 }
 
@@ -150,7 +149,7 @@ void page_manager::release_frame(page_table *table, unsigned int log_addr)
 
     log_status::log_pager_release_frame(table->pcb_id, log_addr, phys_addr);
 
-    ram_to_disk(phys_addr, table->base_disk_address + log_addr, 4, table->pcb_id);
+    ram_to_disk(phys_addr, table->base_disk_address + log_addr, 4);
     free_frames[phys_addr / 16] = true;
 }
 

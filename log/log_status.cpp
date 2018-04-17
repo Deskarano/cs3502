@@ -1127,14 +1127,13 @@ void log_status::dump_ram()
         std::cout << "0x" << dec_to_hex(4 * i) << ": ";
         for(int j = 0; j < 4; j++)
         {
-            char *val = ram::read_word(4 * (i + j), 0);
+            char *val = ram::read_word(4 * (i + j));
             for(int k = 0; k < 8; k++)
             {
                 std::cout << val[k];
             }
             std::cout << " ";
         }
-        std::cout << "PCB " << ram::get_frame_owner(4 * i) << "\n";
     }
 
     print_lock->notify();

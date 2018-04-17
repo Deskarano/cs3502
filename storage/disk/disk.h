@@ -1,8 +1,6 @@
 #ifndef CS3502_DISK_H
 #define CS3502_DISK_H
 
-#include "../page_frame.h"
-
 struct disk
 {
 public:
@@ -16,7 +14,7 @@ public:
 
 private:
     static unsigned int num_words;
-    static page_frame *pages;
+    static char *data;
 };
 
 #endif //CS3502_DISK_H
