@@ -71,6 +71,7 @@ void longterm::writeback_finished_pcb(pcb *pcb)
     log_status::log_pcb_oncputimes(pcb->ID, pcb->times_oncpu);
     log_status::log_pcb_offcputimes(pcb->ID, pcb->times_offcpu);
     log_status::log_pcb_runtimes(pcb->ID, pcb->get_running_time());
+    log_status::log_pcb_blocktimes(pcb->ID, pcb->get_blocked_time());
 
     log_status::log_pcb_pages_used(pcb->ID, pcb->table->num_frames);
     log_status::log_pcb_page_faults(pcb->ID, pcb->get_num_faults());

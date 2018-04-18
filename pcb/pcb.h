@@ -78,6 +78,7 @@ public:
     void page_fault() {num_pageFault++;}
 
     unsigned int get_running_time();
+    unsigned int get_blocked_time();
 
     unsigned int get_num_pages() { return num_pages; }
     unsigned int get_num_faults() { return num_pageFault; }

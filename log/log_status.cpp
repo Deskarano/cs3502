@@ -1185,6 +1185,18 @@ void log_status::log_pcb_runtimes(unsigned int pcb_id, unsigned int time_running
     }
 }
 
+void log_status::log_pcb_blocktimes(unsigned int pcb_id, unsigned int time_blocked)
+{
+    if(LOG_PCB_BLOCKEDTIMES)
+    {
+        print_lock->wait();
+
+        std::cout << pcb_id << "," << time_blocked << "\n";
+
+        print_lock->notify();
+    }
+}
+
 void log_status::log_pcb_pages_used(unsigned int pcb_id, unsigned int num_used)
 {
     if(LOG_PCB_PAGES_USED)

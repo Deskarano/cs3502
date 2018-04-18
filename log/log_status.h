@@ -44,8 +44,9 @@
 #define LOG_PCB_PRIORITIES              false
 #define LOG_PCB_IO                      false
 #define LOG_PCB_TIMESONCPU              true
-#define LOG_PCB_TIMESOFFCPU             true
-#define LOG_PCB_RUNTIMES                true
+#define LOG_PCB_TIMESOFFCPU             false
+#define LOG_PCB_RUNTIMES                false
+#define LOG_PCB_BLOCKEDTIMES            false
 
 #define LOG_PCB_PAGES_USED              false
 #define LOG_PCB_PAGE_FAULTS             false
@@ -100,6 +101,7 @@ public:
     static void log_pcb_oncputimes(unsigned int pcb_id, clock_t *times_oncpu);
     static void log_pcb_offcputimes(unsigned int pcb_id, clock_t *times_offcpu);
     static void log_pcb_runtimes(unsigned int pcb_id, unsigned int time_running);
+    static void log_pcb_blocktimes(unsigned int pcb_id, unsigned int time_blocked);
 
     static void log_pcb_pages_used(unsigned int pcb_id, unsigned int num_used);
     static void log_pcb_page_faults(unsigned int pcb_id, unsigned int num_faults);
