@@ -73,6 +73,16 @@ public:
     unsigned int get_num_io_operations()
     { return num_input + num_output; }
 
+    void start_fault_service()
+    {
+        time_start_service = clock();
+    }
+
+    void end_fault_service()
+    {
+        time_fault_service += (clock() - time_start_service);
+    }
+
     void add_page() {num_pages++;}
     void add_page(unsigned int num) {num_pages += num;}
     void page_fault() {num_pageFault++;}
@@ -105,6 +115,7 @@ public:
     clock_t* times_oncpu;
     clock_t* times_offcpu;
 
+    clock_t time_fault_service;
 private:
     //summary info
     unsigned int num_input = 0;
@@ -116,6 +127,8 @@ private:
     clock_t time_oncpu;
     clock_t time_offcpu;
     clock_t time_death;
+
+    clock_t time_start_service;
 
     unsigned int curTimesOnCpu = -1;
 

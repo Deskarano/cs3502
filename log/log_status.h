@@ -43,13 +43,14 @@
 #define LOG_PCB_SUMMARY                 false
 #define LOG_PCB_PRIORITIES              false
 #define LOG_PCB_IO                      false
-#define LOG_PCB_TIMESONCPU              true
+#define LOG_PCB_TIMESONCPU              false
 #define LOG_PCB_TIMESOFFCPU             false
 #define LOG_PCB_RUNTIMES                false
 #define LOG_PCB_BLOCKEDTIMES            false
 
 #define LOG_PCB_PAGES_USED              false
 #define LOG_PCB_PAGE_FAULTS             false
+#define LOG_PCB_FAULT_TIME              true
 
 #include <ctime>
 
@@ -105,7 +106,7 @@ public:
 
     static void log_pcb_pages_used(unsigned int pcb_id, unsigned int num_used);
     static void log_pcb_page_faults(unsigned int pcb_id, unsigned int num_faults);
-
+    static void log_pcb_fault_service_time(unsigned int pcb_id, clock_t service_time);
     static void dump_ram();
     static void dump_disk();
 };

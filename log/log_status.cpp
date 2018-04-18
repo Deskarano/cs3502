@@ -1221,6 +1221,17 @@ void log_status::log_pcb_page_faults(unsigned int pcb_id, unsigned int num_fault
     }
 }
 
+void log_status::log_pcb_fault_service_time(unsigned int pcb_id, clock_t service_time) {
+    if(LOG_PCB_FAULT_TIME)
+    {
+        print_lock->wait();
+
+        std::cout << pcb_id << "," << service_time << "\n";
+
+        print_lock->notify();
+    }
+}
+
 void log_status::dump_ram()
 {
     print_lock->wait();
