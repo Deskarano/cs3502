@@ -38,7 +38,7 @@
 #define LOG_LONG_SCHEDULE           	false
 #define LOG_LONG_WRITEBACK_PCB      	false
 
-#define LOG_PCB_SIZES                   false
+#define LOG_PCB_SIZES                   true
 #define LOG_PCB_TIMES                   false
 #define LOG_PCB_SUMMARY                 false
 #define LOG_PCB_PRIORITIES              false

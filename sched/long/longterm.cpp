@@ -67,7 +67,7 @@ void longterm::writeback_finished_pcb(pcb *pcb)
     log_status::log_pcb_io_operations(pcb->ID, pcb->get_num_input(), pcb->get_num_output(),
                                       pcb->get_num_io_operations());
 
-    log_status::log_pcb_pages_used(pcb->ID, pcb->get_num_pages());
+    log_status::log_pcb_pages_used(pcb->ID, pcb->table->num_frames);
     log_status::log_pcb_page_faults(pcb->ID, pcb->get_num_faults());
     //end of pcb lifecycle
     delete pcb->table;
