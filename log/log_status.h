@@ -45,7 +45,7 @@
 #define LOG_PCB_IO                      false
 #define LOG_PCB_TIMESONCPU              true
 #define LOG_PCB_TIMESOFFCPU             true
-#define LOG_PCB_RUNTIMES                false
+#define LOG_PCB_RUNTIMES                true
 
 #define LOG_PCB_PAGES_USED              false
 #define LOG_PCB_PAGE_FAULTS             false
