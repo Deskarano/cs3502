@@ -38,14 +38,15 @@
 #define LOG_LONG_SCHEDULE           	false
 #define LOG_LONG_WRITEBACK_PCB      	false
 
-#define LOG_PCB_SIZES                   true
+#define LOG_PCB_SIZES                   false
 #define LOG_PCB_TIMES                   false
 #define LOG_PCB_SUMMARY                 false
 #define LOG_PCB_PRIORITIES              false
 #define LOG_PCB_IO                      false
+#define LOG_PCB_RUNTIMES                true
 
-#define LOG_PCB_PAGES_USED              true
-#define LOG_PCB_PAGE_FAULTS             true
+#define LOG_PCB_PAGES_USED              false
+#define LOG_PCB_PAGE_FAULTS             false
 
 #include <ctime>
 
@@ -94,6 +95,7 @@ public:
     static void log_pcb_summary(unsigned int pcb_id, clock_t time_birth, clock_t time_ram, clock_t time_cpu, clock_t time_death, clock_t elapsed_waiting, clock_t elapsed_running);
     static void log_pcb_priority(unsigned int pcb_id, unsigned int priority);
     static void log_pcb_io_operations(unsigned int pcb_id, unsigned int num_input, unsigned int num_output, unsigned int num_total);
+    static void log_pcb_runtimes(unsigned int pcb_id, clock_t* times_oncpu, clock_t* times_offcpu);
 
     static void log_pcb_pages_used(unsigned int pcb_id, unsigned int num_used);
     static void log_pcb_page_faults(unsigned int pcb_id, unsigned int num_faults);

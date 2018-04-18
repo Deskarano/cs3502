@@ -1118,6 +1118,23 @@ void log_status::log_pcb_io_operations(unsigned int pcb_id, unsigned int num_inp
     }
 }
 
+void log_status::log_pcb_runtimes(unsigned int pcb_id, clock_t *times_oncpu, clock_t *times_offcpu)
+{
+    if(LOG_PCB_RUNTIMES)
+    {
+        print_lock->wait();
+
+        unsigned int time_running = 0;
+        for(int i = 0; i < 100; i++)
+        {
+            time_running += times_offcpu[i] - times_oncpu[i];
+        }
+        std::cout << pcb_id << "," << time_running;
+
+        print_lock->notify();
+    }
+}
+
 void log_status::log_pcb_pages_used(unsigned int pcb_id, unsigned int num_used)
 {
     if(LOG_PCB_PAGES_USED)

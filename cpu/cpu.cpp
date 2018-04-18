@@ -72,6 +72,7 @@ void cpu::cpu_main_thread()
         if(page_fault)
         {
             state = CPU_IDLE;
+            current_pcb->set_clock_offcpu();
             return;
         }
 
@@ -87,6 +88,7 @@ void cpu::cpu_main_thread()
 
             state = CPU_DONE;
             current_pcb->state = PCB_DONE;
+            current_pcb->set_clock_offcpu();
             return;
         }
         else
@@ -106,7 +108,6 @@ void cpu::cpu_main_thread()
         delete instruction;
     }
 
-    current_pcb->set_clock_offcpu();
 }
 
 instr *cpu::decode(char instruction[8])

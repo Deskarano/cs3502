@@ -20,6 +20,13 @@ pcb::pcb(unsigned int ID, unsigned int priority,
     this->output_size = output_size;
     this->temp_size = temp_size;
 
+    this->times_oncpu = new clock_t[100];
+    for(int i = 0; i < 100; i++)
+        times_oncpu[i] = 0;
+    this->times_offcpu = new clock_t[100];
+    for(int i = 0; i < 100; i++)
+        times_offcpu[i] = 0;
+
     this->base_disk_address = base_disk_address;
 
     this->table = new page_table(this->get_total_size(), this->base_disk_address, this->ID);
