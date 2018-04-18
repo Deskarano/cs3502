@@ -119,7 +119,6 @@ void page_manager::load_and_update(page_table *table, unsigned int log_addr)
 
     bool free_frame_found = false;
 
-    //find the first free frame
     for(unsigned int i = 0; i < ram::size() / 4; i++)
     {
         if(free_frames[i])
@@ -164,7 +163,7 @@ void page_manager::release_all_frames(page_table *table)
     for(unsigned int i = 0; i < table->num_frames; i++)
     {
         unsigned int phys_addr = table->lookup_page(16 * i);
-        
+
         if(phys_addr != PAGE_FAULT)
         {
             release_frame(table, 16 * i);

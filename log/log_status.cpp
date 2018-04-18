@@ -579,7 +579,22 @@ void log_status::log_cpu_execute(unsigned int core_id, void *instruction, int re
 
             case SLTI:
             {
-                //TODO
+                auto args = (i_args *) ((instr *) instruction)->args;
+                if(reg[args->breg] < args->addr)
+                {
+                    std::cout << "--cpu-status (" << core_id << ") (execute SLTI):"
+                              << " set reg " << args->dreg << " to val 1"
+                              << " since reg " << args->breg << " = " << reg[args->breg]
+                              << " < val " << args->addr << "\n";
+                }
+                else
+                {
+                    std::cout << "--cpu-status (" << core_id << ") (execute SLTI):"
+                              << " set reg " << args->dreg << " to val 0"
+                              << " since reg " << args->breg << " = " << reg[args->breg]
+                              << " >= val " << args->addr << "\n";
+                }
+
                 break;
             }
 
@@ -1196,45 +1211,47 @@ void log_status::log_pcb_page_faults(unsigned int pcb_id, unsigned int num_fault
 
 void log_status::dump_ram()
 {
-    if(LOG_DUMP_RAM) {
-        print_lock->wait();
+    print_lock->wait();
 
-        for (int i = 0; i < ram::size(); i += 4) {
-            std::cout << "0x" << dec_to_hex(4 * i) << ": ";
-            for (int j = 0; j < 4; j++) {
-                char *val = ram::read_word(4 * (i + j));
-                for (int k = 0; k < 8; k++) {
-                    std::cout << val[k];
-                }
-                std::cout << " ";
-
-                delete val;
+    for(int i = 0; i < ram::size(); i += 4)
+    {
+        std::cout << "0x" << dec_to_hex(4 * i) << ": ";
+        for(int j = 0; j < 4; j++)
+        {
+            char *val = ram::read_word(4 * (i + j));
+            for(int k = 0; k < 8; k++)
+            {
+                std::cout << val[k];
             }
-        }
+            std::cout << " ";
 
-        print_lock->notify();
+            delete val;
+        }
     }
+
+    print_lock->notify();
 }
 
 void log_status::dump_disk()
 {
-    if(LOG_DUMP_DISK) {
-        print_lock->wait();
+    print_lock->wait();
 
-        for (int i = 0; i < disk::size(); i += 4) {
-            std::cout << "0x" << dec_to_hex(4 * i) << ": ";
-            for (int j = 0; j < 4; j++) {
-                char *val = disk::read_word(4 * (i + j));
-                for (int k = 0; k < 8; k++) {
-                    std::cout << val[k];
-                }
-                std::cout << " ";
-
-                delete val;
+    for(int i = 0; i < disk::size(); i += 4)
+    {
+        std::cout << "0x" << dec_to_hex(4 * i) << ": ";
+        for(int j = 0; j < 4; j++)
+        {
+            char *val = disk::read_word(4 * (i + j));
+            for(int k = 0; k < 8; k++)
+            {
+                std::cout << val[k];
             }
-            std::cout << "\n";
-        }
+            std::cout << " ";
 
-        print_lock->notify();
+            delete val;
+        }
+        std::cout << "\n";
     }
+
+    print_lock->notify();
 }

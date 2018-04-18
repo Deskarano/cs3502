@@ -1,13 +1,11 @@
 #include "storage/disk/disk.h"
 #include "storage/ram/ram.h"
+#include "storage/page_manager.h"
 
 #include "sched/sched_control.h"
 
 #include "cpu/cpu_control.h"
 #include "log/log_status.h"
-
-#include "utils/base_conversions.h"
-#include "storage/page_manager.h"
 
 #include <iostream>
 #include <fstream>
@@ -80,6 +78,5 @@ int main()
         sched_control::schedule_and_run();
     }
 
-    log_status::dump_disk();
-    std::cout << "done!\n";
+    std::cout << "finished successfully!\n";
 }
