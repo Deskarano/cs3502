@@ -1129,7 +1129,7 @@ void log_status::log_pcb_runtimes(unsigned int pcb_id, clock_t *times_oncpu, clo
         {
             time_running += times_offcpu[i] - times_oncpu[i];
         }
-        std::cout << pcb_id << "," << time_running;
+        std::cout << pcb_id << "," << time_running << "\n";
 
         print_lock->notify();
     }
