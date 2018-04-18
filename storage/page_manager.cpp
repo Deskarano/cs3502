@@ -7,6 +7,9 @@
 #include "../utils/lock.h"
 #include "../sched/short/shortterm.h"
 
+#include <thread>
+
+
 bool *page_manager::free_frames = nullptr;
 
 pcb_node *page_manager::work_head = nullptr;
@@ -156,7 +159,7 @@ unsigned int page_manager::release_frame(page_table *table, unsigned int log_add
 void page_manager::release_all_frames(page_table *table)
 {
     log_status::log_pager_release_all_frames(table->pcb_id);
-
+    int numframes;
     for(unsigned int i = 0; i < table->num_frames; i++)
     {
         unsigned int phys_addr = table->lookup_page(16 * i);

@@ -7,6 +7,7 @@
 #include "../log/log_error.h"
 
 #include <thread>
+#include <iostream>
 
 static unsigned int next_id = 0;
 
@@ -71,6 +72,7 @@ void cpu::cpu_main_thread()
         if(page_fault)
         {
             state = CPU_IDLE;
+            current_pcb->set_clock_offcpu();
             return;
         }
 
@@ -86,6 +88,7 @@ void cpu::cpu_main_thread()
 
             state = CPU_DONE;
             current_pcb->state = PCB_DONE;
+            current_pcb->set_clock_offcpu();
 
             return;
         }
@@ -105,7 +108,6 @@ void cpu::cpu_main_thread()
         delete instruction->args;
         delete instruction;
     }
-
     current_pcb->set_clock_offcpu();
 }
 
@@ -190,6 +192,8 @@ void cpu::handle_page_fault(unsigned int addr)
     save_pcb();
 
     current_pcb->state = PCB_WAITING;
+    current_pcb->add_page();
+    current_pcb->page_fault();
     page_fault = true;
 
     page_manager::receive_pcb(current_pcb, addr);

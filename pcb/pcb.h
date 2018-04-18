@@ -25,10 +25,18 @@ public:
     { this->time_onram = clock(); };
 
     void set_clock_oncpu()
-    { this->time_oncpu = clock(); };
+    {
+        curTimesOnCpu++;
+        this->times_oncpu[curTimesOnCpu] = clock();
+        this->time_oncpu = clock();
+
+    };
 
     void set_clock_offcpu()
-    { this->time_offcpu = clock(); };
+    {
+        this->times_offcpu[curTimesOnCpu] = clock();
+        this->time_offcpu = clock();
+    };
 
     void set_clock_death()
     { this->time_death = clock(); };
@@ -65,6 +73,13 @@ public:
     unsigned int get_num_io_operations()
     { return num_input + num_output; }
 
+    void add_page() {num_pages++;}
+    void add_page(unsigned int num) {num_pages += num;}
+    void page_fault() {num_pageFault++;}
+
+    unsigned int get_num_pages() { return num_pages; }
+    unsigned int get_num_faults() { return num_pageFault; }
+
     //sched-related info
     unsigned int ID;
     unsigned int priority;
@@ -84,6 +99,9 @@ public:
     unsigned int output_size;
     unsigned int temp_size;
 
+    clock_t* times_oncpu;
+    clock_t* times_offcpu;
+
 private:
     //summary info
     unsigned int num_input = 0;
@@ -95,6 +113,13 @@ private:
     clock_t time_oncpu;
     clock_t time_offcpu;
     clock_t time_death;
+
+    unsigned int curTimesOnCpu = -1;
+
+
+    //page info
+    unsigned int num_pages = 0;
+    unsigned int num_pageFault = 0;
 };
 
 

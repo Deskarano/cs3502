@@ -1133,8 +1133,91 @@ void log_status::log_pcb_io_operations(unsigned int pcb_id, unsigned int num_inp
     }
 }
 
+void log_status::log_pcb_oncputimes(unsigned int pcb_id, clock_t *times_oncpu)
+{
+    if(LOG_PCB_TIMESONCPU)
+    {
+        print_lock -> wait();
+
+        std::cout << pcb_id;
+
+        for(int i = 0; i < 100; i++)
+        {
+            if(times_oncpu[i] != 0)
+                std::cout << "," << times_oncpu[i];
+        }
+
+        std::cout << "\n";
+
+        print_lock -> notify();
+    }
+}
+
+void log_status::log_pcb_offcputimes(unsigned int pcb_id, clock_t *times_offcpu)
+{
+    if(LOG_PCB_TIMESOFFCPU)
+    {
+        print_lock -> wait();
+
+        std::cout << pcb_id;
+
+        for(int i = 0; i < 100; i++)
+        {
+            if(times_offcpu[i] != 0)
+                std::cout << "," << times_offcpu[i];
+        }
+
+        std::cout << "\n";
+
+        print_lock -> notify();
+    }
+}
+
+void log_status::log_pcb_runtimes(unsigned int pcb_id, clock_t *times_oncpu, clock_t *times_offcpu)
+{
+    if(LOG_PCB_RUNTIMES)
+    {
+        print_lock->wait();
+
+        unsigned int time_running = 0;
+        for(int i = 0; i < 100; i++)
+        {
+            time_running += (times_offcpu[i] - times_oncpu[i]);
+        }
+        std::cout << pcb_id << "," << time_running << "\n";
+
+        print_lock->notify();
+    }
+}
+
+void log_status::log_pcb_pages_used(unsigned int pcb_id, unsigned int num_used)
+{
+    if(LOG_PCB_PAGES_USED)
+    {
+        print_lock->wait();
+
+        std::cout << pcb_id << "," << num_used << "\n";
+
+        print_lock->notify();
+    }
+}
+
+void log_status::log_pcb_page_faults(unsigned int pcb_id, unsigned int num_faults)
+{
+    if(LOG_PCB_PAGE_FAULTS)
+    {
+        print_lock->wait();
+
+        std::cout << pcb_id << "," << num_faults << "\n";
+
+        print_lock->notify();
+    }
+}
+
 void log_status::dump_ram()
 {
+    print_lock->wait();
+
     for(int i = 0; i < ram::size(); i += 4)
     {
         std::cout << "0x" << dec_to_hex(4 * i) << ": ";
@@ -1150,10 +1233,14 @@ void log_status::dump_ram()
             delete val;
         }
     }
+
+    print_lock->notify();
 }
 
 void log_status::dump_disk()
 {
+    print_lock->wait();
+
     for(int i = 0; i < disk::size(); i += 4)
     {
         std::cout << "0x" << dec_to_hex(4 * i) << ": ";
@@ -1170,4 +1257,6 @@ void log_status::dump_disk()
         }
         std::cout << "\n";
     }
+
+    print_lock->notify();
 }
