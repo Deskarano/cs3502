@@ -1,7 +1,5 @@
 #include "pcb.h"
 
-#include "../storage/page_manager.h"
-
 pcb::pcb(unsigned int ID, unsigned int priority,
          unsigned int code_size, unsigned int input_size,
          unsigned int output_size, unsigned int temp_size,
@@ -24,5 +22,5 @@ pcb::pcb(unsigned int ID, unsigned int priority,
 
     this->base_disk_address = base_disk_address;
 
-    this->table = new page_table(this->get_total_size());
+    this->table = new page_table(this->get_total_size(), this->base_disk_address, this->ID);
 }

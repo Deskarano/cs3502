@@ -1,8 +1,6 @@
 #ifndef CS3502_PAGE_MANAGER_H
 #define CS3502_PAGE_MANAGER_H
 
-#include <thread>
-
 #include "../pcb/page_table/page_table.h"
 
 #include "../pcb/pcb.h"
@@ -14,21 +12,21 @@ struct page_manager
 public:
     static void init();
 
-    static int write_word(pcb *pcb, unsigned int addr, char *val);
-    static int read_word(pcb *pcb, unsigned int addr, char *target);
+    static int write_word(page_table *table, unsigned int addr, char *val);
+    static int read_word(page_table *table, unsigned int log_addr, char *target);
 
-    static void init_frames(pcb *pcb);
+    static void init_frames(page_table *table);
     static void receive_pcb(pcb *pcb, unsigned int log_addr);
 
-    static void release_frames(pcb *pcb);
+    static unsigned int release_frame(page_table *table, unsigned int phys_addr);
+    static void release_all_frames(page_table *table);
 
 private:
-    static void load_and_update(pcb *pcb, unsigned int log_addr);
-    static bool *free_frames;
-
+    static void load_and_update(page_table *table, unsigned int log_addr);
     static void process_work();
 
-    static std::thread *work_thread;
+    static bool *free_frames;
+
     static pcb_node *work_head;
     static pcb_node *work_tail;
 };

@@ -946,13 +946,28 @@ void log_status::log_pager_load_update(unsigned int pcb_id, unsigned int log_add
     }
 }
 
-void log_status::log_pager_release_frames(unsigned int pcb_id)
+void log_status::log_pager_release_frame(unsigned int pcb_id, unsigned int log_addr, unsigned int phys_addr)
 {
-    if(LOG_PAGER_RELEASE_FRAMES)
+    if(LOG_PAGER_RELEASE_FRAME)
     {
         print_lock->wait();
 
-        std::cout << "--pager-status (release_frames):"
+        std::cout << "--pager-status (release_frame):"
+                  << " removed entry in PCB " << pcb_id
+                  << " for logical address 0x" << dec_to_hex(log_addr)
+                  << ": 0x" << dec_to_hex(phys_addr) << "\n";
+
+        print_lock->notify();
+    }
+}
+
+void log_status::log_pager_release_all_frames(unsigned int pcb_id)
+{
+    if(LOG_PAGER_RELEASE_ALL_FRAMES)
+    {
+        print_lock->wait();
+
+        std::cout << "--pager-status (release_all_frames):"
                   << " releasing all frames from PCB " << pcb_id << "\n";
 
         print_lock->notify();
@@ -1105,6 +1120,8 @@ void log_status::log_pcb_io_operations(unsigned int pcb_id, unsigned int num_inp
 
 void log_status::dump_ram()
 {
+    print_lock->wait();
+
     for(int i = 0; i < ram::size(); i += 4)
     {
         std::cout << "0x" << dec_to_hex(4 * i) << ": ";
@@ -1116,13 +1133,18 @@ void log_status::dump_ram()
                 std::cout << val[k];
             }
             std::cout << " ";
+
+            delete val;
         }
-        std::cout << "\n";
     }
+
+    print_lock->notify();
 }
 
 void log_status::dump_disk()
 {
+    print_lock->wait();
+
     for(int i = 0; i < disk::size(); i += 4)
     {
         std::cout << "0x" << dec_to_hex(4 * i) << ": ";
@@ -1134,7 +1156,11 @@ void log_status::dump_disk()
                 std::cout << val[k];
             }
             std::cout << " ";
+
+            delete val;
         }
         std::cout << "\n";
     }
+
+    print_lock->notify();
 }

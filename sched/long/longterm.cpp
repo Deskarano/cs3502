@@ -58,7 +58,7 @@ void longterm::writeback_finished_pcb(pcb *pcb)
 {
     log_status::log_long_writeback_pcb(pcb->ID);
 
-    page_manager::release_frames(pcb);
+    page_manager::release_all_frames(pcb->table);
 
     pcb->set_clock_death(); //set time of death
     log_status::log_pcb_times(pcb->ID, pcb->get_clock_birth(), pcb->get_clock_oncpu(), pcb->get_clock_death());
@@ -224,7 +224,7 @@ void longterm::schedule()
             }
         }
 
-        page_manager::init_frames(current);
+        page_manager::init_frames(current->table);
 
         current->state = PCB_READY;
 

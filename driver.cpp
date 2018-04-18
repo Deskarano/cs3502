@@ -68,10 +68,10 @@ int main()
     disk::init(2048);
     ram::init(1024);
 
-    cpu_control::init(1);
+    cpu_control::init(4);
     page_manager::init();
 
-    sched_control::set_algorithm(SCHED_SJF);
+    sched_control::set_algorithm(SCHED_FCFS);
 
     load("programfile");
 
@@ -80,5 +80,6 @@ int main()
         sched_control::schedule_and_run();
     }
 
+    log_status::dump_disk();
     std::cout << "done!\n";
 }

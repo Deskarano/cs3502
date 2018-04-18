@@ -1,8 +1,6 @@
 #ifndef CS3502_RAM_H
 #define CS3502_RAM_H
 
-#include "../page_frame.h"
-
 struct ram
 {
 public:
@@ -15,7 +13,7 @@ public:
 
 private:
     static unsigned int num_words;
-    static page_frame *frames;
+    static char *data;
 };
 
 #endif //CS3502_RAM_H
