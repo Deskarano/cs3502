@@ -63,14 +63,14 @@ void longterm::writeback_finished_pcb(pcb *pcb)
     log_status::log_pcb_times(pcb->ID, pcb->get_clock_birth(), pcb->get_clock_oncpu(), pcb->get_clock_death());
     log_status::log_pcb_summary(pcb->ID, pcb->get_clock_birth(), pcb->get_clock_onram(), pcb->get_clock_oncpu(),
                                 pcb->get_clock_offcpu(), pcb->get_clock_oncpu() - pcb->get_clock_birth(),
-                                pcb->get_clock_offcpu() - pcb->get_clock_oncpu());
+                                pcb->get_running_time());
     log_status::log_pcb_io_operations(pcb->ID, pcb->get_num_input(), pcb->get_num_output(),
                                       pcb->get_num_io_operations());
 
 
     log_status::log_pcb_oncputimes(pcb->ID, pcb->times_oncpu);
     log_status::log_pcb_offcputimes(pcb->ID, pcb->times_offcpu);
-    log_status::log_pcb_runtimes(pcb->ID, pcb->times_oncpu, pcb->times_offcpu);
+    log_status::log_pcb_runtimes(pcb->ID, pcb->get_running_time());
 
     log_status::log_pcb_pages_used(pcb->ID, pcb->table->num_frames);
     log_status::log_pcb_page_faults(pcb->ID, pcb->get_num_faults());

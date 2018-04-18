@@ -1158,17 +1158,12 @@ void log_status::log_pcb_offcputimes(unsigned int pcb_id, clock_t *times_offcpu)
     }
 }
 
-void log_status::log_pcb_runtimes(unsigned int pcb_id, clock_t *times_oncpu, clock_t *times_offcpu)
+void log_status::log_pcb_runtimes(unsigned int pcb_id, unsigned int time_running)
 {
     if(LOG_PCB_RUNTIMES)
     {
         print_lock->wait();
 
-        unsigned int time_running = 0;
-        for(int i = 0; i < 100; i++)
-        {
-            time_running += (times_offcpu[i] - times_oncpu[i]);
-        }
         std::cout << pcb_id << "," << time_running << "\n";
 
         print_lock->notify();

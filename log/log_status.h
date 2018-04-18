@@ -99,7 +99,7 @@ public:
     static void log_pcb_io_operations(unsigned int pcb_id, unsigned int num_input, unsigned int num_output, unsigned int num_total);
     static void log_pcb_oncputimes(unsigned int pcb_id, clock_t *times_oncpu);
     static void log_pcb_offcputimes(unsigned int pcb_id, clock_t *times_offcpu);
-    static void log_pcb_runtimes(unsigned int pcb_id, clock_t* times_oncpu, clock_t* times_offcpu);
+    static void log_pcb_runtimes(unsigned int pcb_id, unsigned int time_running);
 
     static void log_pcb_pages_used(unsigned int pcb_id, unsigned int num_used);
     static void log_pcb_page_faults(unsigned int pcb_id, unsigned int num_faults);

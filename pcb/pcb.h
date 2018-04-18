@@ -77,6 +77,8 @@ public:
     void add_page(unsigned int num) {num_pages += num;}
     void page_fault() {num_pageFault++;}
 
+    unsigned int get_running_time();
+
     unsigned int get_num_pages() { return num_pages; }
     unsigned int get_num_faults() { return num_pageFault; }
 
