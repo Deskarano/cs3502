@@ -87,8 +87,6 @@ void cpu::cpu_main_thread()
 
             state = CPU_DONE;
             current_pcb->state = PCB_DONE;
-            log_status::log_pcb_page_faults(current_pcb->ID, 1);
-            std::cout << current_pcb->ID << " just finished\n";
             return;
         }
         else

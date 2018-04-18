@@ -1,6 +1,9 @@
 #ifndef CS3502_LOG_STATUS_H
 #define CS3502_LOG_STATUS_H
 
+#define LOG_DUMP_DISK                   false
+#define LOG_DUMP_RAM                    false
+
 #define LOG_CPU_CONTROL_INIT        	false
 #define LOG_CPU_CONTROL_DISPATCH    	false
 #define LOG_CPU_CONTROL_CLEAR       	false

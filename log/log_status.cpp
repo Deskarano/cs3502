@@ -1144,47 +1144,45 @@ void log_status::log_pcb_page_faults(unsigned int pcb_id, unsigned int num_fault
 
 void log_status::dump_ram()
 {
-    print_lock->wait();
+    if(LOG_DUMP_RAM) {
+        print_lock->wait();
 
-    for(int i = 0; i < ram::size(); i += 4)
-    {
-        std::cout << "0x" << dec_to_hex(4 * i) << ": ";
-        for(int j = 0; j < 4; j++)
-        {
-            char *val = ram::read_word(4 * (i + j));
-            for(int k = 0; k < 8; k++)
-            {
-                std::cout << val[k];
+        for (int i = 0; i < ram::size(); i += 4) {
+            std::cout << "0x" << dec_to_hex(4 * i) << ": ";
+            for (int j = 0; j < 4; j++) {
+                char *val = ram::read_word(4 * (i + j));
+                for (int k = 0; k < 8; k++) {
+                    std::cout << val[k];
+                }
+                std::cout << " ";
+
+                delete val;
             }
-            std::cout << " ";
-
-            delete val;
         }
-    }
 
-    print_lock->notify();
+        print_lock->notify();
+    }
 }
 
 void log_status::dump_disk()
 {
-    print_lock->wait();
+    if(LOG_DUMP_DISK) {
+        print_lock->wait();
 
-    for(int i = 0; i < disk::size(); i += 4)
-    {
-        std::cout << "0x" << dec_to_hex(4 * i) << ": ";
-        for(int j = 0; j < 4; j++)
-        {
-            char *val = disk::read_word(4 * (i + j));
-            for(int k = 0; k < 8; k++)
-            {
-                std::cout << val[k];
+        for (int i = 0; i < disk::size(); i += 4) {
+            std::cout << "0x" << dec_to_hex(4 * i) << ": ";
+            for (int j = 0; j < 4; j++) {
+                char *val = disk::read_word(4 * (i + j));
+                for (int k = 0; k < 8; k++) {
+                    std::cout << val[k];
+                }
+                std::cout << " ";
+
+                delete val;
             }
-            std::cout << " ";
-
-            delete val;
+            std::cout << "\n";
         }
-        std::cout << "\n";
-    }
 
-    print_lock->notify();
+        print_lock->notify();
+    }
 }
