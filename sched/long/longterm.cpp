@@ -49,7 +49,6 @@ void longterm::create_pcb(unsigned int ID, unsigned int priority, unsigned int c
     new_pcb->set_clock_birth(); //set the time of birth
 
     num_total_pcbs++;
-
     log_status::log_long_create_pcb(ID, base_disk_address);
     log_status::log_pcb_priority(ID, priority);
 }
@@ -67,6 +66,9 @@ void longterm::writeback_finished_pcb(pcb *pcb)
                                 pcb->get_clock_offcpu() - pcb->get_clock_oncpu());
     log_status::log_pcb_io_operations(pcb->ID, pcb->get_num_input(), pcb->get_num_output(),
                                       pcb->get_num_io_operations());
+
+    log_status::log_pcb_pages_used(pcb->ID, pcb->get_num_pages());
+    log_status::log_pcb_page_faults(pcb->ID, pcb->get_num_faults());
     //end of pcb lifecycle
     delete pcb->table;
     delete pcb;

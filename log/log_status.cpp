@@ -1118,6 +1118,30 @@ void log_status::log_pcb_io_operations(unsigned int pcb_id, unsigned int num_inp
     }
 }
 
+void log_status::log_pcb_pages_used(unsigned int pcb_id, unsigned int num_used)
+{
+    if(LOG_PCB_PAGES_USED)
+    {
+        print_lock->wait();
+
+        std::cout << pcb_id << "," << num_used << "\n";
+
+        print_lock->notify();
+    }
+}
+
+void log_status::log_pcb_page_faults(unsigned int pcb_id, unsigned int num_faults)
+{
+    if(LOG_PCB_PAGE_FAULTS)
+    {
+        print_lock->wait();
+
+        std::cout << pcb_id << "," << num_faults << "\n";
+
+        print_lock->notify();
+    }
+}
+
 void log_status::dump_ram()
 {
     print_lock->wait();
