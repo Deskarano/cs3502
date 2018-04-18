@@ -36,6 +36,8 @@ unsigned int pcb::get_running_time() {
     unsigned int runningTime = 0;
     for(int i = 0; i < 100; i++)
     {
+        if(times_offcpu[i] == 0)
+            break;
         runningTime += times_offcpu[i] - times_oncpu[i];
     }
     return runningTime;
@@ -45,6 +47,8 @@ unsigned int pcb::get_blocked_time() {
     unsigned int blockedTime = 0;
     for(int i = 1; i < 100; i++)
     {
+        if(times_oncpu[i] == 0)
+            break;
         blockedTime += times_oncpu[i] - times_offcpu[i-1];
     }
 
