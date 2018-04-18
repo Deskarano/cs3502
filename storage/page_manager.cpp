@@ -78,6 +78,7 @@ void page_manager::process_work()
     {
         load_and_update(work_head->value->table, work_head->misc);
         work_head->value->state = PCB_READY;
+        work_head->value->end_fault_service();
         shortterm::receive_pcb(work_head->value);
 
         pcb_node *del = work_head;
@@ -94,6 +95,7 @@ void page_manager::receive_pcb(pcb *pcb, unsigned int log_addr)
     log_status::log_pager_receive_pcb(pcb->ID, log_addr);
 
     pcb_node *node = new pcb_node(pcb);
+    pcb -> start_fault_service();
     node->misc = log_addr;
 
     if(work_head == nullptr)
