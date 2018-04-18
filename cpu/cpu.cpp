@@ -89,6 +89,7 @@ void cpu::cpu_main_thread()
             state = CPU_DONE;
             current_pcb->state = PCB_DONE;
             current_pcb->set_clock_offcpu();
+
             return;
         }
         else
