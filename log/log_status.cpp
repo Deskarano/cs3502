@@ -579,7 +579,22 @@ void log_status::log_cpu_execute(unsigned int core_id, void *instruction, int re
 
             case SLTI:
             {
-                //TODO
+                auto args = (i_args *) ((instr *) instruction)->args;
+                if(reg[args->breg] < args->addr)
+                {
+                    std::cout << "--cpu-status (" << core_id << ") (execute SLTI):"
+                              << " set reg " << args->dreg << " to val 1"
+                              << " since reg " << args->breg << " = " << reg[args->breg]
+                              << " < val " << args->addr << "\n";
+                }
+                else
+                {
+                    std::cout << "--cpu-status (" << core_id << ") (execute SLTI):"
+                              << " set reg " << args->dreg << " to val 0"
+                              << " since reg " << args->breg << " = " << reg[args->breg]
+                              << " >= val " << args->addr << "\n";
+                }
+
                 break;
             }
 
@@ -1120,8 +1135,6 @@ void log_status::log_pcb_io_operations(unsigned int pcb_id, unsigned int num_inp
 
 void log_status::dump_ram()
 {
-    print_lock->wait();
-
     for(int i = 0; i < ram::size(); i += 4)
     {
         std::cout << "0x" << dec_to_hex(4 * i) << ": ";
@@ -1137,14 +1150,10 @@ void log_status::dump_ram()
             delete val;
         }
     }
-
-    print_lock->notify();
 }
 
 void log_status::dump_disk()
 {
-    print_lock->wait();
-
     for(int i = 0; i < disk::size(); i += 4)
     {
         std::cout << "0x" << dec_to_hex(4 * i) << ": ";
@@ -1161,6 +1170,4 @@ void log_status::dump_disk()
         }
         std::cout << "\n";
     }
-
-    print_lock->notify();
 }
