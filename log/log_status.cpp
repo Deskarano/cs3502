@@ -1131,7 +1131,7 @@ void log_status::log_pcb_oncputimes(unsigned int pcb_id, clock_t *times_oncpu)
             if(times_oncpu[i] != 0)
                 std::cout << "," << times_oncpu[i];
         }
-        
+
         std::cout << "\n";
 
         print_lock -> notify();

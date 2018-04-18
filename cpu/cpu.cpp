@@ -108,7 +108,7 @@ void cpu::cpu_main_thread()
         delete instruction->args;
         delete instruction;
     }
-
+    current_pcb->set_clock_offcpu();
 }
 
 instr *cpu::decode(char instruction[8])
