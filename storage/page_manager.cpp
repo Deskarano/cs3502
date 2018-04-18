@@ -7,6 +7,8 @@
 #include "../utils/lock.h"
 #include "../sched/short/shortterm.h"
 
+#include <thread>
+
 
 bool *page_manager::free_frames = nullptr;
 
