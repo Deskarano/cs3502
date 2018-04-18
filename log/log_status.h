@@ -43,6 +43,7 @@
 #define LOG_PCB_SUMMARY                 false
 #define LOG_PCB_PRIORITIES              false
 #define LOG_PCB_IO                      false
+
 #define LOG_PCB_TIMESONCPU              false
 #define LOG_PCB_TIMESOFFCPU             false
 #define LOG_PCB_RUNTIMES                false

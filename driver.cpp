@@ -66,10 +66,10 @@ int main()
     disk::init(2048);
     ram::init(1024);
 
-    cpu_control::init(4);
+    cpu_control::init(1);
     page_manager::init();
 
-    sched_control::set_algorithm(SCHED_FCFS);
+    sched_control::set_algorithm(SCHED_SJF);
 
     load("programfile");
 
