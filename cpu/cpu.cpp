@@ -64,6 +64,7 @@ void cpu::save_pcb()
 void cpu::cpu_main_thread()
 {
     current_pcb->set_clock_oncpu();
+    current_pcb->start_cpu_running();
     while(!page_fault)
     {
         log_status::log_cpu_fetch(core_id, pc);
@@ -73,6 +74,7 @@ void cpu::cpu_main_thread()
         {
             state = CPU_IDLE;
             current_pcb->set_clock_offcpu();
+            current_pcb->end_cpu_running();
             return;
         }
 
@@ -89,7 +91,7 @@ void cpu::cpu_main_thread()
             state = CPU_DONE;
             current_pcb->state = PCB_DONE;
             current_pcb->set_clock_offcpu();
-
+            current_pcb->end_cpu_running();
             return;
         }
         else
@@ -109,6 +111,7 @@ void cpu::cpu_main_thread()
         delete instruction;
     }
     current_pcb->set_clock_offcpu();
+    current_pcb->end_cpu_running();
 }
 
 instr *cpu::decode(char instruction[8])

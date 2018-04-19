@@ -83,11 +83,21 @@ public:
         time_fault_service += (clock() - time_start_service);
     }
 
+    void start_cpu_running()
+    {
+        time_start_cpu = clock();
+    }
+
+    void end_cpu_running()
+    {
+        time_cpu_running += (clock() - time_start_cpu);
+    }
+
     void add_page() {num_pages++;}
     void add_page(unsigned int num) {num_pages += num;}
     void page_fault() {num_pageFault++;}
 
-    unsigned int get_running_time();
+    clock_t get_running_time();
     unsigned int get_blocked_time();
 
     unsigned int get_num_pages() { return num_pages; }
@@ -129,6 +139,8 @@ private:
     clock_t time_death;
 
     clock_t time_start_service;
+    clock_t time_start_cpu;
+    clock_t time_cpu_running;
 
     unsigned int curTimesOnCpu = -1;
 

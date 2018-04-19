@@ -32,7 +32,8 @@ pcb::pcb(unsigned int ID, unsigned int priority,
     this->table = new page_table(this->get_total_size(), this->base_disk_address, this->ID);
 }
 
-unsigned int pcb::get_running_time() {
+clock_t pcb::get_running_time() {
+    return time_cpu_running;
     unsigned int runningTime = 0;
     for(int i = 0; i < 100; i++)
     {
