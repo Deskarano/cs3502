@@ -100,7 +100,7 @@ public:
     void page_fault() {num_pageFault++;}
 
     clock_t get_running_time();
-    unsigned int get_blocked_time();
+    clock_t get_blocked_time();
 
     unsigned int get_num_pages() { return num_pages; }
     unsigned int get_num_faults() { return num_pageFault; }

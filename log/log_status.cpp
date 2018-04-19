@@ -1185,7 +1185,7 @@ void log_status::log_pcb_runtimes(unsigned int pcb_id, clock_t time_running)
     }
 }
 
-void log_status::log_pcb_blocktimes(unsigned int pcb_id, unsigned int time_blocked)
+void log_status::log_pcb_blocktimes(unsigned int pcb_id, clock_t time_blocked)
 {
     if(LOG_PCB_BLOCKEDTIMES)
     {
