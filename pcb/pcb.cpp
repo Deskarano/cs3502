@@ -45,6 +45,7 @@ clock_t pcb::get_running_time() {
 }
 
 unsigned int pcb::get_blocked_time() {
+    return time_cpu_waiting;
     unsigned int blockedTime = 0;
     for(int i = 1; i < 100; i++)
     {
