@@ -46,12 +46,12 @@
 
 #define LOG_PCB_TIMESONCPU              false
 #define LOG_PCB_TIMESOFFCPU             false
-#define LOG_PCB_RUNTIMES                false
+#define LOG_PCB_RUNTIMES                true
 #define LOG_PCB_BLOCKEDTIMES            false
 
 #define LOG_PCB_PAGES_USED              false
 #define LOG_PCB_PAGE_FAULTS             false
-#define LOG_PCB_FAULT_TIME              true
+#define LOG_PCB_FAULT_TIME              false
 
 #include <ctime>
 
