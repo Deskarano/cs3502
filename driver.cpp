@@ -66,7 +66,7 @@ int main()
     disk::init(2048);
     ram::init(1024);
 
-    cpu_control::init(1);
+    cpu_control::init(4);
     page_manager::init();
 
     sched_control::set_algorithm(SCHED_SJF);
