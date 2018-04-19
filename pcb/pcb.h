@@ -26,15 +26,13 @@ public:
 
     void set_clock_oncpu()
     {
-        curTimesOnCpu++;
-        this->times_oncpu[curTimesOnCpu] = clock();
-        this->time_oncpu = clock();
+        if(curTimesOnCpu == 0)
+            this->time_oncpu = clock();
 
     };
 
     void set_clock_offcpu()
     {
-        this->times_offcpu[curTimesOnCpu] = clock();
         this->time_offcpu = clock();
     };
 
@@ -86,10 +84,14 @@ public:
     void start_cpu_running()
     {
         time_start_cpu = clock();
+        if(curTimesOnCpu > 0)
+            time_cpu_waiting += (clock() - time_stop_cpu);
+        curTimesOnCpu++;
     }
 
     void end_cpu_running()
     {
+        time_stop_cpu = clock();
         time_cpu_running += (clock() - time_start_cpu);
     }
 
@@ -140,9 +142,11 @@ private:
 
     clock_t time_start_service;
     clock_t time_start_cpu;
+    clock_t time_stop_cpu;
     clock_t time_cpu_running;
+    clock_t time_cpu_waiting;
 
-    unsigned int curTimesOnCpu = -1;
+    unsigned int curTimesOnCpu = 0;
 
 
     //page info
